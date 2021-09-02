@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  font-family: "Nunito", sans-serif;
+}
+
+#login .block-left {
+  flex-basis: 70%;
+  height: 100vh;
+  max-width: 70%;
+  background-image: url("/images/login/voyager-assets.jpg");
+  background-size: cover;
+}
+#login .block-right {
+  flex-basis: 30%;
+  max-width: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
