@@ -18,6 +18,9 @@ mix.js('resources/js/app.js', 'public/js')
     .sass('resources/scss/app.scss', 'public/css')
     .sass('resources/scss/login.scss', 'public/css');
 
+// user
+mix.js('resources/js/user.js', 'public/js')
+
 mix.alias({
     vue$: 'node_modules/vue/dist/vue.esm-bundler.js',
 });

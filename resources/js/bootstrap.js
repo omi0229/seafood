@@ -29,3 +29,43 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 import { createApp } from 'vue';
 window.createApp = createApp;
+
+window.Swal = require('sweetalert2');
+
+// 驗證錯誤提示
+window.Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000
+});
+
+// 頁面讀取中樣式
+import 'load-awesome/css/ball-scale-ripple.css';
+window.loading = createApp({
+    data() {
+        return {
+            show: true,
+        }
+    },
+}).mount('#loading');
+
+// 密碼規則(8碼以上數字+英文)
+export const passwordRule = password => {
+    let rules = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+    if (!rules.test(password)) {
+        return false
+    }
+
+    return true;
+}
+
+export const emailRule = email => {
+    let rules = /^([\w]+)(.[\w]+)*@([\w]+)(.[\w]{2,3}){1,2}$/;
+    if (!rules.test(email)) {
+        return false
+    }
+
+    return true;
+}
+

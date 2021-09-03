@@ -17,3 +17,6 @@ body {
   align-items: center;
   justify-content: center;
 }
+#login .text-right {
+  text-align: right;
+}

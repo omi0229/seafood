@@ -22,3 +22,8 @@ Route::get('/', [\App\Http\Controllers\DashboardController::class, 'index']);
 Route::get('login', [\App\Http\Controllers\LoginController::class, 'login']);
 
 Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
+
+# 使用者管理
+Route::get('user', [\App\Http\Controllers\UserController::class, 'index']);
+Route::post('user/insert', [\App\Http\Controllers\UserController::class, 'insert']);
+Route::post('user/update', [\App\Http\Controllers\UserController::class, 'update']);

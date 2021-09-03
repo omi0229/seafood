@@ -19092,16 +19092,6 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./resources/js/app.js":
-/*!*****************************!*\
-  !*** ./resources/js/app.js ***!
-  \*****************************/
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-__webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
-
-/***/ }),
-
 /***/ "./resources/js/bootstrap.js":
 /*!***********************************!*\
   !*** ./resources/js/bootstrap.js ***!
@@ -36492,32 +36482,6 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 /***/ }),
 
-/***/ "./resources/scss/app.scss":
-/*!*********************************!*\
-  !*** ./resources/scss/app.scss ***!
-  \*********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-
-/***/ "./resources/scss/login.scss":
-/*!***********************************!*\
-  !*** ./resources/scss/login.scss ***!
-  \***********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-
 /***/ "./node_modules/process/browser.js":
 /*!*****************************************!*\
   !*** ./node_modules/process/browser.js ***!
@@ -40408,42 +40372,7 @@ function compileToFunction(template, options) {
 /******/ 		return module.exports;
 /******/ 	}
 /******/ 	
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = __webpack_modules__;
-/******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/chunk loaded */
-/******/ 	(() => {
-/******/ 		var deferred = [];
-/******/ 		__webpack_require__.O = (result, chunkIds, fn, priority) => {
-/******/ 			if(chunkIds) {
-/******/ 				priority = priority || 0;
-/******/ 				for(var i = deferred.length; i > 0 && deferred[i - 1][2] > priority; i--) deferred[i] = deferred[i - 1];
-/******/ 				deferred[i] = [chunkIds, fn, priority];
-/******/ 				return;
-/******/ 			}
-/******/ 			var notFulfilled = Infinity;
-/******/ 			for (var i = 0; i < deferred.length; i++) {
-/******/ 				var [chunkIds, fn, priority] = deferred[i];
-/******/ 				var fulfilled = true;
-/******/ 				for (var j = 0; j < chunkIds.length; j++) {
-/******/ 					if ((priority & 1 === 0 || notFulfilled >= priority) && Object.keys(__webpack_require__.O).every((key) => (__webpack_require__.O[key](chunkIds[j])))) {
-/******/ 						chunkIds.splice(j--, 1);
-/******/ 					} else {
-/******/ 						fulfilled = false;
-/******/ 						if(priority < notFulfilled) notFulfilled = priority;
-/******/ 					}
-/******/ 				}
-/******/ 				if(fulfilled) {
-/******/ 					deferred.splice(i--, 1)
-/******/ 					var r = fn();
-/******/ 					if (r !== undefined) result = r;
-/******/ 				}
-/******/ 			}
-/******/ 			return result;
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/compat get default export */
 /******/ 	(() => {
 /******/ 		// getDefaultExport function for compatibility with non-harmony modules
@@ -40505,70 +40434,165 @@ function compileToFunction(template, options) {
 /******/ 		};
 /******/ 	})();
 /******/ 	
-/******/ 	/* webpack/runtime/jsonp chunk loading */
-/******/ 	(() => {
-/******/ 		// no baseURI
-/******/ 		
-/******/ 		// object to store loaded and loading chunks
-/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
-/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
-/******/ 		var installedChunks = {
-/******/ 			"/js/app": 0,
-/******/ 			"css/login": 0,
-/******/ 			"css/app": 0
-/******/ 		};
-/******/ 		
-/******/ 		// no chunk on demand loading
-/******/ 		
-/******/ 		// no prefetching
-/******/ 		
-/******/ 		// no preloaded
-/******/ 		
-/******/ 		// no HMR
-/******/ 		
-/******/ 		// no HMR manifest
-/******/ 		
-/******/ 		__webpack_require__.O.j = (chunkId) => (installedChunks[chunkId] === 0);
-/******/ 		
-/******/ 		// install a JSONP callback for chunk loading
-/******/ 		var webpackJsonpCallback = (parentChunkLoadingFunction, data) => {
-/******/ 			var [chunkIds, moreModules, runtime] = data;
-/******/ 			// add "moreModules" to the modules object,
-/******/ 			// then flag all "chunkIds" as loaded and fire callback
-/******/ 			var moduleId, chunkId, i = 0;
-/******/ 			if(chunkIds.some((id) => (installedChunks[id] !== 0))) {
-/******/ 				for(moduleId in moreModules) {
-/******/ 					if(__webpack_require__.o(moreModules, moduleId)) {
-/******/ 						__webpack_require__.m[moduleId] = moreModules[moduleId];
-/******/ 					}
-/******/ 				}
-/******/ 				if(runtime) var result = runtime(__webpack_require__);
-/******/ 			}
-/******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
-/******/ 			for(;i < chunkIds.length; i++) {
-/******/ 				chunkId = chunkIds[i];
-/******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
-/******/ 					installedChunks[chunkId][0]();
-/******/ 				}
-/******/ 				installedChunks[chunkIds[i]] = 0;
-/******/ 			}
-/******/ 			return __webpack_require__.O(result);
-/******/ 		}
-/******/ 		
-/******/ 		var chunkLoadingGlobal = self["webpackChunk"] = self["webpackChunk"] || [];
-/******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
-/******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
-/******/ 	})();
-/******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["css/login","css/app"], () => (__webpack_require__("./resources/js/app.js")))
-/******/ 	__webpack_require__.O(undefined, ["css/login","css/app"], () => (__webpack_require__("./resources/scss/app.scss")))
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/login","css/app"], () => (__webpack_require__("./resources/scss/login.scss")))
-/******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
-/******/ 	
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+/*!******************************!*\
+  !*** ./resources/js/user.js ***!
+  \******************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _bootstrap__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
+
+
+var setData = function setData(data) {
+  console.log(12345);
+};
+
+window.app = createApp({
+  data: function data() {
+    return {
+      list: []
+    };
+  },
+  delimiters: ["${", "}"],
+  mounted: function mounted() {
+    loading.show = false;
+  },
+  methods: {
+    create: function create() {
+      set_user.dataInit();
+      set_user.mode = 'create';
+    },
+    modify: function modify(user_id) {
+      set_user.dataInit();
+      set_user.mode = 'modify';
+      set_user.user_info.id = user_id;
+
+      var info = _.find(this.list, {
+        'id': user_id
+      });
+
+      set_user.user_info.account = info.account;
+      set_user.user_info.email = info.email;
+    }
+  }
+}).mount('#app');
+var set_user = createApp({
+  data: function data() {
+    return {
+      mode: 'create',
+      user_info: {
+        id: null,
+        account: '',
+        password: '',
+        auth_password: '',
+        email: ''
+      }
+    };
+  },
+  delimiters: ["${", "}"],
+  methods: {
+    dataInit: function dataInit() {
+      this.user_info.id = null;
+      this.user_info.account = '';
+      this.user_info.password = '';
+      this.user_info.auth_password = '';
+      this.user_info.email = '';
+    },
+    auth: function auth(data) {
+      if (!data.account) {
+        return {
+          auth: false,
+          message: '帳號不得為空！'
+        };
+      }
+
+      if (!data.email) {
+        return {
+          auth: false,
+          message: '電子郵件不得為空！'
+        };
+      }
+
+      if (!(0,_bootstrap__WEBPACK_IMPORTED_MODULE_0__.emailRule)(data.email)) {
+        return {
+          auth: false,
+          message: '電子郵件格式錯誤！'
+        };
+      }
+
+      if (this.mode == 'create') {
+        if (!(0,_bootstrap__WEBPACK_IMPORTED_MODULE_0__.passwordRule)(data.password)) {
+          return {
+            auth: false,
+            message: '密碼規則需為8碼以上數字加英文！'
+          };
+        }
+
+        if (!data.password) {
+          return {
+            auth: false,
+            message: '密碼不得為空！'
+          };
+        }
+
+        if (data.password !== data.auth_password) {
+          return {
+            auth: false,
+            message: '密碼與密碼確認不同！'
+          };
+        }
+      } else {
+        if (data.password) {
+          if (!(0,_bootstrap__WEBPACK_IMPORTED_MODULE_0__.passwordRule)(data.password)) {
+            return {
+              auth: false,
+              message: '密碼規則需為8碼以上數字加英文！'
+            };
+          }
+
+          if (data.password !== data.auth_password) {
+            return {
+              auth: false,
+              message: '密碼與密碼確認不同！'
+            };
+          }
+        }
+      }
+
+      return {
+        auth: true,
+        message: 'success'
+      };
+    },
+    save: function save() {
+      var auth = this.auth(this.user_info);
+
+      if (!auth.auth) {
+        Toast.fire({
+          icon: 'error',
+          title: auth.message
+        });
+        return false;
+      }
+
+      var url = this.mode === 'create' ? '/user/insert' : '/user/update';
+      loading.show = true;
+      axios.post(url, this.user_info).then(function (res) {
+        var icon = res.data.status ? 'success' : 'error';
+        Toast.fire({
+          icon: icon,
+          title: res.data.message
+        });
+        $('#set-user').modal('hide');
+        loading.show = false;
+      })["catch"](function (error) {});
+    }
+  }
+}).mount('#set-user');
+})();
+
 /******/ })()
 ;
