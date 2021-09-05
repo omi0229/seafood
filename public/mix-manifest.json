@@ -1,6 +1,10 @@
 {
     "/js/app.js": "/js/app.js",
+    "/js/base.js": "/js/base.js",
+    "/js/login.js": "/js/login.js",
+    "/js/logout.js": "/js/logout.js",
     "/js/user.js": "/js/user.js",
+    "/css/components/search.css": "/css/components/search.css",
     "/css/login.css": "/css/login.css",
     "/css/app.css": "/css/app.css"
 }

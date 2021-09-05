@@ -40,16 +40,6 @@ window.Toast = Swal.mixin({
     timer: 3000
 });
 
-// 頁面讀取中樣式
-import 'load-awesome/css/ball-scale-ripple.css';
-window.loading = createApp({
-    data() {
-        return {
-            show: true,
-        }
-    },
-}).mount('#loading');
-
 // 密碼規則(8碼以上數字+英文)
 export const passwordRule = password => {
     let rules = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
@@ -60,6 +50,7 @@ export const passwordRule = password => {
     return true;
 }
 
+// 電子郵件規則
 export const emailRule = email => {
     let rules = /^([\w]+)(.[\w]+)*@([\w]+)(.[\w]{2,3}){1,2}$/;
     if (!rules.test(email)) {
@@ -67,5 +58,33 @@ export const emailRule = email => {
     }
 
     return true;
+}
+
+// swal2 confirm
+// 電子郵件規則
+export const swal2Confirm = (title) => {
+    return new Promise(resolve => {
+        Swal.fire({
+            title: title,
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '確定',
+            cancelButtonText: '取消',
+            allowOutsideClick: false,
+            confirmButtonClass: 'btn btn-sm btn-success px-3 ml-1',
+            cancelButtonClass: 'btn btn-sm btn-danger px-3 mr-1',
+            buttonsStyling: false,
+            reverseButtons: true,
+            padding: 30,
+            width: 300,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                resolve(true);
+            }
+
+            resolve(false);
+        })
+    });
 }
 

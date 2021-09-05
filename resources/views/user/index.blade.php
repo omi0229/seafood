@@ -1,7 +1,7 @@
 @extends('layouts.base')
 
 @section('content')
-    <div id="app">
+    <div id="app" v-cloak>
         <div class="content-header px-4">
             <div class="container-fluid">
                 <div class="row mb-2">
@@ -18,20 +18,26 @@
             </div>
         </div>
 
-        <div class="px-4 d-flex justify-content-end">
-            <div class="mr-2">
-                <button type="button" class="btn btn-sm btn-danger px-3">
-                    <i class="fa fa-minus mr-2"></i> 刪除
-                </button>
+        <div class="row mx-0 px-3">
+            <div class="mb-3 col-12 col-md-6">
+                <components-search v-model:search_text="search_text" @get-data="getUsers"></components-search>
             </div>
-            <div>
-                <button type="button" class="btn btn-sm btn-primary px-3" data-toggle="modal" data-target="#set-user" @click="create">
-                    <i class="fa fa-plus mr-2"></i> 新增
-                </button>
+            <div class="mb-3 col-12 col-md-6 d-flex justify-content-end">
+                <!-- v-show -->
+                <div class="mr-2" v-show="check.length > 0">
+                    <button type="button" class="btn btn-sm btn-danger px-2" @click="confirm('delete')">
+                        <i class="fa fa-minus mr-1"></i> 刪除
+                    </button>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-sm btn-primary px-2" data-toggle="modal" data-target="#set-user" @click="create">
+                        <i class="fa fa-plus mr-1"></i> 新增
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="content mt-3 px-4">
+        <div class="content px-4">
             <div class="row">
                 <div class="col-12">
                     <div class="card">
@@ -41,29 +47,33 @@
                         <div class="card-body table-responsive p-0">
                             <table class="table table-hover text-nowrap">
                                 <thead>
-                                    <tr>
-                                        <th class="align-middle">
-                                            <input type="checkbox" class="checkbox-size">
-                                        </th>
-                                        <th>帳號</th>
-                                        <th>電子郵件</th>
-                                        <th class="text-center">功能</th>
-                                    </tr>
+                                <!-- v-if -->
+                                <tr v-if="list.length > 0">
+                                    <th class="align-middle">
+                                        <input type="checkbox" class="checkbox-size" v-model="checkAll">
+                                    </th>
+                                    <th>帳號</th>
+                                    <th>電子郵件</th>
+                                    <th class="text-center">功能</th>
+                                </tr>
+                                <tr v-else>
+                                    <th class="text-center" colspan="4"><span class="text-danger">無使用者資料</span></th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- v-for -->
-                                    <tr v-for="item in list">
-                                        <td class="align-middle">
-                                            <input type="checkbox" class="checkbox-size">
-                                        </td>
-                                        <td>${item.account}</td>
-                                        <td>${item.email}</td>
-                                        <td class="text-center">
-                                            <button type="button" class="btn btn-sm btn-info px-3" data-toggle="modal" data-target="#set-user" @click="modify(item.id)">
-                                                <i class="fa fa-edit mr-2"></i> 編輯
-                                            </button>
-                                        </td>
-                                    </tr>
+                                <!-- v-for -->
+                                <tr v-for="item in list">
+                                    <td class="align-middle">
+                                        <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check">
+                                    </td>
+                                    <td>${item.account}</td>
+                                    <td>${item.email}</td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm btn-info px-2" data-toggle="modal" data-target="#set-user" @click="modify(item.id)">
+                                            <i class="fa fa-edit mr-1"></i> 編輯
+                                        </button>
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -104,13 +114,10 @@
                     </div>
                 </div>
                 <div class="modal-footer justify-content-end">
-                    <button type="button" class="btn btn-sm btn-primary px-3" @click="save">儲存</button>
+                    <button type="button" class="btn btn-sm btn-primary px-3" @click="confirm('save')">儲存</button>
                 </div>
             </div>
         </div>
     </div>
     <script src="js/user.js"></script>
-    <script>
-        app.list = @JSON($users);
-    </script>
 @endsection

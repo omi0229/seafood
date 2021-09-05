@@ -2,6 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,13 +22,17 @@ use Illuminate\Support\Facades\Route;
 //    return view('welcome');
 //});
 
-Route::get('/', [\App\Http\Controllers\DashboardController::class, 'index']);
+Route::get('login', [LoginController::class, 'login'])->name('login')->middleware('auth.login');
+Route::post('login', [AuthController::class, 'login']);
+Route::post('logout', [AuthController::class, 'logout']);
 
-Route::get('login', [\App\Http\Controllers\LoginController::class, 'login']);
+Route::middleware(['auth.web'])->group(function () {
+    Route::get('/', [DashboardController::class, 'index']);
 
-Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
-
-# 使用者管理
-Route::get('user', [\App\Http\Controllers\UserController::class, 'index']);
-Route::post('user/insert', [\App\Http\Controllers\UserController::class, 'insert']);
-Route::post('user/update', [\App\Http\Controllers\UserController::class, 'update']);
+    # 使用者管理
+    Route::get('user', [UserController::class, 'index']);
+    Route::get('user/list/{page}', [UserController::class, 'list']);
+    Route::post('user/insert', [UserController::class, 'insert']);
+    Route::post('user/update', [UserController::class, 'update']);
+    Route::delete('user/delete', [UserController::class, 'delete']);
+});

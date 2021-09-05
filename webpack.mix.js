@@ -18,8 +18,18 @@ mix.js('resources/js/app.js', 'public/js')
     .sass('resources/scss/app.scss', 'public/css')
     .sass('resources/scss/login.scss', 'public/css');
 
+// base
+mix.js('resources/js/base.js', 'public/js')
+// login
+mix.js('resources/js/login.js', 'public/js')
+// logout
+mix.js('resources/js/logout.js', 'public/js')
+
 // user
 mix.js('resources/js/user.js', 'public/js')
+
+// components search
+mix.sass('resources/scss/components/search.scss', 'public/css/components')
 
 mix.alias({
     vue$: 'node_modules/vue/dist/vue.esm-bundler.js',
