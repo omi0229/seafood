@@ -28,11 +28,11 @@
                 <h5 class="margin-t-10px">後台管理系統</h5>
                 <h6>帳號</h6>
                 <div class="ts tiny input width percent-100" :class="{'error': !status.account}">
-                    <input type="text" class="width inherit" placeholder="請輸入帳號" v-model="account">
+                    <input type="text" class="width inherit" maxlength="20" placeholder="請輸入帳號" v-model="account">
                 </div>
                 <h6>密碼</h6>
                 <div class="ts tiny input width percent-100" :class="{'error': !status.password}">
-                    <input type="password" class="width inherit" placeholder="請輸入密碼" v-model="password">
+                    <input type="password" class="width inherit" maxlength="20" placeholder="請輸入密碼" v-model="password">
                 </div>
                 <div class="margin-t-3 text-right">
                     <button class="ts positive mini button margin-r-2" @click="reset">重新輸入</button>
@@ -41,6 +41,7 @@
             </div>
         </div>
     </div>
+    <script src="js/base.js"></script>
     <script src="js/login.js"></script>
     </body>
 </html>

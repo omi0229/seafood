@@ -35,7 +35,7 @@ window.Swal = require('sweetalert2');
 // 驗證錯誤提示
 window.Toast = Swal.mixin({
     toast: true,
-    position: 'top-end',
+    position: 'top',
     showConfirmButton: false,
     timer: 3000
 });

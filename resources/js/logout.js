@@ -1,7 +1,4 @@
 createApp({
-    mounted() {
-        window.loading.show = false;
-    },
     methods: {
         confirm() {
             Swal.fire({

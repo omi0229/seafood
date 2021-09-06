@@ -26,12 +26,20 @@ class UserController extends Controller
 
     public function list($page, Request $request)
     {
-        $params = $request->all();
-
         return response()->json([
             'status' => true,
             'message' => 'success',
-            'data' => $this->users_repository->list($page, $params),
+            'data' => $this->users_repository->list($page, $request->all())
+        ]);
+    }
+
+    public function count(Request $request)
+    {
+        return response()->json([
+            'status' => true,
+            'message' => 'success',
+            'page_count' => env('USER_PAGE_COUNT', 10),
+            'count' => $this->users_repository->count($request->all())
         ]);
     }
 
@@ -39,11 +47,10 @@ class UserController extends Controller
     {
         $inputs = $request->all();
 
-        try {
-            # 驗證資料
-            UserServices::authInputData($request);
-        } catch (\Exception $e) {
-            return response()->json(['status' => false, 'message' => '驗證失敗']);
+        # 驗證資料
+        $validator = UserServices::authInputData($inputs);
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'message' => $validator->errors()->first()]);
         }
 
         $inputs['password'] = Hash::make($inputs['password']);
@@ -60,13 +67,12 @@ class UserController extends Controller
         }
 
         $user_id = $request->all()['id'];
-        $inputs = $request->only('account', 'email', 'password', 'auth_password');
+        $inputs = $request->only('id', 'account', 'name', 'email', 'password', 'auth_password', 'active');
 
-        try {
-            # 驗證資料
-            UserServices::authInputData($request);
-        } catch (\Exception $e) {
-            return response()->json(['status' => false, 'message' => '驗證失敗']);
+        # 驗證資料
+        $validator = UserServices::authInputData($inputs);
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'message' => $validator->errors()->first()]);
         }
 
         $user = $this->user::find($this->user::decodeSlug($user_id));

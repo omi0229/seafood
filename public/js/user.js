@@ -19146,7 +19146,7 @@ window.Swal = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2
 
 window.Toast = Swal.mixin({
   toast: true,
-  position: 'top-end',
+  position: 'top',
   showConfirmButton: false,
   timer: 3000
 }); // 密碼規則(8碼以上數字+英文)
@@ -19200,6 +19200,71 @@ var swal2Confirm = function swal2Confirm(title) {
 
 /***/ }),
 
+/***/ "./resources/js/components/pagination.js":
+/*!***********************************************!*\
+  !*** ./resources/js/components/pagination.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "pagination": () => (/* binding */ pagination)
+/* harmony export */ });
+var pagination = {
+  template: "\n        <div class=\"col-12 clearfix\">\n            <!-- v-show -->\n            <ul class=\"pagination float-right\" v-show=\"pages > 1\">\n                <li class=\"page-item\" :class=\"{'disabled': page === 1}\">\n                    <a class=\"page-link\" href=\"#\" @click.prevent=\"selectPage(1)\"><<</a>\n                </li>\n                <li class=\"page-item\" :class=\"{'disabled': page === 1}\">\n                    <a class=\"page-link\" href=\"#\" @click.prevent=\"selectPage(page - 1)\"><</a>\n                </li>\n\n                <!-- v-for -->\n                <li class=\"page-item\" v-for=\"p in page_array\">\n                    <a class=\"page-link\" :class=\"{'bg-blue': p === page}\" href=\"#\" @click.prevent=\"selectPage(p)\">{{p}}</a>\n                </li>\n\n                <li class=\"page-item\" :class=\"{'disabled': page === pages}\">\n                    <a class=\"page-link\" href=\"#\" @click.prevent=\"selectPage(page + 1)\">></a>\n                </li>\n                <li class=\"page-item\" :class=\"{'disabled': page === pages}\">\n                    <a class=\"page-link\" href=\"#\" @click.prevent=\"selectPage(pages)\">>></a>\n                </li>\n            </ul>\n        </div>\n    ",
+  props: {
+    all_count: Number,
+    page_count: Number
+  },
+  watch: {
+    'all_count': function all_count(new_data, old_data) {
+      this.page = 1;
+      this.pages = Math.ceil(new_data / this.page_count);
+      this.page_array = [];
+      var start = this.page - 2;
+      var end = this.page + 2;
+
+      for (var p = start; p <= end; p++) {
+        if (p >= 1 && p <= this.pages) {
+          this.page_array.push(p);
+        }
+      }
+    },
+    'page': function page(new_data, old_data) {
+      this.page_array = [];
+      var start = this.page - 2;
+      var end = this.page + 2;
+
+      for (var p = start; p <= end; p++) {
+        if (p >= 1 && p <= this.pages) {
+          this.page_array.push(p);
+        }
+      }
+    }
+  },
+  data: function data() {
+    return {
+      page: 1,
+      pages: 0,
+      page_array: []
+    };
+  },
+  methods: {
+    selectPage: function selectPage(page) {
+      loading.show = true;
+
+      if (page >= 1 && page <= this.pages) {
+        this.page = page;
+        this.$emit('get-data', page);
+        this.$emit('set-page', page);
+      }
+    }
+  }
+};
+
+/***/ }),
+
 /***/ "./resources/js/components/search.js":
 /*!*******************************************!*\
   !*** ./resources/js/components/search.js ***!
@@ -19220,7 +19285,7 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 var search = {
-  template: "\n        <link rel=\"stylesheet\" href=\"css/components/search.css\">\n        <div class=\"input-group search-width\">\n            <input type=\"text\" class=\"form-control form-control-sm\" placeholder=\"\u8ACB\u8F38\u5165\u5E33\u865F\u540D\u7A31\" :value=\"search_text\" @input=\"searchText($event.target.value)\" @keyup.enter=\"getData\">\n            <div class=\"input-group-append\">\n                <button type=\"button\" class=\"btn btn-sm btn-default\" @click=\"getData\">\n                    <i class=\"fa fa-search\"></i>\n                </button>\n            </div>\n        </div>      \n    ",
+  template: "\n        <link rel=\"stylesheet\" href=\"css/components/search.css\">\n        <div class=\"input-group search-width\">\n            <input type=\"text\" class=\"form-control form-control-sm\" placeholder=\"\u8ACB\u8F38\u5165\u5E33\u865F\u540D\u7A31\" :value=\"search_text\" @input=\"searchText($event.target.value)\" @keyup.enter=\"getData\">\n            <div class=\"input-group-append\">\n                <button type=\"button\" class=\"btn btn-sm btn-default\" @click=\"getData\">\n                    <i class=\"fa fa-search\"></i>\n                </button>\n            </div>\n        </div>\n    ",
   props: {
     search_text: String
   },
@@ -19242,6 +19307,10 @@ var search = {
                 return emit('get-data', 1);
 
               case 3:
+                _context.next = 5;
+                return emit('get-count');
+
+              case 5:
               case "end":
                 return _context.stop();
             }
@@ -40895,6 +40964,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _bootstrap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 /* harmony import */ var _components_search_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/search.js */ "./resources/js/components/search.js");
+/* harmony import */ var _components_pagination_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/pagination.js */ "./resources/js/components/pagination.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -40903,12 +40973,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
+
 window.app = createApp({
   components: {
-    'components-search': _components_search_js__WEBPACK_IMPORTED_MODULE_2__.search
+    'components-search': _components_search_js__WEBPACK_IMPORTED_MODULE_2__.search,
+    'components-pagination': _components_pagination_js__WEBPACK_IMPORTED_MODULE_3__.pagination
   },
   data: function data() {
     return {
+      page: 1,
+      all_count: 0,
+      page_count: 10,
       checkAll: false,
       check: [],
       list: [],
@@ -40926,23 +41001,37 @@ window.app = createApp({
     }
   },
   mounted: function mounted() {
-    this.getUsers(1).then(function () {
-      loading.show = false;
-    });
+    this.getCount();
+    this.getUsers(this.page);
   },
   methods: {
-    getUsers: function getUsers(page) {
+    setPage: function setPage(page) {
+      this.page = page;
+    },
+    getCount: function getCount() {
       var _this = this;
+
+      return new Promise(function (resolve) {
+        var url = !_this.search_text ? '/user/count' : '/user/count?keywords=' + _this.search_text;
+        axios.get(url).then(function (res) {
+          _this.all_count = res.data.count;
+          _this.page_count = res.data.page_count;
+          resolve();
+        });
+      });
+    },
+    getUsers: function getUsers(page) {
+      var _this2 = this;
 
       return new Promise(function (resolve) {
         var url = '/user/list/' + page;
 
-        if (_this.search_text) {
-          url += '?keywords=' + _this.search_text;
+        if (_this2.search_text) {
+          url += '?keywords=' + _this2.search_text;
         }
 
         axios.get(url).then(function (res) {
-          _this.list = res.data.data;
+          _this2.list = res.data.data;
 
           if (loading && loading.show) {
             loading.show = false;
@@ -40966,9 +41055,13 @@ window.app = createApp({
       });
 
       set_user.user_info.account = info.account;
+      set_user.user_info.name = info.name;
       set_user.user_info.email = info.email;
+      set_user.user_info.active = info.active.toString();
     },
     "delete": function _delete() {
+      var _this3 = this;
+
       if (this.check.length > 0) {
         loading.show = true;
         axios["delete"]('/user/delete', {
@@ -40979,22 +41072,16 @@ window.app = createApp({
               while (1) {
                 switch (_context.prev = _context.next) {
                   case 0:
-                    if (!res.data.status) {
-                      _context.next = 5;
-                      break;
+                    if (res.data.status) {
+                      Toast.fire({
+                        icon: 'success',
+                        title: '刪除成功'
+                      });
+
+                      _this3.searchService();
                     }
 
-                    Toast.fire({
-                      icon: 'success',
-                      title: '刪除成功'
-                    });
-                    _context.next = 4;
-                    return app.getUsers(1);
-
-                  case 4:
-                    loading.show = false;
-
-                  case 5:
+                  case 1:
                   case "end":
                     return _context.stop();
                 }
@@ -41008,12 +41095,51 @@ window.app = createApp({
         }());
       }
     },
+    searchService: function searchService() {
+      var _this4 = this;
+
+      return new Promise( /*#__PURE__*/function () {
+        var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(resolve) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+            while (1) {
+              switch (_context2.prev = _context2.next) {
+                case 0:
+                  _context2.next = 2;
+                  return _this4.getCount();
+
+                case 2:
+                  _context2.next = 4;
+                  return _this4.getUsers(_this4.page);
+
+                case 4:
+                  if (!(_this4.search_text && _this4.page > 1 && _this4.list.length === 0)) {
+                    _context2.next = 8;
+                    break;
+                  }
+
+                  loading.show = true;
+                  _context2.next = 8;
+                  return _this4.getUsers(1);
+
+                case 8:
+                case "end":
+                  return _context2.stop();
+              }
+            }
+          }, _callee2);
+        }));
+
+        return function (_x2) {
+          return _ref2.apply(this, arguments);
+        };
+      }());
+    },
     confirm: function confirm() {
-      var _this2 = this;
+      var _this5 = this;
 
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_1__.swal2Confirm)('確定刪除選取的使用者？').then(function (confirm) {
         if (confirm) {
-          _this2["delete"]();
+          _this5["delete"]();
         }
       });
     }
@@ -41026,9 +41152,12 @@ var set_user = createApp({
       user_info: {
         id: null,
         account: '',
+        name: '',
         password: '',
         auth_password: '',
-        email: ''
+        email: '',
+        role_id: '1',
+        active: '1'
       }
     };
   },
@@ -41037,6 +41166,7 @@ var set_user = createApp({
     dataInit: function dataInit() {
       this.user_info.id = null;
       this.user_info.account = '';
+      this.user_info.name = '';
       this.user_info.password = '';
       this.user_info.auth_password = '';
       this.user_info.email = '';
@@ -41046,6 +41176,13 @@ var set_user = createApp({
         return {
           auth: false,
           message: '帳號不得為空！'
+        };
+      }
+
+      if (!data.name) {
+        return {
+          auth: false,
+          message: '姓名不得為空！'
         };
       }
 
@@ -41108,7 +41245,7 @@ var set_user = createApp({
       };
     },
     confirm: function confirm() {
-      var _this3 = this;
+      var _this6 = this;
 
       var auth = this.auth(this.user_info);
 
@@ -41123,7 +41260,7 @@ var set_user = createApp({
       var text = this.mode === 'create' ? '新增' : '編輯';
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_1__.swal2Confirm)("\u78BA\u5B9A".concat(text, "\u6B64\u4F7F\u7528\u8005\uFF1F")).then(function (confirm) {
         if (confirm) {
-          _this3.save();
+          _this6.save();
         }
       });
     },
@@ -41131,34 +41268,33 @@ var set_user = createApp({
       var url = this.mode === 'create' ? '/user/insert' : '/user/update';
       loading.show = true;
       axios.post(url, this.user_info).then( /*#__PURE__*/function () {
-        var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(res) {
+        var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(res) {
           var icon;
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
             while (1) {
-              switch (_context2.prev = _context2.next) {
+              switch (_context3.prev = _context3.next) {
                 case 0:
+                  $('#set-user').modal('hide');
+                  _context3.next = 3;
+                  return app.searchService();
+
+                case 3:
                   icon = res.data.status ? 'success' : 'error';
                   Toast.fire({
                     icon: icon,
                     title: res.data.message
                   });
-                  $('#set-user').modal('hide');
-                  _context2.next = 5;
-                  return app.getUsers(1);
 
                 case 5:
-                  loading.show = false;
-
-                case 6:
                 case "end":
-                  return _context2.stop();
+                  return _context3.stop();
               }
             }
-          }, _callee2);
+          }, _callee3);
         }));
 
-        return function (_x2) {
-          return _ref2.apply(this, arguments);
+        return function (_x3) {
+          return _ref3.apply(this, arguments);
         };
       }())["catch"](function (error) {});
     }

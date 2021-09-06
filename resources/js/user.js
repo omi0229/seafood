@@ -1,12 +1,17 @@
 import { passwordRule, emailRule, swal2Confirm } from './bootstrap';
 import { search } from './components/search.js';
+import { pagination } from './components/pagination.js';
 
 window.app = createApp({
     components: {
         'components-search': search,
+        'components-pagination': pagination,
     },
     data() {
         return {
+            page: 1,
+            all_count: 0,
+            page_count: 10,
             checkAll: false,
             check: [],
             list: [],
@@ -24,11 +29,23 @@ window.app = createApp({
         },
     },
     mounted() {
-        this.getUsers(1).then(() => {
-            loading.show = false;
-        });
+        this.getCount();
+        this.getUsers(this.page);
     },
     methods: {
+        setPage(page) {
+            this.page = page;
+        },
+        getCount() {
+            return new Promise(resolve => {
+                let url = !this.search_text ? '/user/count' : '/user/count?keywords=' + this.search_text;
+                axios.get(url).then(res => {
+                    this.all_count = res.data.count;
+                    this.page_count = res.data.page_count;
+                    resolve();
+                });
+            });
+        },
         getUsers(page) {
             return new Promise(resolve => {
                 let url = '/user/list/' + page;
@@ -56,7 +73,9 @@ window.app = createApp({
             set_user.user_info.id = user_id;
             let info = _.find(this.list, {'id': user_id});
             set_user.user_info.account = info.account;
+            set_user.user_info.name = info.name;
             set_user.user_info.email = info.email;
+            set_user.user_info.active = info.active.toString();
         },
         delete() {
             if(this.check.length > 0) {
@@ -64,11 +83,21 @@ window.app = createApp({
                 axios.delete('/user/delete', {data: this.check}).then(async res => {
                     if (res.data.status) {
                         Toast.fire({icon: 'success', title: '刪除成功'});
-                        await app.getUsers(1);
-                        loading.show = false;
+                        this.searchService();
                     }
                 });
             }
+        },
+        searchService() {
+            return new Promise(async resolve => {
+                await this.getCount();
+                await this.getUsers(this.page);
+
+                if (this.search_text && this.page > 1 && this.list.length === 0) {
+                    loading.show = true;
+                    await this.getUsers(1);
+                }
+            });
         },
         confirm() {
             swal2Confirm('確定刪除選取的使用者？').then(confirm => {
@@ -87,9 +116,12 @@ let set_user = createApp({
             user_info: {
                 id: null,
                 account: '',
+                name: '',
                 password: '',
                 auth_password: '',
-                email: ''
+                email: '',
+                role_id: '1',
+                active: '1',
             },
         }
     },
@@ -98,6 +130,7 @@ let set_user = createApp({
         dataInit() {
             this.user_info.id = null;
             this.user_info.account = '';
+            this.user_info.name = '';
             this.user_info.password = '';
             this.user_info.auth_password = '';
             this.user_info.email = '';
@@ -105,6 +138,10 @@ let set_user = createApp({
         auth(data) {
             if (!data.account) {
                 return {auth: false, message: '帳號不得為空！'};
+            }
+
+            if (!data.name) {
+                return {auth: false, message: '姓名不得為空！'};
             }
 
             if (!data.email) {
@@ -160,11 +197,12 @@ let set_user = createApp({
             let url = this.mode === 'create' ? '/user/insert' : '/user/update';
             loading.show = true;
             axios.post(url, this.user_info).then(async res => {
+                $('#set-user').modal('hide');
+
+                await app.searchService();
+
                 let icon = res.data.status ? 'success' : 'error';
                 Toast.fire({icon: icon, title: res.data.message});
-                $('#set-user').modal('hide');
-                await app.getUsers(1);
-                loading.show = false;
             }).catch(error => {
 
             });

@@ -19135,7 +19135,7 @@ window.Swal = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2
 
 window.Toast = Swal.mixin({
   toast: true,
-  position: 'top-end',
+  position: 'top',
   showConfirmButton: false,
   timer: 3000
 }); // 密碼規則(8碼以上數字+英文)
