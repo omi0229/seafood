@@ -30,7 +30,6 @@ export const pagination = {
     },
     watch: {
         'all_count'(new_data, old_data) {
-            this.page = 1;
             this.pages = Math.ceil(new_data / this.page_count);
             this.page_array = [];
             let start = this.page - 2;
@@ -67,6 +66,9 @@ export const pagination = {
                 this.$emit('get-data', page);
                 this.$emit('set-page', page);
             }
+        },
+        setPage(page) {
+            this.page = page;
         },
     },
 }

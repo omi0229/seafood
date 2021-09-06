@@ -27,6 +27,8 @@ mix.js('resources/js/logout.js', 'public/js')
 
 // user
 mix.js('resources/js/user.js', 'public/js')
+// role
+mix.js('resources/js/role.js', 'public/js')
 
 // components search
 mix.sass('resources/scss/components/search.scss', 'public/css/components')

@@ -5,59 +5,22 @@ namespace App\Http\Controllers;
 use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Traits\General;
 use App\Models\User;
 use App\Repositories\UsersRepository;
 use App\Services\UserServices;
 
 class UserController extends Controller
 {
-    protected $user, $repository;
+    use General;
 
-    public function __construct(User $user, UsersRepository $users_repository)
+    protected $model, $repository, $services;
+
+    public function __construct(User $model, UsersRepository $repository, UserServices $services)
     {
-        $this->user = $user;
-        $this->users_repository = $users_repository;
-    }
-
-    public function index()
-    {
-        return view('user.index');
-    }
-
-    public function list($page, Request $request)
-    {
-        return response()->json([
-            'status' => true,
-            'message' => 'success',
-            'data' => $this->users_repository->list($page, $request->all())
-        ]);
-    }
-
-    public function count(Request $request)
-    {
-        return response()->json([
-            'status' => true,
-            'message' => 'success',
-            'page_count' => env('USER_PAGE_COUNT', 10),
-            'count' => $this->users_repository->count($request->all())
-        ]);
-    }
-
-    public function insert(Request $request)
-    {
-        $inputs = $request->all();
-
-        # 驗證資料
-        $validator = UserServices::authInputData($inputs);
-        if ($validator->fails()) {
-            return response()->json(['status' => false, 'message' => $validator->errors()->first()]);
-        }
-
-        $inputs['password'] = Hash::make($inputs['password']);
-
-        $this->user::create($inputs);
-
-        return response()->json(['status' => true, 'message' => '新增成功']);
+        $this->model = $model;
+        $this->repository = $repository;
+        $this->services = $services;
     }
 
     public function update(Request $request)
@@ -70,12 +33,12 @@ class UserController extends Controller
         $inputs = $request->only('id', 'account', 'name', 'email', 'password', 'auth_password', 'active');
 
         # 驗證資料
-        $validator = UserServices::authInputData($inputs);
+        $validator = $this->services::authInputData($inputs);
         if ($validator->fails()) {
             return response()->json(['status' => false, 'message' => $validator->errors()->first()]);
         }
 
-        $user = $this->user::find($this->user::decodeSlug($user_id));
+        $user = $this->model::find($this->model::decodeSlug($user_id));
         if ($user) {
             if (data_get($inputs, 'password')) {
                 $inputs['password'] = Hash::make($inputs['password']);
@@ -88,13 +51,5 @@ class UserController extends Controller
         } else {
             return response()->json(['status' => false, 'message' => '無此人員資料']);
         }
-    }
-
-    public function delete(Request $request){
-
-        $this->user::whereIn('id', array_map([User::class, 'decodeSlug'], (array) $request->all()))
-            ->delete();
-
-        return response()->json(['status' => true, 'message' => '刪除成功']);
     }
 }

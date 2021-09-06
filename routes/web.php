@@ -32,6 +32,11 @@ Route::middleware(['auth.web'])->group(function () {
 
     # 權限管理
     Route::get('role', [RoleController::class, 'index']);
+    Route::get('role/count', [RoleController::class, 'count']);
+    Route::get('role/list/{page}', [RoleController::class, 'list']);
+    Route::post('role/insert', [RoleController::class, 'insert']);
+    Route::post('role/update', [RoleController::class, 'update']);
+    Route::delete('role/delete', [RoleController::class, 'delete']);
 
     # 使用者管理
     Route::get('user', [UserController::class, 'index']);

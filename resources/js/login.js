@@ -46,6 +46,7 @@ window.app = createApp({
                 if (res.data.status) {
                     location.href = '/';
                 } else {
+                    window.loading.show = false;
                     Toast.fire({icon: 'warning', title: '帳號或密碼輸入錯誤'});
                 }
             }).catch(error => {

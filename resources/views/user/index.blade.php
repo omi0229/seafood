@@ -6,12 +6,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">使用者管理</h1>
+                        <h1 class="m-0">管理員設定</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="/">首頁</a></li>
-                            <li class="breadcrumb-item active">使用者管理</li>
+                            <li class="breadcrumb-item active">管理員設定</li>
                         </ol>
                     </div>
                 </div>
@@ -20,7 +20,7 @@
 
         <div class="row mx-0 px-3">
             <div class="mb-3 col-12 col-md-6">
-                <components-search v-model:search_text="search_text" @get-count="getCount" @get-data="getUsers"></components-search>
+                <components-search v-model:search_text="search_text" name="帳號" @get-count="getCount" @get-data="getData"></components-search>
             </div>
             <div class="mb-3 col-12 col-md-6 d-flex justify-content-end">
                 <!-- v-show -->
@@ -42,7 +42,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">使用者列表</h3>
+                            <h3 class="card-title">管理員列表</h3>
                         </div>
                         <div class="card-body table-responsive p-0">
                             <table class="table table-hover text-nowrap">
@@ -60,7 +60,7 @@
                                     <th class="text-center">功能</th>
                                 </tr>
                                 <tr v-else>
-                                    <th class="text-center" colspan="4"><span class="text-danger">無使用者資料</span></th>
+                                    <th class="text-center" colspan="7"><span class="text-danger">無管理員資料</span></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -89,7 +89,7 @@
                         </div>
                     </div>
                 </div>
-                <components-pagination :all_count="all_count" :page_count="page_count" @get-data="getUsers" @set-page="setPage"></components-pagination>
+                <components-pagination ref="pagination" :all_count="all_count" :page_count="page_count" @get-data="getData"></components-pagination>
             </div>
         </div>
     </div>
@@ -100,7 +100,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
-                        <template v-if="mode == 'create'">新增</template><template v-else>編輯</template>使用者
+                        <template v-if="mode == 'create'">新增</template><template v-else>編輯</template>管理員
                     </h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>

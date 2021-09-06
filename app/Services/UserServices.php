@@ -5,12 +5,15 @@ namespace App\Services;
 
 use Validator;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class UserServices
 {
-    static function authInputData($inputs)
+    static $service_name = 'user';
+
+    static function authInputData(&$inputs)
     {
         $auth = [
             'account' => [
@@ -34,6 +37,8 @@ class UserServices
             $tip['password.required'] =  '請填寫密碼';
             $tip['auth_password.required'] =  '請填寫確認密碼';
         }
+
+        $inputs['password'] = Hash::make($inputs['password']);
 
         return Validator::make($inputs, $auth, $tip);
     }

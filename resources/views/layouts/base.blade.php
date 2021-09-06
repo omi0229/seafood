@@ -107,7 +107,7 @@
                                     <li class="nav-item">
                                         <a href="/user" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
-                                            <p>使用者設定</p>
+                                            <p>管理員設定</p>
                                         </a>
                                     </li>
                                 </ul>

@@ -20,7 +20,7 @@
 
         <div class="row mx-0 px-3">
             <div class="mb-3 col-12 col-md-6">
-                <components-search v-model:search_text="search_text" @get-count="getCount" @get-data="getUsers"></components-search>
+                <components-search v-model:search_text="search_text" name="權限" @get-count="getCount" @get-data="getData"></components-search>
             </div>
             <div class="mb-3 col-12 col-md-6 d-flex justify-content-end">
                 <!-- v-show -->
@@ -30,7 +30,7 @@
                     </button>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-sm btn-primary px-2" data-toggle="modal" data-target="#set-user" @click="create">
+                    <button type="button" class="btn btn-sm btn-primary px-2" data-toggle="modal" data-target="#set-info" @click="create">
                         <i class="fa fa-plus mr-1"></i> 新增
                     </button>
                 </div>
@@ -42,7 +42,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">使用者列表</h3>
+                            <h3 class="card-title">權限列表</h3>
                         </div>
                         <div class="card-body table-responsive p-0">
                             <table class="table table-hover text-nowrap">
@@ -52,15 +52,13 @@
                                     <th class="align-middle">
                                         <input type="checkbox" class="checkbox-size" v-model="checkAll">
                                     </th>
-                                    <th>帳號</th>
-                                    <th>姓名</th>
-                                    <th>電子郵件</th>
-                                    <th class="text-center">權限</th>
-                                    <th class="text-center">狀態</th>
+                                    <th>權限名稱</th>
+                                    <th class="text-center">建立日期</th>
+                                    <th class="text-center">上次異動日期</th>
                                     <th class="text-center">功能</th>
                                 </tr>
                                 <tr v-else>
-                                    <th class="text-center" colspan="4"><span class="text-danger">無使用者資料</span></th>
+                                    <th class="text-center" colspan="5"><span class="text-danger">無權限資料</span></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -69,17 +67,11 @@
                                     <td class="align-middle">
                                         <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check">
                                     </td>
-                                    <td>${item.account}</td>
                                     <td>${item.name}</td>
-                                    <td>${item.email}</td>
-                                    <th class="text-center">${item.role_id}</th>
+                                    <td class="text-center">${dateFormat(item.created_at)}</td>
+                                    <th class="text-center">${dateFormat(item.updated_at)}</th>
                                     <td class="text-center">
-                                        <!-- v-if -->
-                                        <span class="right badge badge-success" v-if="item.active == '1'">啟用</span>
-                                        <span class="right badge badge-danger" v-else="">停用</span>
-                                    </td>
-                                    <td class="text-center">
-                                        <button type="button" class="btn btn-sm btn-info px-2" data-toggle="modal" data-target="#set-user" @click="modify(item.id)">
+                                        <button type="button" class="btn btn-sm btn-info px-2" data-toggle="modal" data-target="#set-info" @click="modify(item.id)">
                                             <i class="fa fa-edit mr-1"></i> 編輯
                                         </button>
                                     </td>
@@ -89,18 +81,18 @@
                         </div>
                     </div>
                 </div>
-                <components-pagination :all_count="all_count" :page_count="page_count" @get-data="getUsers" @set-page="setPage"></components-pagination>
+                <components-pagination ref="pagination" :all_count="all_count" :page_count="page_count" @get-data="getData"></components-pagination>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="set-user" data-backdrop="false">
+    <div class="modal fade" id="set-info" data-backdrop="false">
         <div class="modal-background"></div>
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
-                        <template v-if="mode == 'create'">新增</template><template v-else>編輯</template>使用者
+                        <template v-if="mode == 'create'">新增</template><template v-else>編輯</template>權限
                     </h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -108,37 +100,11 @@
                 </div>
                 <div class="modal-body px-5">
                     <div class="form-group">
-                        <label for="account">帳號</label>
-                        <input type="text" maxlength="20" class="form-control form-control-sm" id="account" placeholder="請輸入帳號" v-model="user_info.account">
-                    </div>
-                    <div class="form-group">
-                        <label for="name">姓名</label>
+                        <label for="name">名稱</label>
                         <input type="text" maxlength="20" class="form-control form-control-sm" id="name" placeholder="請輸入姓名" v-model="user_info.name">
                     </div>
                     <div class="form-group">
-                        <label for="email">電子郵件</label>
-                        <input type="email" class="form-control form-control-sm" id="email" placeholder="請輸入電子郵件" v-model="user_info.email">
-                    </div>
-                    <div class="form-group">
-                        <label for="password"><template v-if="mode == 'modify'">修改</template>密碼</label>
-                        <input type="password" maxlength="20" class="form-control form-control-sm" id="password" placeholder="請輸入密碼" v-model="user_info.password">
-                    </div>
-                    <div class="form-group">
-                        <label for="password_auth">密碼確認</label>
-                        <input type="password" maxlength="20" class="form-control form-control-sm" id="password_auth" placeholder="請再次確認密碼" v-model="user_info.auth_password">
-                    </div>
-                    <div class="form-group">
-                        <label>帳號啟用</label>
-                        <div class="d-flex align-items-center">
-                            <div class="form-check mr-3">
-                                <input id="disabled" class="form-check-input" type="radio" value="0" v-model="user_info.active">
-                                <label for="disabled" class="form-check-label">停用</label>
-                            </div>
-                            <div class="form-check">
-                                <input id="enabled" class="form-check-input" type="radio" value="1" v-model="user_info.active">
-                                <label for="enabled" class="form-check-label">啟用</label>
-                            </div>
-                        </div>
+                        <label for="permission">擁有權限</label>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-end">
@@ -147,5 +113,5 @@
             </div>
         </div>
     </div>
-    <script src="js/user.js"></script>
+    <script src="js/role.js"></script>
 @endsection

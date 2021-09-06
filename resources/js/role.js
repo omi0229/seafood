@@ -1,4 +1,5 @@
-import { passwordRule, emailRule, swal2Confirm } from './bootstrap';
+import moment from 'moment';
+import { swal2Confirm } from './bootstrap';
 import { search } from './components/search.js';
 import { pagination } from './components/pagination.js';
 
@@ -6,9 +7,6 @@ window.app = createApp({
     components: {
         'components-search': search,
         'components-pagination': pagination,
-    },
-    setup() {
-
     },
     data() {
         return {
@@ -30,6 +28,13 @@ window.app = createApp({
             }
         },
     },
+    computed: {
+        dateFormat() {
+            return datetime => {
+                return moment(datetime).format('Y-MM-DD H:m');
+            }
+        },
+    },
     mounted() {
         this.getCount();
         this.getData(1);
@@ -37,7 +42,7 @@ window.app = createApp({
     methods: {
         getCount() {
             return new Promise(resolve => {
-                let url = !this.search_text ? '/user/count' : '/user/count?keywords=' + this.search_text;
+                let url = !this.search_text ? '/role/count' : '/role/count?keywords=' + this.search_text;
                 axios.get(url).then(res => {
                     this.all_count = res.data.count;
                     this.page_count = res.data.page_count;
@@ -47,7 +52,7 @@ window.app = createApp({
         },
         getData(page) {
             return new Promise(resolve => {
-                let url = '/user/list/' + page;
+                let url = '/role/list/' + page;
 
                 if (this.search_text) {
                     url += '?keywords=' + this.search_text;
@@ -63,23 +68,20 @@ window.app = createApp({
             });
         },
         create() {
-            set_user.dataInit();
-            set_user.mode = 'create';
+            set_info.dataInit();
+            set_info.mode = 'create';
         },
         modify(id) {
-            set_user.dataInit();
-            set_user.mode = 'modify';
-            set_user.user_info.id = id;
+            set_info.dataInit();
+            set_info.mode = 'modify';
+            set_info.user_info.id = id;
             let info = _.find(this.list, {'id': id});
-            set_user.user_info.account = info.account;
-            set_user.user_info.name = info.name;
-            set_user.user_info.email = info.email;
-            set_user.user_info.active = info.active.toString();
+            set_info.user_info.name = info.name;
         },
         delete() {
             if(this.check.length > 0) {
                 loading.show = true;
-                axios.delete('/user/delete', {data: this.check}).then(async res => {
+                axios.delete('/role/delete', {data: this.check}).then(async res => {
                     if (res.data.status) {
                         Toast.fire({icon: 'success', title: '刪除成功'});
                         this.searchService('delete');
@@ -103,7 +105,7 @@ window.app = createApp({
             });
         },
         confirm() {
-            swal2Confirm('確定刪除選取的管理員？').then(confirm => {
+            swal2Confirm('確定刪除選取的權限？').then(confirm => {
                 if (confirm) {
                     this.delete();
                 }
@@ -112,19 +114,13 @@ window.app = createApp({
     },
 }).mount('#app');
 
-let set_user = createApp({
+let set_info = createApp({
     data() {
         return {
             mode: 'create',
             user_info: {
                 id: null,
-                account: '',
                 name: '',
-                password: '',
-                auth_password: '',
-                email: '',
-                role_id: '1',
-                active: '1',
             },
         }
     },
@@ -132,53 +128,11 @@ let set_user = createApp({
     methods: {
         dataInit() {
             this.user_info.id = null;
-            this.user_info.account = '';
-            this.user_info.name = '';
-            this.user_info.password = '';
-            this.user_info.auth_password = '';
-            this.user_info.email = '';
-            this.user_info.role_id = '';
-            this.user_info.active = '';
+            this.user_info.name = '';;
         },
         auth(data) {
-            if (!data.account) {
-                return {auth: false, message: '帳號不得為空！'};
-            }
-
             if (!data.name) {
-                return {auth: false, message: '姓名不得為空！'};
-            }
-
-            if (!data.email) {
-                return {auth: false, message: '電子郵件不得為空！'};
-            }
-
-            if (!emailRule(data.email)) {
-                return {auth: false, message: '電子郵件格式錯誤！'};
-            }
-
-            if (this.mode == 'create') {
-                if (!passwordRule(data.password)) {
-                    return {auth: false, message: '密碼規則需為8碼以上數字加英文！'};
-                }
-
-                if (!data.password) {
-                    return {auth: false, message: '密碼不得為空！'};
-                }
-
-                if (data.password !== data.auth_password) {
-                    return {auth: false, message: '密碼與密碼確認不同！'};
-                }
-            } else {
-                if (data.password) {
-                    if (!passwordRule(data.password)) {
-                        return {auth: false, message: '密碼規則需為8碼以上數字加英文！'};
-                    }
-
-                    if (data.password !== data.auth_password) {
-                        return {auth: false, message: '密碼與密碼確認不同！'};
-                    }
-                }
+                return {auth: false, message: '名稱不得為空！'};
             }
 
             return {auth: true, message: 'success'};
@@ -192,17 +146,17 @@ let set_user = createApp({
 
             let text = this.mode === 'create' ? '新增' : '編輯';
 
-            swal2Confirm(`確定${text}此管理員？`).then(confirm => {
+            swal2Confirm(`確定${text}此權限？`).then(confirm => {
                 if (confirm) {
                     this.save();
                 }
             });
         },
         save() {
-            let url = this.mode === 'create' ? '/user/insert' : '/user/update';
+            let url = this.mode === 'create' ? '/role/insert' : '/role/update';
             loading.show = true;
             axios.post(url, this.user_info).then(async res => {
-                $('#set-user').modal('hide');
+                $('#set-info').modal('hide');
 
                 await app.searchService();
 
@@ -213,4 +167,4 @@ let set_user = createApp({
             });
         },
     },
-}).mount('#set-user');
+}).mount('#set-info');
