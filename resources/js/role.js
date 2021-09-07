@@ -143,6 +143,8 @@ let set_info = createApp({
             });
         },
         dataInit() {
+            this.checkAll = false;
+            this.user_info.check = [];
             this.user_info.id = null;
             this.user_info.name = '';
         },

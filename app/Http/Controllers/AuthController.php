@@ -26,9 +26,9 @@ class AuthController extends Controller
             return response()->json(['status' => false, 'message' => '帳號或密碼錯誤']);
         }
 
+        # 取得token
         $token = $user->createToken('web');
         $user->access_token = $token->accessToken;
-
         $token_info = OauthAccessTokens::find($token->token->id);
         $token_info->update(['expires_at' => Carbon::now()->addHours(2)->format('Y-m-d H:i:s')]);
         $user->token = $token_info;
@@ -43,7 +43,10 @@ class AuthController extends Controller
         $login_user = Session::get('user');
 
         if ($login_user) {
-            OauthAccessTokens::find($login_user->token->id)->update(['revoked' => 1]);
+            $token_info = OauthAccessTokens::find($login_user->token->id);
+            if($token_info){
+                $token_info->update(['revoked' => 1]);
+            }
         }
 
         Session::flush();

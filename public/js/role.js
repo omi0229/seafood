@@ -62628,6 +62628,8 @@ var set_info = createApp({
       });
     },
     dataInit: function dataInit() {
+      this.checkAll = false;
+      this.user_info.check = [];
       this.user_info.id = null;
       this.user_info.name = '';
     },

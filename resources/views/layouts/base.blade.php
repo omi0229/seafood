@@ -78,40 +78,64 @@
 
                     <!-- Sidebar Menu -->
                     <nav class="mt-2">
-                        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
-                            data-accordion="false">
+                        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                            @php
+                                $permission = $permissions->where('name', 'set_basic')->first();
+                            @endphp
+                            @if($permission && $login_user->can('set_basic'))
                             <li class="nav-item">
                                 <a href="/" class="nav-link">
                                     <i class="nav-icon fas fa-th"></i>
                                     <p>
-                                        環境設定
-                                        <span class="right badge badge-danger">New</span>
+                                        {{$permission->display_name}}
                                     </p>
                                 </a>
                             </li>
+                            @endif
+
+                            @php
+                                $permission = $permissions->where('name', 'set_manager')->first();
+                            @endphp
+                            @if($permission && $login_user->can('set_manager'))
                             <li class="nav-item menu-open">
                                 <a href="#" class="nav-link">
                                     <i class="nav-icon fas fa-user-cog"></i>
                                     <p>
-                                        人員管理
+                                        {{$permission->display_name}}
                                         <i class="right fas fa-angle-left"></i>
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
                                         <a href="/role" class="nav-link">
-                                            <i class="far fa-circle nav-icon"></i>
+                                            <i class="nav-icon far fa-circle"></i>
                                             <p>權限設定</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
                                         <a href="/user" class="nav-link">
-                                            <i class="far fa-circle nav-icon"></i>
+                                            <i class="nav-icon far fa-circle"></i>
                                             <p>管理員設定</p>
                                         </a>
                                     </li>
                                 </ul>
                             </li>
+                            @endif
+
+                            @php
+                                $permission = $permissions->where('name', 'set_message')->first();
+                            @endphp
+                            @if($permission && $login_user->can('set_message'))
+                            <li class="nav-item">
+                                <a href="/" class="nav-link">
+                                    <i class="nav-icon fas fa-sms"></i>
+                                    <p>
+                                        {{$permission->display_name}}
+                                    </p>
+                                </a>
+                            </li>
+                            @endif
+
                         </ul>
                     </nav>
                     <!-- /.sidebar-menu -->

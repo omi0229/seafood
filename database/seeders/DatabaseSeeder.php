@@ -29,6 +29,9 @@ class DatabaseSeeder extends Seeder
 //            'updated_at' => Carbon::now(),
 //        ]);
 
+        $user = \App\Models\User::where('name', '系統管理者')->get()->first();
+        $user->assignRole('系統管理者');
+
 //        for ($i = 10; $i <= 100; $i++) {
 //            DB::table('users')->insert([
 //                'account' => 'test' . $i,

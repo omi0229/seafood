@@ -46,7 +46,7 @@ class RoleController extends Controller
         }
 
         $id = $request->all()['id'];
-        $inputs = $request->only('id', 'name');
+        $inputs = $request->only('id', 'name', 'check');
 
         # 驗證資料
         $validator = $this->services::authInputData($inputs);
