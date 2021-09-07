@@ -21,17 +21,13 @@ window.app = createApp({
     delimiters: ["${", "}"],
     watch: {
         'checkAll'(newData, oldData) {
-            if (newData) {
-                this.check = _.map(this.list, 'id');
-            } else {
-                this.check = [];
-            }
+            this.check = newData ? _.map(this.list, 'id') : [];
         },
     },
     computed: {
         dateFormat() {
             return datetime => {
-                return moment(datetime).format('Y-MM-DD H:m');
+                return moment(datetime).format('Y-MM-DD HH:mm');
             }
         },
     },
@@ -77,6 +73,7 @@ window.app = createApp({
             set_info.user_info.id = id;
             let info = _.find(this.list, {'id': id});
             set_info.user_info.name = info.name;
+            set_info.user_info.check = _.map(info.permissions, 'name');
         },
         delete() {
             if(this.check.length > 0) {
@@ -121,14 +118,33 @@ let set_info = createApp({
             user_info: {
                 id: null,
                 name: '',
+                check: [],
             },
+            checkAll: false,
+            permissions: [],
         }
     },
     delimiters: ["${", "}"],
+    watch: {
+        'checkAll'(newData, oldData) {
+            this.user_info.check = newData ? _.map(this.permissions, 'name') : [];
+        },
+    },
+    mounted() {
+        this.getPermission();
+    },
     methods: {
+        getPermission() {
+            return new Promise(resolve => {
+                axios.get('/role/permissions').then(res => {
+                    this.permissions = res.data;
+                    resolve();
+                });
+            });
+        },
         dataInit() {
             this.user_info.id = null;
-            this.user_info.name = '';;
+            this.user_info.name = '';
         },
         auth(data) {
             if (!data.name) {

@@ -9,7 +9,7 @@ class RolesRepository extends Repository
 {
     public function model()
     {
-        return 'App\Models\Roles';
+        return 'App\Models\Role';
     }
 
     public function list($page, array $params = [])
@@ -17,7 +17,8 @@ class RolesRepository extends Repository
         $start = ($page - 1) * 10;
         $keywords = data_get($params, 'keywords');
 
-        $data = !$keywords ? $this->model : $this->model->where('account', 'LIKE', '%' . $keywords . '%');
+        $data = !$keywords ? $this->model : $this->model->where('name', 'LIKE', '%' . $keywords . '%');
+        $this->model->load(['permissions']);
 
         $data = $data->skip($start)->take(10)->get();
 
@@ -25,6 +26,7 @@ class RolesRepository extends Repository
         foreach ($data as $key => $row) {
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
+            $list[$key]['permissions'] = $row->permissions;
         }
 
         return $list;
@@ -34,7 +36,7 @@ class RolesRepository extends Repository
     {
         $keywords = data_get($params, 'keywords');
 
-        $data = !$keywords ? $this->model : $this->model->where('account', 'LIKE', '%' . $keywords . '%');
+        $data = !$keywords ? $this->model : $this->model->where('name', 'LIKE', '%' . $keywords . '%');
 
         return $data->count();
     }

@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 5.5.62, for Win64 (AMD64)
+-- MySQL dump 10.13  Distrib 5.7.23, for Win64 (x86_64)
 --
 -- Host: localhost    Database: seafood
 -- ------------------------------------------------------
@@ -56,7 +56,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,8 +65,60 @@ CREATE TABLE `migrations` (
 
 LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` VALUES (46,'2014_10_12_000000_create_users_table',1),(47,'2014_10_12_100000_create_password_resets_table',1),(48,'2016_06_01_000001_create_oauth_auth_codes_table',1),(49,'2016_06_01_000002_create_oauth_access_tokens_table',1),(50,'2016_06_01_000003_create_oauth_refresh_tokens_table',1),(51,'2016_06_01_000004_create_oauth_clients_table',1),(52,'2016_06_01_000005_create_oauth_personal_access_clients_table',1),(53,'2019_08_19_000000_create_failed_jobs_table',1),(54,'2019_12_14_000001_create_personal_access_tokens_table',1),(55,'2021_09_06_194114_create_roles_table',2);
+INSERT INTO `migrations` VALUES (46,'2014_10_12_000000_create_users_table',1),(47,'2014_10_12_100000_create_password_resets_table',1),(48,'2016_06_01_000001_create_oauth_auth_codes_table',1),(49,'2016_06_01_000002_create_oauth_access_tokens_table',1),(50,'2016_06_01_000003_create_oauth_refresh_tokens_table',1),(51,'2016_06_01_000004_create_oauth_clients_table',1),(52,'2016_06_01_000005_create_oauth_personal_access_clients_table',1),(53,'2019_08_19_000000_create_failed_jobs_table',1),(54,'2019_12_14_000001_create_personal_access_tokens_table',1),(58,'2021_09_07_130852_create_permission_tables',2);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `model_has_permissions`
+--
+
+DROP TABLE IF EXISTS `model_has_permissions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model_has_permissions` (
+  `permission_id` bigint(20) unsigned NOT NULL,
+  `model_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `model_id` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`permission_id`,`model_id`,`model_type`),
+  KEY `model_has_permissions_model_id_model_type_index` (`model_id`,`model_type`),
+  CONSTRAINT `model_has_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `model_has_permissions`
+--
+
+LOCK TABLES `model_has_permissions` WRITE;
+/*!40000 ALTER TABLE `model_has_permissions` DISABLE KEYS */;
+/*!40000 ALTER TABLE `model_has_permissions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `model_has_roles`
+--
+
+DROP TABLE IF EXISTS `model_has_roles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model_has_roles` (
+  `role_id` bigint(20) unsigned NOT NULL,
+  `model_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `model_id` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`role_id`,`model_id`,`model_type`),
+  KEY `model_has_roles_model_id_model_type_index` (`model_id`,`model_type`),
+  CONSTRAINT `model_has_roles_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `model_has_roles`
+--
+
+LOCK TABLES `model_has_roles` WRITE;
+/*!40000 ALTER TABLE `model_has_roles` DISABLE KEYS */;
+/*!40000 ALTER TABLE `model_has_roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -97,7 +149,7 @@ CREATE TABLE `oauth_access_tokens` (
 
 LOCK TABLES `oauth_access_tokens` WRITE;
 /*!40000 ALTER TABLE `oauth_access_tokens` DISABLE KEYS */;
-INSERT INTO `oauth_access_tokens` VALUES ('03c194723438e7173f83fe05e477d8ca183fb505b58147f2af656c99095968a6b34e04ef1291e590',3,1,'web','[]',1,'2021-09-06 05:26:32','2021-09-06 05:26:36','2021-09-06 15:26:33'),('2449645a3e64a3064f0e5eb9737ec651aa33923f5196f67def7b88ad9158e36be204acb9a39671cf',3,1,'web','[]',1,'2021-09-06 08:44:05','2021-09-06 09:02:14','2021-09-06 18:44:06'),('419071ac6f07e9c9ee4a02adf3d2162863b037d82dc2aee400aedba9506b1170b35a511fb2498e66',2,1,'web','[]',1,'2021-09-06 05:07:18','2021-09-06 05:26:23','2021-09-06 15:07:19'),('42666ef09ff07fdbc6ff105ce91e7d58852db5a3917952576296cdf6ea9dd6ff9e10bda16dd8ad00',104,1,'web','[]',0,'2021-09-06 09:41:20','2021-09-06 09:41:20','2021-09-06 19:41:20'),('44b4592559c77e714d3b480a8235d144beb948d2a39da31d8bb0f7a3c0f191bbe4026f9977150269',1,1,'web','[]',1,'2021-09-06 09:02:19','2021-09-06 09:03:47','2021-09-06 19:02:19'),('57c8c97a16d4ddddd84c130d644e69088951857e62c29ca170b449f0e9038aadba3cc42f663739ab',107,1,'web','[]',0,'2021-09-06 13:36:49','2021-09-06 13:36:49','2021-09-06 23:36:49'),('6fdabb86b6f5f946968775ff17324073ddc509b52ab7022b266f5c7857db7311feb0186b48ece943',3,1,'web','[]',1,'2021-09-06 05:26:48','2021-09-06 05:27:02','2021-09-06 15:26:49'),('7860c837eb8173aeb5b9cccf2af615d18373c2a68b45411ed15cb0c246e9038bb6bd9e4e04c162f8',1,1,'web','[]',0,'2021-09-06 03:02:21','2021-09-06 03:02:22','2021-09-06 13:02:22'),('7c6ba745f8ea18edda61790a29047e869d704d9a13a5ab25f7a91c593833de062414759c5d4e5215',2,1,'web','[]',0,'2021-09-06 07:20:47','2021-09-06 07:20:48','2021-09-06 17:20:48'),('8c7efc06ddd29f52f630a052e363c84adae3a2bdd0a2d64b597db2f8915275b4fafb9ff3cf05dde9',1,1,'web','[]',0,'2021-09-06 05:32:13','2021-09-06 05:32:14','2021-09-06 15:32:14'),('a063da298fc889884e2de1f002b993fb5d074edab075755e45aa28d27329ab0f8dee9333aa66cdb8',104,1,'web','[]',1,'2021-09-06 11:38:27','2021-09-06 11:39:21','2021-09-06 21:38:27'),('a8d5aa1885c73ccf83248ba9b5fe3a369a51af38426f510470d45bc2ce7b1715d01b3abdee3a4db9',1,1,'web','[]',1,'2021-09-06 03:27:20','2021-09-06 05:07:13','2021-09-06 13:27:20'),('c0ee0a4f047dcc6d385fc0af2bfc29ee7c805003c3ade37bcf2fd73966335433ab20e046a3be9d6c',2,1,'web','[]',0,'2021-09-06 08:04:17','2021-09-06 08:04:18','2021-09-06 18:04:18'),('c40946551e1d3c05ef43e5fddc5044345bf920e0386069219f3abb4ef888f077a90b2d6f57144b99',92,1,'web','[]',0,'2021-09-06 11:40:44','2021-09-06 11:40:44','2021-09-06 21:40:44'),('dfed6b1b1dd75ce1b9bfc6f853071ae9aff98ebbfa231ad09f7eb39450a394881ff82774ee5167e2',104,1,'web','[]',0,'2021-09-06 09:04:05','2021-09-06 09:04:05','2021-09-06 19:04:05'),('e718d447147210d0e4df77f146ae3a9a425201930c26fd61f2a11593610b696346f90339319ee72f',1,1,'web','[]',0,'2021-09-06 02:54:29','2021-09-06 02:54:29','2021-09-06 12:54:29'),('ef121ad664ad838f29cb1d654db61a0e2ffc1f6aca42a4b3d99d70573973eade378f424eb8b1b6ba',2,1,'web','[]',0,'2021-09-06 07:26:04','2021-09-06 07:26:04','2021-09-06 17:26:04'),('f8f710dac2242a417276d4932d757ef813be6b89931381995f7bfa08ed44b67ef7b1b1720dda1653',104,1,'web','[]',0,'2021-09-06 11:39:27','2021-09-06 11:39:27','2021-09-06 21:39:27');
+INSERT INTO `oauth_access_tokens` VALUES ('03c194723438e7173f83fe05e477d8ca183fb505b58147f2af656c99095968a6b34e04ef1291e590',3,1,'web','[]',1,'2021-09-06 05:26:32','2021-09-06 05:26:36','2021-09-06 15:26:33'),('2449645a3e64a3064f0e5eb9737ec651aa33923f5196f67def7b88ad9158e36be204acb9a39671cf',3,1,'web','[]',1,'2021-09-06 08:44:05','2021-09-06 09:02:14','2021-09-06 18:44:06'),('3da27c340e4fd6d7024dcd7a6e406fd2229e8baf000b2f02a49bdd9d6bb0ddfc28a4cf6d878c08d4',2,1,'web','[]',0,'2021-09-07 07:12:07','2021-09-07 07:12:07','2021-09-07 17:12:07'),('419071ac6f07e9c9ee4a02adf3d2162863b037d82dc2aee400aedba9506b1170b35a511fb2498e66',2,1,'web','[]',1,'2021-09-06 05:07:18','2021-09-06 05:26:23','2021-09-06 15:07:19'),('42666ef09ff07fdbc6ff105ce91e7d58852db5a3917952576296cdf6ea9dd6ff9e10bda16dd8ad00',104,1,'web','[]',0,'2021-09-06 09:41:20','2021-09-06 09:41:20','2021-09-06 19:41:20'),('44b4592559c77e714d3b480a8235d144beb948d2a39da31d8bb0f7a3c0f191bbe4026f9977150269',1,1,'web','[]',1,'2021-09-06 09:02:19','2021-09-06 09:03:47','2021-09-06 19:02:19'),('57c8c97a16d4ddddd84c130d644e69088951857e62c29ca170b449f0e9038aadba3cc42f663739ab',107,1,'web','[]',0,'2021-09-06 13:36:49','2021-09-06 13:36:49','2021-09-06 23:36:49'),('6fdabb86b6f5f946968775ff17324073ddc509b52ab7022b266f5c7857db7311feb0186b48ece943',3,1,'web','[]',1,'2021-09-06 05:26:48','2021-09-06 05:27:02','2021-09-06 15:26:49'),('7860c837eb8173aeb5b9cccf2af615d18373c2a68b45411ed15cb0c246e9038bb6bd9e4e04c162f8',1,1,'web','[]',0,'2021-09-06 03:02:21','2021-09-06 03:02:22','2021-09-06 13:02:22'),('7c6ba745f8ea18edda61790a29047e869d704d9a13a5ab25f7a91c593833de062414759c5d4e5215',2,1,'web','[]',0,'2021-09-06 07:20:47','2021-09-06 07:20:48','2021-09-06 17:20:48'),('8c7efc06ddd29f52f630a052e363c84adae3a2bdd0a2d64b597db2f8915275b4fafb9ff3cf05dde9',1,1,'web','[]',0,'2021-09-06 05:32:13','2021-09-06 05:32:14','2021-09-06 15:32:14'),('a063da298fc889884e2de1f002b993fb5d074edab075755e45aa28d27329ab0f8dee9333aa66cdb8',104,1,'web','[]',1,'2021-09-06 11:38:27','2021-09-06 11:39:21','2021-09-06 21:38:27'),('a8d5aa1885c73ccf83248ba9b5fe3a369a51af38426f510470d45bc2ce7b1715d01b3abdee3a4db9',1,1,'web','[]',1,'2021-09-06 03:27:20','2021-09-06 05:07:13','2021-09-06 13:27:20'),('aa44a7d326192ae0518e88f052f0786ef5cefb3b8c5b7333d227be8b490de23c4012b9dd42d5e26f',2,1,'web','[]',0,'2021-09-07 05:10:35','2021-09-07 05:10:35','2021-09-07 15:10:35'),('c0ee0a4f047dcc6d385fc0af2bfc29ee7c805003c3ade37bcf2fd73966335433ab20e046a3be9d6c',2,1,'web','[]',0,'2021-09-06 08:04:17','2021-09-06 08:04:18','2021-09-06 18:04:18'),('c40946551e1d3c05ef43e5fddc5044345bf920e0386069219f3abb4ef888f077a90b2d6f57144b99',92,1,'web','[]',0,'2021-09-06 11:40:44','2021-09-06 11:40:44','2021-09-06 21:40:44'),('dfed6b1b1dd75ce1b9bfc6f853071ae9aff98ebbfa231ad09f7eb39450a394881ff82774ee5167e2',104,1,'web','[]',0,'2021-09-06 09:04:05','2021-09-06 09:04:05','2021-09-06 19:04:05'),('e718d447147210d0e4df77f146ae3a9a425201930c26fd61f2a11593610b696346f90339319ee72f',1,1,'web','[]',0,'2021-09-06 02:54:29','2021-09-06 02:54:29','2021-09-06 12:54:29'),('ef121ad664ad838f29cb1d654db61a0e2ffc1f6aca42a4b3d99d70573973eade378f424eb8b1b6ba',2,1,'web','[]',0,'2021-09-06 07:26:04','2021-09-06 07:26:04','2021-09-06 17:26:04'),('f8f710dac2242a417276d4932d757ef813be6b89931381995f7bfa08ed44b67ef7b1b1720dda1653',104,1,'web','[]',0,'2021-09-06 11:39:27','2021-09-06 11:39:27','2021-09-06 21:39:27');
 /*!40000 ALTER TABLE `oauth_access_tokens` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -240,6 +292,35 @@ LOCK TABLES `password_resets` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `permissions`
+--
+
+DROP TABLE IF EXISTS `permissions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `permissions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `guard_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `display_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `permissions_name_guard_name_unique` (`name`,`guard_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `permissions`
+--
+
+LOCK TABLES `permissions` WRITE;
+/*!40000 ALTER TABLE `permissions` DISABLE KEYS */;
+INSERT INTO `permissions` VALUES (1,'basic_set','web','基本設定','2021-09-07 05:52:21','2021-09-07 05:52:21'),(2,'manager_set','web','人員管理','2021-09-07 05:52:21','2021-09-07 05:52:21'),(3,'short_message_set','web','簡訊設定','2021-09-07 05:52:22','2021-09-07 05:52:22');
+/*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `personal_access_tokens`
 --
 
@@ -272,6 +353,33 @@ LOCK TABLES `personal_access_tokens` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `role_has_permissions`
+--
+
+DROP TABLE IF EXISTS `role_has_permissions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `role_has_permissions` (
+  `permission_id` bigint(20) unsigned NOT NULL,
+  `role_id` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`permission_id`,`role_id`),
+  KEY `role_has_permissions_role_id_foreign` (`role_id`),
+  CONSTRAINT `role_has_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `role_has_permissions_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `role_has_permissions`
+--
+
+LOCK TABLES `role_has_permissions` WRITE;
+/*!40000 ALTER TABLE `role_has_permissions` DISABLE KEYS */;
+INSERT INTO `role_has_permissions` VALUES (1,1),(1,3),(2,3),(3,3);
+/*!40000 ALTER TABLE `role_has_permissions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `roles`
 --
 
@@ -280,12 +388,14 @@ DROP TABLE IF EXISTS `roles`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `roles` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `guard_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `roles_name_guard_name_unique` (`name`,`guard_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -294,7 +404,7 @@ CREATE TABLE `roles` (
 
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
-INSERT INTO `roles` VALUES (3,'系統管理者','2021-09-06 14:35:52','2021-09-06 14:36:03',NULL),(4,'test','2021-09-06 14:35:57','2021-09-06 14:35:57',NULL);
+INSERT INTO `roles` VALUES (1,'最高權限管理者','web','2021-09-07 05:52:21','2021-09-07 05:52:21',NULL),(2,'test','web','2021-09-07 07:07:04','2021-09-07 07:07:04',NULL),(3,'test2','web','2021-09-07 07:10:19','2021-09-07 07:10:19',NULL);
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -345,4 +455,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-09-06 23:17:04
+-- Dump completed on 2021-09-07 15:21:27

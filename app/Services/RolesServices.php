@@ -4,7 +4,7 @@
 namespace App\Services;
 
 use Validator;
-use App\Models\Roles;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -17,7 +17,7 @@ class RolesServices
         $auth = [
             'name' => [
                 'required',
-                Rule::unique('roles')->ignore(Roles::find(Roles::decodeSlug($inputs['id'])))->whereNull('deleted_at')
+                Rule::unique('roles')->ignore(Role::find(Role::decodeSlug($inputs['id'])))->whereNull('deleted_at')
             ],
         ];
 

@@ -1,6 +1,7 @@
 @extends('layouts.base')
 
 @section('content')
+    <link rel="stylesheet" href="css/role.css">
     <div id="app" v-cloak>
         <div class="content-header px-4">
             <div class="container-fluid">
@@ -69,7 +70,7 @@
                                     </td>
                                     <td>${item.name}</td>
                                     <td class="text-center">${dateFormat(item.created_at)}</td>
-                                    <th class="text-center">${dateFormat(item.updated_at)}</th>
+                                    <td class="text-center">${dateFormat(item.updated_at)}</td>
                                     <td class="text-center">
                                         <button type="button" class="btn btn-sm btn-info px-2" data-toggle="modal" data-target="#set-info" @click="modify(item.id)">
                                             <i class="fa fa-edit mr-1"></i> 編輯
@@ -104,7 +105,19 @@
                         <input type="text" maxlength="20" class="form-control form-control-sm" id="name" placeholder="請輸入姓名" v-model="user_info.name">
                     </div>
                     <div class="form-group">
-                        <label for="permission">擁有權限</label>
+                        <label>擁有權限</label>
+                        <div class="mb-1">
+                            <input id="role-check-all" class="mr-2" type="checkbox" v-model="checkAll" />
+                            <label for="role-check-all" class="mb-0 form-check-label role-select-label">全選</label>
+                        </div>
+                        <div class="overflow-auto role-select-div">
+                            <template v-for="item in permissions">
+                                <div class="d-flex align-items-center mb-1">
+                                    <input :id="'permission-' + item.id" class="mr-2" type="checkbox" :value="item.name" v-model="user_info.check"/>
+                                    <label :for="'permission-' + item.id" class="mb-0 form-check-label role-select-label">${item.display_name}</label>
+                                </div>
+                            </template>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-end">

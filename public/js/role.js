@@ -62432,17 +62432,13 @@ window.app = createApp({
   delimiters: ["${", "}"],
   watch: {
     'checkAll': function checkAll(newData, oldData) {
-      if (newData) {
-        this.check = _.map(this.list, 'id');
-      } else {
-        this.check = [];
-      }
+      this.check = newData ? _.map(this.list, 'id') : [];
     }
   },
   computed: {
     dateFormat: function dateFormat() {
       return function (datetime) {
-        return moment__WEBPACK_IMPORTED_MODULE_1___default()(datetime).format('Y-MM-DD H:m');
+        return moment__WEBPACK_IMPORTED_MODULE_1___default()(datetime).format('Y-MM-DD HH:mm');
       };
     }
   },
@@ -62498,6 +62494,7 @@ window.app = createApp({
       });
 
       set_info.user_info.name = info.name;
+      set_info.user_info.check = _.map(info.permissions, 'name');
     },
     "delete": function _delete() {
       var _this3 = this;
@@ -62603,16 +62600,36 @@ var set_info = createApp({
       mode: 'create',
       user_info: {
         id: null,
-        name: ''
-      }
+        name: '',
+        check: []
+      },
+      checkAll: false,
+      permissions: []
     };
   },
   delimiters: ["${", "}"],
+  watch: {
+    'checkAll': function checkAll(newData, oldData) {
+      this.user_info.check = newData ? _.map(this.permissions, 'name') : [];
+    }
+  },
+  mounted: function mounted() {
+    this.getPermission();
+  },
   methods: {
+    getPermission: function getPermission() {
+      var _this6 = this;
+
+      return new Promise(function (resolve) {
+        axios.get('/role/permissions').then(function (res) {
+          _this6.permissions = res.data;
+          resolve();
+        });
+      });
+    },
     dataInit: function dataInit() {
       this.user_info.id = null;
       this.user_info.name = '';
-      ;
     },
     auth: function auth(data) {
       if (!data.name) {
@@ -62628,7 +62645,7 @@ var set_info = createApp({
       };
     },
     confirm: function confirm() {
-      var _this6 = this;
+      var _this7 = this;
 
       var auth = this.auth(this.user_info);
 
@@ -62643,7 +62660,7 @@ var set_info = createApp({
       var text = this.mode === 'create' ? '新增' : '編輯';
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)("\u78BA\u5B9A".concat(text, "\u6B64\u6B0A\u9650\uFF1F")).then(function (confirm) {
         if (confirm) {
-          _this6.save();
+          _this7.save();
         }
       });
     },

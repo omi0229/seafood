@@ -37,6 +37,7 @@ Route::middleware(['auth.web'])->group(function () {
     Route::post('role/insert', [RoleController::class, 'insert']);
     Route::post('role/update', [RoleController::class, 'update']);
     Route::delete('role/delete', [RoleController::class, 'delete']);
+    Route::get('role/permissions', [RoleController::class, 'permissions']);
 
     # 使用者管理
     Route::get('user', [UserController::class, 'index']);

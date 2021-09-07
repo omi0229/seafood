@@ -23,11 +23,7 @@ window.app = createApp({
     delimiters: ["${", "}"],
     watch: {
         'checkAll'(newData, oldData) {
-            if (newData) {
-                this.check = _.map(this.list, 'id');
-            } else {
-                this.check = [];
-            }
+            this.check = newData ? _.map(this.list, 'id') : [];
         },
     },
     mounted() {

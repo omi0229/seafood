@@ -36437,6 +36437,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/scss/role.scss":
+/*!**********************************!*\
+  !*** ./resources/scss/role.scss ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "./resources/scss/components/search.scss":
 /*!***********************************************!*\
   !*** ./resources/scss/components/search.scss ***!
@@ -40126,6 +40139,7 @@ function compileToFunction(template, options) {
 /******/ 		var installedChunks = {
 /******/ 			"/js/app": 0,
 /******/ 			"css/components/search": 0,
+/******/ 			"css/role": 0,
 /******/ 			"css/login": 0,
 /******/ 			"css/app": 0
 /******/ 		};
@@ -40177,10 +40191,11 @@ function compileToFunction(template, options) {
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["css/components/search","css/login","css/app"], () => (__webpack_require__("./resources/js/app.js")))
-/******/ 	__webpack_require__.O(undefined, ["css/components/search","css/login","css/app"], () => (__webpack_require__("./resources/scss/app.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/components/search","css/login","css/app"], () => (__webpack_require__("./resources/scss/login.scss")))
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/components/search","css/login","css/app"], () => (__webpack_require__("./resources/scss/components/search.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/components/search","css/role","css/login","css/app"], () => (__webpack_require__("./resources/js/app.js")))
+/******/ 	__webpack_require__.O(undefined, ["css/components/search","css/role","css/login","css/app"], () => (__webpack_require__("./resources/scss/app.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/components/search","css/role","css/login","css/app"], () => (__webpack_require__("./resources/scss/login.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/components/search","css/role","css/login","css/app"], () => (__webpack_require__("./resources/scss/role.scss")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/components/search","css/role","css/login","css/app"], () => (__webpack_require__("./resources/scss/components/search.scss")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

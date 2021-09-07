@@ -9,10 +9,13 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\HashId;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HashId;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HashId, HasRoles;
+
+    protected $guard_name = 'web';
 
     /**
      * The attributes that are mass assignable.
