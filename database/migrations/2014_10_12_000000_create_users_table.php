@@ -21,7 +21,6 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password', 255);
             $table->rememberToken();
-            $table->tinyInteger('role_id')->comment('權限ID')->unsigned();
             $table->tinyInteger('active')->comment('帳號啟用狀態(0 => 停用, 1 => 啟用)')->default(1)->unsigned();
             $table->timestamps();
             $table->softDeletes();

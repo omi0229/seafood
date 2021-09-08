@@ -61,7 +61,6 @@ export const emailRule = email => {
 }
 
 // swal2 confirm
-// 電子郵件規則
 export const swal2Confirm = (title) => {
     return new Promise(resolve => {
         Swal.fire({
@@ -88,3 +87,13 @@ export const swal2Confirm = (title) => {
     });
 }
 
+export const getRoles = (page = null, keywords = null) => {
+    return new Promise(resolve => {
+        let url = page ? '/role/list/' + page : '/role/list/all';
+
+        // has keyword
+        url += keywords ? '?keywords=' + keywords : null;
+
+        axios.get(url).then(res => { resolve(res) });
+    });
+}

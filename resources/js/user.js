@@ -1,4 +1,4 @@
-import { passwordRule, emailRule, swal2Confirm } from './bootstrap';
+import { passwordRule, emailRule, swal2Confirm, getUser, getRoles } from './bootstrap';
 import { search } from './components/search.js';
 import { pagination } from './components/pagination.js';
 
@@ -71,6 +71,8 @@ window.app = createApp({
             set_user.user_info.name = info.name;
             set_user.user_info.email = info.email;
             set_user.user_info.active = info.active.toString();
+            set_user.user_info.role.id = info.role_id;
+            set_user.user_info.role.name = info.role_name;
         },
         delete() {
             if(this.check.length > 0) {
@@ -119,12 +121,23 @@ let set_user = createApp({
                 password: '',
                 auth_password: '',
                 email: '',
-                role_id: '1',
+                role: {
+                    id: '',
+                    name: '',
+                },
                 active: '1',
             },
+            select: {
+                roles: [],
+            }
         }
     },
     delimiters: ["${", "}"],
+    mounted() {
+        getRoles().then(res => {
+            this.select.roles = res.data.data;
+        });
+    },
     methods: {
         dataInit() {
             this.user_info.id = null;
@@ -133,12 +146,24 @@ let set_user = createApp({
             this.user_info.password = '';
             this.user_info.auth_password = '';
             this.user_info.email = '';
-            this.user_info.role_id = '';
-            this.user_info.active = '';
+            this.user_info.role.id = '';
+            this.user_info.role.name = '';
+            this.user_info.active = '1';
         },
         auth(data) {
             if (!data.account) {
                 return {auth: false, message: '帳號不得為空！'};
+            }
+
+            let obj = {
+                account: data.account,
+            };
+
+            console.log(getUser(obj));
+            return;
+
+            if (getUser(obj)) {
+                return {auth: false, message: '帳號重複！'};
             }
 
             if (!data.name) {
@@ -175,6 +200,10 @@ let set_user = createApp({
                         return {auth: false, message: '密碼與密碼確認不同！'};
                     }
                 }
+            }
+
+            if (!data.role) {
+                return {auth: false, message: '請選擇權限！'};
             }
 
             return {auth: true, message: 'success'};

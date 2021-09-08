@@ -19,7 +19,7 @@ class AuthController extends Controller
 
         $credentials = $request->only('account', 'password');
 
-        $user = User::where('account', $credentials['account'])->first();
+        $user = User::where('account', $credentials['account'])->where('active', 1)->first();
         $validCredentials = \Hash::check($credentials['password'], optional($user)->getAuthPassword());
 
         if (!$validCredentials) {

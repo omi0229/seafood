@@ -38,8 +38,6 @@ class UserServices
             $tip['auth_password.required'] =  '請填寫確認密碼';
         }
 
-        $inputs['password'] = Hash::make($inputs['password']);
-
         return Validator::make($inputs, $auth, $tip);
     }
 }

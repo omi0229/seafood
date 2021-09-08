@@ -38,15 +38,6 @@
   margin-right: 0.5rem;
 }
 
-.modal .modal-background {
-  position: absolute;
-  background-color: rgba(33, 37, 41, 0.6);
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
 .loading {
   background-color: rgba(100, 100, 100, 0.8);
   height: 100vh;

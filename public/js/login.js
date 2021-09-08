@@ -19103,7 +19103,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "passwordRule": () => (/* binding */ passwordRule),
 /* harmony export */   "emailRule": () => (/* binding */ emailRule),
-/* harmony export */   "swal2Confirm": () => (/* binding */ swal2Confirm)
+/* harmony export */   "swal2Confirm": () => (/* binding */ swal2Confirm),
+/* harmony export */   "getRoles": () => (/* binding */ getRoles)
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
@@ -19159,7 +19160,6 @@ var emailRule = function emailRule(email) {
 
   return true;
 }; // swal2 confirm
-// 電子郵件規則
 
 var swal2Confirm = function swal2Confirm(title) {
   return new Promise(function (resolve) {
@@ -19183,6 +19183,18 @@ var swal2Confirm = function swal2Confirm(title) {
       }
 
       resolve(false);
+    });
+  });
+};
+var getRoles = function getRoles() {
+  var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+  var keywords = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+  return new Promise(function (resolve) {
+    var url = page ? '/role/list/' + page : '/role/list/all'; // has keyword
+
+    url += keywords ? '?keywords=' + keywords : null;
+    axios.get(url).then(function (res) {
+      resolve(res);
     });
   });
 };

@@ -72,7 +72,7 @@
                                     <td>${item.account}</td>
                                     <td>${item.name}</td>
                                     <td>${item.email}</td>
-                                    <th class="text-center">${item.role_id}</th>
+                                    <td class="text-center">${item.role_name}</td>
                                     <td class="text-center">
                                         <!-- v-if -->
                                         <span class="right badge badge-success" v-if="item.active == '1'">啟用</span>
@@ -94,8 +94,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="set-user" data-backdrop="false">
-        <div class="modal-background"></div>
+    <div class="modal fade" id="set-user" data-backdrop="static">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -126,6 +125,15 @@
                     <div class="form-group">
                         <label for="password_auth">密碼確認</label>
                         <input type="password" maxlength="20" class="form-control form-control-sm" id="password_auth" placeholder="請再次確認密碼" v-model="user_info.auth_password">
+                    </div>
+                    <div class="form-group">
+                        <label for="role">權限</label>
+                        <select class="form-control form-control-sm" v-model="user_info.role.id">
+                            <option value="">請選擇權限</option>
+                            <!-- v-for -->
+                            <option v-for="item in select.roles" :value="item.id">${item.name}</option>
+                        </select>
+
                     </div>
                     <div class="form-group">
                         <label>帳號啟用</label>

@@ -18,16 +18,15 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
 
-//        DB::table('users')->insert([
-//            'account' => 'admin',
-//            'password' => Hash::make('admin'),
-//            'name' => '系統管理者',
-//            'email' => 'josh.chiang@aibitechcology.com',
-//            'role_id' => 1,
-//            'active' => 1,
-//            'created_at' => Carbon::now(),
-//            'updated_at' => Carbon::now(),
-//        ]);
+        DB::table('users')->insert([
+            'account' => 'admin',
+            'password' => Hash::make('admin'),
+            'name' => '系統管理者',
+            'email' => 'josh.chiang@aibitechcology.com',
+            'active' => 1,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
 
         $user = \App\Models\User::where('name', '系統管理者')->get()->first();
         $user->assignRole('系統管理者');

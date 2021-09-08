@@ -14,13 +14,18 @@ class RolesRepository extends Repository
 
     public function list($page, array $params = [])
     {
-        $start = ($page - 1) * 10;
+
         $keywords = data_get($params, 'keywords');
 
         $data = !$keywords ? $this->model : $this->model->where('name', 'LIKE', '%' . $keywords . '%');
         $this->model->load(['permissions']);
 
-        $data = $data->skip($start)->take(10)->get();
+        if ($page !== 'all' && is_numeric($page)) {
+            $start = ($page - 1) * 10;
+            $data = $data->skip($start)->take(10)->get();
+        } else {
+            $data = $data->get();
+        }
 
         $list = [];
         foreach ($data as $key => $row) {

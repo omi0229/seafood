@@ -19114,7 +19114,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "passwordRule": () => (/* binding */ passwordRule),
 /* harmony export */   "emailRule": () => (/* binding */ emailRule),
-/* harmony export */   "swal2Confirm": () => (/* binding */ swal2Confirm)
+/* harmony export */   "swal2Confirm": () => (/* binding */ swal2Confirm),
+/* harmony export */   "getRoles": () => (/* binding */ getRoles)
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
@@ -19170,7 +19171,6 @@ var emailRule = function emailRule(email) {
 
   return true;
 }; // swal2 confirm
-// 電子郵件規則
 
 var swal2Confirm = function swal2Confirm(title) {
   return new Promise(function (resolve) {
@@ -19194,6 +19194,18 @@ var swal2Confirm = function swal2Confirm(title) {
       }
 
       resolve(false);
+    });
+  });
+};
+var getRoles = function getRoles() {
+  var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+  var keywords = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+  return new Promise(function (resolve) {
+    var url = page ? '/role/list/' + page : '/role/list/all'; // has keyword
+
+    url += keywords ? '?keywords=' + keywords : null;
+    axios.get(url).then(function (res) {
+      resolve(res);
     });
   });
 };
@@ -41054,6 +41066,8 @@ window.app = createApp({
       set_user.user_info.name = info.name;
       set_user.user_info.email = info.email;
       set_user.user_info.active = info.active.toString();
+      set_user.user_info.role.id = info.role_id;
+      set_user.user_info.role.name = info.role_name;
     },
     "delete": function _delete() {
       var _this3 = this;
@@ -41164,12 +41178,25 @@ var set_user = createApp({
         password: '',
         auth_password: '',
         email: '',
-        role_id: '1',
+        role: {
+          id: '',
+          name: ''
+        },
         active: '1'
+      },
+      select: {
+        roles: []
       }
     };
   },
   delimiters: ["${", "}"],
+  mounted: function mounted() {
+    var _this6 = this;
+
+    (0,_bootstrap__WEBPACK_IMPORTED_MODULE_1__.getRoles)().then(function (res) {
+      _this6.select.roles = res.data.data;
+    });
+  },
   methods: {
     dataInit: function dataInit() {
       this.user_info.id = null;
@@ -41178,14 +41205,28 @@ var set_user = createApp({
       this.user_info.password = '';
       this.user_info.auth_password = '';
       this.user_info.email = '';
-      this.user_info.role_id = '';
-      this.user_info.active = '';
+      this.user_info.role.id = '';
+      this.user_info.role.name = '';
+      this.user_info.active = '1';
     },
     auth: function auth(data) {
       if (!data.account) {
         return {
           auth: false,
           message: '帳號不得為空！'
+        };
+      }
+
+      var obj = {
+        account: data.account
+      };
+      console.log((0,_bootstrap__WEBPACK_IMPORTED_MODULE_1__.getUser)(obj));
+      return;
+
+      if ((0,_bootstrap__WEBPACK_IMPORTED_MODULE_1__.getUser)(obj)) {
+        return {
+          auth: false,
+          message: '帳號重複！'
         };
       }
 
@@ -41249,13 +41290,20 @@ var set_user = createApp({
         }
       }
 
+      if (!data.role) {
+        return {
+          auth: false,
+          message: '請選擇權限！'
+        };
+      }
+
       return {
         auth: true,
         message: 'success'
       };
     },
     confirm: function confirm() {
-      var _this6 = this;
+      var _this7 = this;
 
       var auth = this.auth(this.user_info);
 
@@ -41270,7 +41318,7 @@ var set_user = createApp({
       var text = this.mode === 'create' ? '新增' : '編輯';
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_1__.swal2Confirm)("\u78BA\u5B9A".concat(text, "\u6B64\u7BA1\u7406\u54E1\uFF1F")).then(function (confirm) {
         if (confirm) {
-          _this6.save();
+          _this7.save();
         }
       });
     },
