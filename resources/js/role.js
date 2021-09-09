@@ -174,7 +174,9 @@ let set_info = createApp({
             let url = this.mode === 'create' ? '/role/insert' : '/role/update';
             loading.show = true;
             axios.post(url, this.user_info).then(async res => {
-                $('#set-info').modal('hide');
+                if (res.data.status) {
+                    $('#set-info').modal('hide');
+                }
 
                 await app.searchService();
 

@@ -5,8 +5,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BasicController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +31,9 @@ Route::post('logout', [AuthController::class, 'logout']);
 
 Route::middleware(['auth.web'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
+
+    # 基本設定
+    Route::get('basic', [BasicController::class, 'index']);
 
     # 權限管理
     Route::get('role', [RoleController::class, 'index']);

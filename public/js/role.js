@@ -62688,7 +62688,10 @@ var set_info = createApp({
             while (1) {
               switch (_context3.prev = _context3.next) {
                 case 0:
-                  $('#set-info').modal('hide');
+                  if (res.data.status) {
+                    $('#set-info').modal('hide');
+                  }
+
                   _context3.next = 3;
                   return app.searchService();
 

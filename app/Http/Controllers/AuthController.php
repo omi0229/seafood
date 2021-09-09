@@ -33,14 +33,14 @@ class AuthController extends Controller
         $token_info->update(['expires_at' => Carbon::now()->addHours(2)->format('Y-m-d H:i:s')]);
         $user->token = $token_info;
 
-		Session::put('user', $user);
+		Session::put('seafood_user', $user);
 
         return response()->json(['status' => true, 'message' => '登入成功']);
     }
 
     public function logout()
     {
-        $login_user = Session::get('user');
+        $login_user = Session::get('seafood_user');
 
         if ($login_user) {
             $token_info = OauthAccessTokens::find($login_user->token->id);

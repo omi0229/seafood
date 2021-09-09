@@ -67,12 +67,12 @@
                 <!-- Sidebar -->
                 <div class="sidebar">
                     <!-- Sidebar user panel (optional) -->
-                    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
                         <div class="image">
-                            <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                            <i class="fas fa-user text-white ml-1" style="font-size: 24px;"></i>
                         </div>
-                        <div class="info">
-                            <a href="#" class="d-block">Alexander Pierce</a>
+                        <div class="info ml-2">
+                            <a href="#" class="d-block">{{ $login_user->name }}</a>
                         </div>
                     </div>
 
@@ -84,7 +84,7 @@
                             @endphp
                             @if($permission && $login_user->can('set_basic'))
                             <li class="nav-item">
-                                <a href="/" class="nav-link">
+                                <a href="/basic" class="nav-link">
                                     <i class="nav-icon fas fa-th"></i>
                                     <p>
                                         {{$permission->display_name}}
@@ -97,7 +97,7 @@
                                 $permission = $permissions->where('name', 'set_manager')->first();
                             @endphp
                             @if($permission && $login_user->can('set_manager'))
-                            <li class="nav-item menu-open">
+                            <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="nav-icon fas fa-user-cog"></i>
                                     <p>

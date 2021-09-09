@@ -1,4 +1,4 @@
-import { passwordRule, emailRule, swal2Confirm, getUser, getRoles } from './bootstrap';
+import { passwordRule, emailRule, swal2Confirm, getRoles } from './bootstrap';
 import { search } from './components/search.js';
 import { pagination } from './components/pagination.js';
 
@@ -155,17 +155,6 @@ let set_user = createApp({
                 return {auth: false, message: '帳號不得為空！'};
             }
 
-            let obj = {
-                account: data.account,
-            };
-
-            console.log(getUser(obj));
-            return;
-
-            if (getUser(obj)) {
-                return {auth: false, message: '帳號重複！'};
-            }
-
             if (!data.name) {
                 return {auth: false, message: '姓名不得為空！'};
             }
@@ -202,7 +191,7 @@ let set_user = createApp({
                 }
             }
 
-            if (!data.role) {
+            if (!data.role.id) {
                 return {auth: false, message: '請選擇權限！'};
             }
 
@@ -227,7 +216,9 @@ let set_user = createApp({
             let url = this.mode === 'create' ? '/user/insert' : '/user/update';
             loading.show = true;
             axios.post(url, this.user_info).then(async res => {
-                $('#set-user').modal('hide');
+                if (res.data.status) {
+                    $('#set-user').modal('hide');
+                }
 
                 await app.searchService();
 

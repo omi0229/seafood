@@ -16,8 +16,8 @@ class WebLogin
      */
     public function handle(Request $request, Closure $next)
     {
-        if (\Session::has('user')) {
-            $login_user = \Session::get('user');
+        if (\Session::has('seafood_user')) {
+            $login_user = \Session::get('seafood_user');
             if (isset($login_user->token) && (new \DateTime())->getTimestamp() <= (new \DateTime($login_user->token->expires_at))->getTimestamp()) {
                 return redirect('/');
             }

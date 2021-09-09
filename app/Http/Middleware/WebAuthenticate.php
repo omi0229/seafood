@@ -16,11 +16,11 @@ class WebAuthenticate
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!\Session::has('user')) {
+        if (!\Session::has('seafood_user')) {
             return redirect('/login');
         }
 
-        $login_user = \Session::get('user');
+        $login_user = \Session::get('seafood_user');
 
         if (!isset($login_user->token)) {
             return redirect('/login');

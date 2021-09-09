@@ -41217,19 +41217,6 @@ var set_user = createApp({
         };
       }
 
-      var obj = {
-        account: data.account
-      };
-      console.log((0,_bootstrap__WEBPACK_IMPORTED_MODULE_1__.getUser)(obj));
-      return;
-
-      if ((0,_bootstrap__WEBPACK_IMPORTED_MODULE_1__.getUser)(obj)) {
-        return {
-          auth: false,
-          message: '帳號重複！'
-        };
-      }
-
       if (!data.name) {
         return {
           auth: false,
@@ -41290,7 +41277,7 @@ var set_user = createApp({
         }
       }
 
-      if (!data.role) {
+      if (!data.role.id) {
         return {
           auth: false,
           message: '請選擇權限！'
@@ -41332,7 +41319,10 @@ var set_user = createApp({
             while (1) {
               switch (_context3.prev = _context3.next) {
                 case 0:
-                  $('#set-user').modal('hide');
+                  if (res.data.status) {
+                    $('#set-user').modal('hide');
+                  }
+
                   _context3.next = 3;
                   return app.searchService();
 

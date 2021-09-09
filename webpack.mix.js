@@ -25,6 +25,10 @@ mix.js('resources/js/login.js', 'public/js')
 // logout
 mix.js('resources/js/logout.js', 'public/js')
 
+// dashboard
+mix.js('resources/js/dashboard.js', 'public/js')
+// basic
+mix.js('resources/js/basic.js', 'public/js')
 // user
 mix.js('resources/js/user.js', 'public/js')
 // role

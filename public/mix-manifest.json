@@ -3,6 +3,8 @@
     "/js/base.js": "/js/base.js",
     "/js/login.js": "/js/login.js",
     "/js/logout.js": "/js/logout.js",
+    "/js/dashboard.js": "/js/dashboard.js",
+    "/js/basic.js": "/js/basic.js",
     "/js/user.js": "/js/user.js",
     "/js/role.js": "/js/role.js",
     "/css/components/search.css": "/css/components/search.css",

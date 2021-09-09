@@ -22,8 +22,8 @@ class RolesServices
         ];
 
         $tip = [
-            'name.required' => '請填寫帳號',
-            'name.unique' => '已有重複帳號',
+            'name.required' => '請填寫權限名稱',
+            'name.unique' => '已有重複權限名稱',
         ];
 
         return Validator::make($inputs, $auth, $tip);
