@@ -32,7 +32,7 @@
                 </div>
                 <h6>密碼</h6>
                 <div class="ts tiny input width percent-100" :class="{'error': !status.password}">
-                    <input type="password" class="width inherit" maxlength="20" placeholder="請輸入密碼" v-model="password">
+                    <input type="password" class="width inherit" maxlength="20" placeholder="請輸入密碼" v-model="password" @keyup.enter="login">
                 </div>
                 <div class="margin-t-3 text-right">
                     <button class="ts positive mini button margin-r-2" @click="reset">重新輸入</button>

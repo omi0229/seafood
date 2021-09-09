@@ -29,6 +29,7 @@ mix.js('resources/js/logout.js', 'public/js')
 mix.js('resources/js/dashboard.js', 'public/js')
 // basic
 mix.js('resources/js/basic.js', 'public/js')
+mix.sass('resources/scss/basic.scss', 'public/css')
 // user
 mix.js('resources/js/user.js', 'public/js')
 // role

@@ -1,6 +1,7 @@
 @extends('layouts.base')
 
 @section('content')
+    <link rel="stylesheet" href="css/basic.css">
     <div id="app" v-cloak>
         <div class="content-header px-4">
             <div class="container-fluid">
@@ -42,38 +43,71 @@
                     </div>
                     <div class="card-body">
                         <div class="tab-content" id="custom-tabs-four-tabContent">
-                            <div class="tab-pane fade show active" id="custom-tabs-basic" role="tabpanel"
-                                 aria-labelledby="custom-tabs-four-home-tab">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin malesuada lacus
-                                ullamcorper dui molestie, sit amet congue quam finibus. Etiam ultricies nunc non magna
-                                feugiat commodo. Etiam odio magna, mollis auctor felis vitae, ullamcorper ornare ligula.
-                                Proin pellentesque tincidunt nisi, vitae ullamcorper felis aliquam id. Pellentesque
-                                habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin
-                                id orci eu lectus blandit suscipit. Phasellus porta, ante et varius ornare, sem enim
-                                sollicitudin eros, at commodo leo est vitae lacus. Etiam ut porta sem. Proin porttitor
-                                porta nisl, id tempor risus rhoncus quis. In in quam a nibh cursus pulvinar non
-                                consequat neque. Mauris lacus elit, condimentum ac condimentum at, semper vitae lectus.
-                                Cras lacinia erat eget sapien porta consectetur.
+                            <div class="tab-pane fade show active" id="custom-tabs-basic" role="tabpanel" aria-labelledby="custom-tabs-four-home-tab">
+                                <div class="basic-tab-pane-height">
+                                    <div class="form-group row">
+                                        <div class="col-12 col-sm-6">
+                                            <label for="web_title">網站標題</label>
+                                            <input type="text" maxlength="50" class="form-control form-control-sm" id="web_title" placeholder="請輸入網站標題">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-12 col-sm-6">
+                                            <label for="web_phone">訂購專線</label>
+                                            <input type="text" maxlength="20" class="form-control form-control-sm" id="web_phone" placeholder="請輸入訂購專線">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-12 col-sm-6">
+                                            <label for="web_address">地址</label>
+                                            <input type="text" maxlength="100" class="form-control form-control-sm" id="web_address" placeholder="請輸入地址">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-12 col-sm-6">
+                                            <label for="web_email">電子郵件</label>
+                                            <input type="text" maxlength="50" class="form-control form-control-sm" id="web_email" placeholder="請輸入地址">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-12 col-sm-6">
+                                            <label for="web_facebook">Facebook連結</label>
+                                            <input type="text" class="form-control form-control-sm" id="web_facebook" placeholder="請輸入地址">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-12 col-sm-6">
+                                            <label for="web_line">Line連結</label>
+                                            <input type="text" class="form-control form-control-sm" id="web_line" placeholder="請輸入地址">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="tab-pane fade" id="custom-tabs-goldflow" role="tabpanel"
-                                 aria-labelledby="custom-tabs-four-profile-tab">
-                                Mauris tincidunt mi at erat gravida, eget tristique urna bibendum. Mauris pharetra purus
-                                ut ligula tempor, et vulputate metus facilisis. Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
-                                posuere cubilia Curae; Maecenas sollicitudin, nisi a luctus interdum, nisl ligula
-                                placerat mi, quis posuere purus ligula eu lectus. Donec nunc tellus, elementum sit amet
-                                ultricies at, posuere nec nunc. Nunc euismod pellentesque diam.
+                            <div class="tab-pane fade" id="custom-tabs-goldflow" role="tabpanel" aria-labelledby="custom-tabs-four-profile-tab">
+                                <div class="basic-tab-pane-height">
+                                    串接金流時補上
+                                </div>
                             </div>
-                            <div class="tab-pane fade" id="custom-tabs-seo" role="tabpanel"
-                                 aria-labelledby="custom-tabs-four-messages-tab">
-                                Morbi turpis dolor, vulputate vitae felis non, tincidunt congue mauris. Phasellus
-                                volutpat augue id mi placerat mollis. Vivamus faucibus eu massa eget condimentum. Fusce
-                                nec hendrerit sem, ac tristique nulla. Integer vestibulum orci odio. Cras nec augue
-                                ipsum. Suspendisse ut velit condimentum, mattis urna a, malesuada nunc. Curabitur
-                                eleifend facilisis velit finibus tristique. Nam vulputate, eros non luctus efficitur,
-                                ipsum odio volutpat massa, sit amet sollicitudin est libero sed ipsum. Nulla lacinia, ex
-                                vitae gravida fermentum, lectus ipsum gravida arcu, id fermentum metus arcu vel metus.
-                                Curabitur eget sem eu risus tincidunt eleifend ac ornare magna.
+                            <div class="tab-pane fade" id="custom-tabs-seo" role="tabpanel" aria-labelledby="custom-tabs-four-messages-tab">
+                                <div class="basic-tab-pane-height">
+                                    <div class="form-group row">
+                                        <div class="col-12 col-sm-6">
+                                            <label for="meta_keyword">頁面關鍵字</label>
+                                            <input type="text" class="form-control form-control-sm" id="web_facebook" placeholder="請輸入地址">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-12 col-sm-6">
+                                            <label for="meta_description">頁面描述</label>
+                                            <textarea id="meta_description" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end mt-3">
+                                <button type="button" class="btn btn-sm btn-primary px-3" @click="confirm('save')">
+                                    儲存
+                                </button>
                             </div>
                         </div>
                     </div>

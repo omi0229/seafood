@@ -40,16 +40,7 @@ class AuthController extends Controller
 
     public function logout()
     {
-        $login_user = Session::get('seafood_user');
-
-        if ($login_user) {
-            $token_info = OauthAccessTokens::find($login_user->token->id);
-            if($token_info){
-                $token_info->update(['revoked' => 1]);
-            }
-        }
-
-        Session::flush();
+        \App\Services\LoginServices::logout();
 
         return response()->json(['status' => true, 'message' => '登出成功']);
     }

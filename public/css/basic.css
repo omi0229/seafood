@@ -1,0 +1,5 @@
+.basic-tab-pane-height {
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 52vh;
+}

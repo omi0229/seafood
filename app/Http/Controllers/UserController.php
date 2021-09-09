@@ -34,6 +34,8 @@ class UserController extends Controller
             return response()->json(['status' => false, 'message' => $validator->errors()->first()]);
         }
 
+        $inputs['password'] = Hash::make($inputs['password']);
+
         $user = $this->model::create($inputs);
         if (isset($inputs['role']['id'])) {
             $user->assignRole(Role::decodeSlug($inputs['role']['id']));
