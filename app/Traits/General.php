@@ -7,7 +7,7 @@ trait General
 {
     public function index()
     {
-        return view($this->services::$service_name . '.index');
+        return view($this->service_name . '.index');
     }
 
     public function list($page, Request $request)

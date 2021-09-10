@@ -105,7 +105,7 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end mt-3">
-                                <button type="button" class="btn btn-sm btn-primary px-3" @click="confirm()">
+                                <button type="button" class="btn btn-sm btn-primary px-3" @click="confirm">
                                     儲存
                                 </button>
                             </div>

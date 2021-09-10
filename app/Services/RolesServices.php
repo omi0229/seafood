@@ -10,8 +10,6 @@ use Illuminate\Validation\Rule;
 
 class RolesServices
 {
-    static $service_name = 'role';
-
     static function authInputData($inputs)
     {
         $auth = [

@@ -7,9 +7,11 @@
     "/js/basic.js": "/js/basic.js",
     "/js/user.js": "/js/user.js",
     "/js/role.js": "/js/role.js",
-    "/css/components/search.css": "/css/components/search.css",
+    "/js/sms.js": "/js/sms.js",
+    "/css/sms.css": "/css/sms.css",
     "/css/role.css": "/css/role.css",
     "/css/basic.css": "/css/basic.css",
     "/css/login.css": "/css/login.css",
-    "/css/app.css": "/css/app.css"
+    "/css/app.css": "/css/app.css",
+    "/css/components/search.css": "/css/components/search.css"
 }

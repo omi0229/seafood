@@ -6,11 +6,11 @@ use Illuminate\Http\Request;
 use App\Models\Config;
 use App\Traits\Config as TraitsConfig;
 
-class basicController extends Controller
+class SmsController extends Controller
 {
     use TraitsConfig;
 
-    protected $service_name = 'basic';
+    protected $service_name = 'sms';
 
     protected $model;
 

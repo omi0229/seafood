@@ -11,8 +11,6 @@ use Illuminate\Validation\Rule;
 
 class UserServices
 {
-    static $service_name = 'user';
-
     static function authInputData(&$inputs)
     {
         $auth = [

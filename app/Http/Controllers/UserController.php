@@ -15,6 +15,8 @@ class UserController extends Controller
 {
     use General;
 
+    protected $service_name = 'user';
+
     protected $model, $repository, $services;
 
     public function __construct(User $model, UsersRepository $repository, UserServices $services)

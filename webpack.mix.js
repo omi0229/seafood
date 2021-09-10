@@ -35,6 +35,9 @@ mix.js('resources/js/user.js', 'public/js')
 // role
 mix.js('resources/js/role.js', 'public/js')
 mix.sass('resources/scss/role.scss', 'public/css')
+// sms
+mix.js('resources/js/sms.js', 'public/js')
+mix.sass('resources/scss/sms.scss', 'public/css')
 
 // components search
 mix.sass('resources/scss/components/search.scss', 'public/css/components')

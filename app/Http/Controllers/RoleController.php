@@ -14,6 +14,8 @@ class RoleController extends Controller
 {
     use General;
 
+    protected $service_name = 'role';
+
     protected $model, $repository, $services;
 
     public function __construct(Role $model, RolesRepository $repository, RolesServices $services)

@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BasicController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SmsController;
 
 
 /*
@@ -53,4 +54,9 @@ Route::middleware(['auth.web'])->group(function () {
     Route::post('user/insert', [UserController::class, 'insert']);
     Route::post('user/update', [UserController::class, 'update']);
     Route::delete('user/delete', [UserController::class, 'delete']);
+
+    # 簡訊設定
+    Route::get('sms', [SmsController::class, 'index']);
+    Route::get('sms/get', [SmsController::class, 'get']);
+    Route::post('sms/set', [SmsController::class, 'set']);
 });

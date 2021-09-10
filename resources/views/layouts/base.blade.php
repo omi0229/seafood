@@ -127,7 +127,21 @@
                             @endphp
                             @if($permission && $login_user->can('set_message'))
                             <li class="nav-item">
-                                <a href="/" class="nav-link">
+                                <a href="/sms" class="nav-link">
+                                    <i class="nav-icon fas fa-sms"></i>
+                                    <p>
+                                        {{$permission->display_name}}
+                                    </p>
+                                </a>
+                            </li>
+                            @endif
+
+                            @php
+                                $permission = $permissions->where('name', 'news')->first();
+                            @endphp
+                            @if($permission && $login_user->can('news'))
+                            <li class="nav-item">
+                                <a href="/news" class="nav-link">
                                     <i class="nav-icon fas fa-sms"></i>
                                     <p>
                                         {{$permission->display_name}}
