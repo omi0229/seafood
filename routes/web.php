@@ -34,6 +34,8 @@ Route::middleware(['auth.web'])->group(function () {
 
     # 基本設定
     Route::get('basic', [BasicController::class, 'index']);
+    Route::get('basic/get', [BasicController::class, 'get']);
+    Route::post('basic/set', [BasicController::class, 'set']);
 
     # 權限管理
     Route::get('role', [RoleController::class, 'index']);

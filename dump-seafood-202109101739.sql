@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 5.5.62, for Win64 (AMD64)
+-- MySQL dump 10.13  Distrib 5.7.23, for Win64 (x86_64)
 --
 -- Host: localhost    Database: seafood
 -- ------------------------------------------------------
@@ -14,6 +14,31 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `config`
+--
+
+DROP TABLE IF EXISTS `config`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `config` (
+  `config_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `config_value` text COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `config`
+--
+
+LOCK TABLES `config` WRITE;
+/*!40000 ALTER TABLE `config` DISABLE KEYS */;
+INSERT INTO `config` VALUES ('basic_title','111111','2021-09-10 09:22:23','2021-09-10 09:23:03'),('basic_phone','123111','2021-09-10 09:22:23','2021-09-10 09:37:45'),('basic_address','123','2021-09-10 09:22:23','2021-09-10 09:33:11'),('basic_email','123','2021-09-10 09:22:24','2021-09-10 09:33:11'),('basic_facebook','123123','2021-09-10 09:22:24','2021-09-10 09:33:11'),('basic_line','12312332','2021-09-10 09:22:24','2021-09-10 09:33:11'),('seo_keyword','11123','2021-09-10 09:22:53','2021-09-10 09:22:58'),('seo_description',NULL,'2021-09-10 09:22:53','2021-09-10 09:34:13');
+/*!40000 ALTER TABLE `config` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `failed_jobs`
@@ -56,7 +81,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,7 +90,7 @@ CREATE TABLE `migrations` (
 
 LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` VALUES (59,'2014_10_12_000000_create_users_table',1),(60,'2014_10_12_100000_create_password_resets_table',1),(61,'2016_06_01_000001_create_oauth_auth_codes_table',1),(62,'2016_06_01_000002_create_oauth_access_tokens_table',1),(63,'2016_06_01_000003_create_oauth_refresh_tokens_table',1),(64,'2016_06_01_000004_create_oauth_clients_table',1),(65,'2016_06_01_000005_create_oauth_personal_access_clients_table',1),(66,'2019_08_19_000000_create_failed_jobs_table',1),(67,'2019_12_14_000001_create_personal_access_tokens_table',1),(68,'2021_09_07_130852_create_permission_tables',1);
+INSERT INTO `migrations` VALUES (59,'2014_10_12_000000_create_users_table',1),(60,'2014_10_12_100000_create_password_resets_table',1),(61,'2016_06_01_000001_create_oauth_auth_codes_table',1),(62,'2016_06_01_000002_create_oauth_access_tokens_table',1),(63,'2016_06_01_000003_create_oauth_refresh_tokens_table',1),(64,'2016_06_01_000004_create_oauth_clients_table',1),(65,'2016_06_01_000005_create_oauth_personal_access_clients_table',1),(66,'2019_08_19_000000_create_failed_jobs_table',1),(67,'2019_12_14_000001_create_personal_access_tokens_table',1),(68,'2021_09_07_130852_create_permission_tables',1),(70,'2021_09_10_161057_create_config_table',2);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -150,7 +175,7 @@ CREATE TABLE `oauth_access_tokens` (
 
 LOCK TABLES `oauth_access_tokens` WRITE;
 /*!40000 ALTER TABLE `oauth_access_tokens` DISABLE KEYS */;
-INSERT INTO `oauth_access_tokens` VALUES ('0e1fe67c16c982de984ea04e6fb3fb5db71b62da2570d47cb87e1dd4cf837f854364aebd9736373f',1,1,'web','[]',1,'2021-09-08 14:39:23','2021-09-08 14:39:51','2021-09-09 00:39:23'),('1f1dbda287cac52bc4bcf090942405198e011764c513e15c07db00083938998934753ed34878c9f7',6,1,'web','[]',1,'2021-09-08 14:43:40','2021-09-08 14:44:27','2021-09-09 00:43:40'),('37b30a35fbf9812434ac18b1457387c97bd84ec4876cc2edcffb3389f460132e425b7fad08c66d20',6,1,'web','[]',1,'2021-09-08 14:39:57','2021-09-08 14:40:31','2021-09-09 00:39:57'),('5ddc8795c34056297894ab14b18aa58d190e69a55c2c29271b7ad4e3066ab110768d37bcd2834e3e',1,1,'web','[]',1,'2021-09-08 14:44:37','2021-09-08 14:44:52','2021-09-09 00:44:37'),('69be433b8524f1b518032206ff07e60ea58daca5ed453b7508de6ce3a55c89a1880fc49ed59d2698',6,1,'web','[]',1,'2021-09-08 14:44:56','2021-09-08 14:45:19','2021-09-09 00:44:56'),('8ebcd7b8da69e5c6c2f416799a8710467ccd7c698f0104020bbad846902e83be2374f644d7c35f57',6,1,'web','[]',1,'2021-09-08 14:42:41','2021-09-08 14:43:34','2021-09-09 00:42:41'),('b4fe45aa2a549b5aa157e19913010404457ff1ae8d155060e114edb59f88b593f615b17e3f607f01',1,1,'web','[]',1,'2021-09-08 14:38:46','2021-09-08 14:39:09','2021-09-09 00:38:46'),('bbf9436c6ef92d1e537a9fc7682e6b1ab88e955c72b134163332edfd8e049cd0b3b19ffa6061754b',1,1,'web','[]',0,'2021-09-08 15:19:26','2021-09-08 15:19:26','2021-09-09 01:19:26'),('e756a2b679af71c7fcc3f7caa7c56cede7755153d0cbec4758dee65ccacea53c77c072afc9ac4927',2,1,'web','[]',0,'2021-09-08 14:45:25','2021-09-08 14:45:25','2021-09-09 00:45:25'),('faad062e503ade076f64b08786cd6a950ea99ae9539c739358d588b2c0dd60935b0586c2a00050b5',1,1,'web','[]',0,'2021-09-08 14:41:07','2021-09-08 14:41:07','2021-09-09 00:41:07');
+INSERT INTO `oauth_access_tokens` VALUES ('0bb2766900fbcc983f284cb5c56af0ba8da57a29c9d29164eebe499a2aa24f5a9c4b6298803b579c',6,1,'web','[]',1,'2021-09-09 09:34:19','2021-09-09 09:34:48','2021-09-09 19:34:20'),('0e1fe67c16c982de984ea04e6fb3fb5db71b62da2570d47cb87e1dd4cf837f854364aebd9736373f',1,1,'web','[]',1,'2021-09-08 14:39:23','2021-09-08 14:39:51','2021-09-09 00:39:23'),('1ef3a529c346441b368520d7c8a56d3eb0af99c22ec4a1aab45306d3e274ab7bd2a990cf7a295e57',1,1,'web','[]',1,'2021-09-09 09:30:52','2021-09-09 09:34:14','2021-09-09 19:30:53'),('1f1dbda287cac52bc4bcf090942405198e011764c513e15c07db00083938998934753ed34878c9f7',6,1,'web','[]',1,'2021-09-08 14:43:40','2021-09-08 14:44:27','2021-09-09 00:43:40'),('37b30a35fbf9812434ac18b1457387c97bd84ec4876cc2edcffb3389f460132e425b7fad08c66d20',6,1,'web','[]',1,'2021-09-08 14:39:57','2021-09-08 14:40:31','2021-09-09 00:39:57'),('4ac60479342dd9e1645245b8ee5b2bde235efae0966ace18da06de47939bbf13cf4994201304bcb0',1,1,'web','[]',0,'2021-09-09 08:30:14','2021-09-09 08:30:14','2021-09-09 18:30:14'),('4c2aeca3a8a5da6bf1376c1b10cdb4548bd007d427bcb8a4689507fde5b18f07e3dca0036d62b9ec',1,1,'web','[]',0,'2021-09-09 09:34:54','2021-09-09 09:34:54','2021-09-09 19:34:54'),('5ddc8795c34056297894ab14b18aa58d190e69a55c2c29271b7ad4e3066ab110768d37bcd2834e3e',1,1,'web','[]',1,'2021-09-08 14:44:37','2021-09-08 14:44:52','2021-09-09 00:44:37'),('69be433b8524f1b518032206ff07e60ea58daca5ed453b7508de6ce3a55c89a1880fc49ed59d2698',6,1,'web','[]',1,'2021-09-08 14:44:56','2021-09-08 14:45:19','2021-09-09 00:44:56'),('8ebcd7b8da69e5c6c2f416799a8710467ccd7c698f0104020bbad846902e83be2374f644d7c35f57',6,1,'web','[]',1,'2021-09-08 14:42:41','2021-09-08 14:43:34','2021-09-09 00:42:41'),('97d813b904afc01b3c1e590836ce2ed510ecd656eb0e0eec3d6d8628fed4c4c30f7942b848cd79b4',1,1,'web','[]',1,'2021-09-10 08:59:20','2021-09-10 09:37:55','2021-09-10 18:59:20'),('b08dee864330dbbf4867864cbe7381e9698b7b4ea9a013ae3abf5bb8a63c1c73bb9e5818af5158be',1,1,'web','[]',0,'2021-09-10 08:09:42','2021-09-10 08:09:43','2021-09-10 18:09:43'),('b4fe45aa2a549b5aa157e19913010404457ff1ae8d155060e114edb59f88b593f615b17e3f607f01',1,1,'web','[]',1,'2021-09-08 14:38:46','2021-09-08 14:39:09','2021-09-09 00:38:46'),('bbf9436c6ef92d1e537a9fc7682e6b1ab88e955c72b134163332edfd8e049cd0b3b19ffa6061754b',1,1,'web','[]',0,'2021-09-08 15:19:26','2021-09-08 15:19:26','2021-09-09 01:19:26'),('e6a4fbde8e2d6bd3e2c5635f57a1a950d651e9616eae7dad1fe3bec7cd5a88b2779613b92dd8c3ed',6,1,'web','[]',0,'2021-09-09 09:36:55','2021-09-09 09:36:55','2021-09-09 19:36:55'),('e756a2b679af71c7fcc3f7caa7c56cede7755153d0cbec4758dee65ccacea53c77c072afc9ac4927',2,1,'web','[]',0,'2021-09-08 14:45:25','2021-09-08 14:45:25','2021-09-09 00:45:25'),('faad062e503ade076f64b08786cd6a950ea99ae9539c739358d588b2c0dd60935b0586c2a00050b5',1,1,'web','[]',0,'2021-09-08 14:41:07','2021-09-08 14:41:07','2021-09-09 00:41:07');
 /*!40000 ALTER TABLE `oauth_access_tokens` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -376,7 +401,7 @@ CREATE TABLE `role_has_permissions` (
 
 LOCK TABLES `role_has_permissions` WRITE;
 /*!40000 ALTER TABLE `role_has_permissions` DISABLE KEYS */;
-INSERT INTO `role_has_permissions` VALUES (1,1),(2,1),(3,1),(1,2);
+INSERT INTO `role_has_permissions` VALUES (1,1),(2,1),(3,1),(1,2),(1,3),(2,3),(3,3);
 /*!40000 ALTER TABLE `role_has_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -396,7 +421,7 @@ CREATE TABLE `roles` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `roles_name_guard_name_unique` (`name`,`guard_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -405,7 +430,7 @@ CREATE TABLE `roles` (
 
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
-INSERT INTO `roles` VALUES (1,'系統管理者','web','2021-09-08 13:59:43','2021-09-08 13:59:43',NULL),(2,'一般使用者','web','2021-09-08 14:05:27','2021-09-08 14:05:27',NULL);
+INSERT INTO `roles` VALUES (1,'系統管理者','web','2021-09-08 13:59:43','2021-09-08 13:59:43',NULL),(2,'一般使用者','web','2021-09-08 14:05:27','2021-09-08 14:05:27',NULL),(3,'一般使用者11','web','2021-09-09 08:41:24','2021-09-09 08:41:29','2021-09-09 08:41:29');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -455,4 +480,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-09-08 23:21:52
+-- Dump completed on 2021-09-10 17:39:27
