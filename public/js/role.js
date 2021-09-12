@@ -62626,16 +62626,17 @@ var set_info = createApp({
     }
   },
   mounted: function mounted() {
-    this.getPermission();
+    var _this6 = this;
+
+    this.getPermission().then(function (res) {
+      _this6.permissions = res.data;
+    });
   },
   methods: {
     getPermission: function getPermission() {
-      var _this6 = this;
-
       return new Promise(function (resolve) {
         axios.get('/role/permissions').then(function (res) {
-          _this6.permissions = res.data;
-          resolve();
+          resolve(res);
         });
       });
     },

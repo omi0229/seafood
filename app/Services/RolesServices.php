@@ -10,12 +10,16 @@ use Illuminate\Validation\Rule;
 
 class RolesServices
 {
+    static $model = 'App\Models\NewsTypes';
+
     static function authInputData($inputs)
     {
+        $model = app()->make(self::$model);
+
         $auth = [
             'name' => [
                 'required',
-                Rule::unique('roles')->ignore(Role::find(Role::decodeSlug($inputs['id'])))->whereNull('deleted_at')
+                Rule::unique('roles')->ignore($model::find($model::decodeSlug($inputs['id'])))->whereNull('deleted_at')
             ],
         ];
 

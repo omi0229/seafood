@@ -131,14 +131,15 @@ let set_info = createApp({
         },
     },
     mounted() {
-        this.getPermission();
+        this.getPermission().then(res => {
+            this.permissions = res.data;
+        });
     },
     methods: {
         getPermission() {
             return new Promise(resolve => {
                 axios.get('/role/permissions').then(res => {
-                    this.permissions = res.data;
-                    resolve();
+                    resolve(res);
                 });
             });
         },

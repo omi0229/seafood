@@ -38,6 +38,11 @@ mix.sass('resources/scss/role.scss', 'public/css')
 // sms
 mix.js('resources/js/sms.js', 'public/js')
 mix.sass('resources/scss/sms.scss', 'public/css')
+// news-types
+mix.js('resources/js/news-types.js', 'public/js')
+// news
+mix.js('resources/js/news.js', 'public/js')
+mix.sass('resources/scss/news.scss', 'public/css')
 
 // components search
 mix.sass('resources/scss/components/search.scss', 'public/css/components')

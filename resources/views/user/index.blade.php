@@ -133,7 +133,6 @@
                             <!-- v-for -->
                             <option v-for="item in select.roles" :value="item.id">${item.name}</option>
                         </select>
-
                     </div>
                     <div class="form-group">
                         <label>帳號啟用</label>

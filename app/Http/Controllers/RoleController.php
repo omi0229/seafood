@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Validator;
 use Illuminate\Http\Request;
 use App\Models\Role;
 use App\Models\Permission;
@@ -62,7 +61,7 @@ class RoleController extends Controller
             $info->syncPermissions($inputs['check']);
             return response()->json(['status' => true, 'message' => '編輯成功']);
         } else {
-            return response()->json(['status' => false, 'message' => '無此人員資料']);
+            return response()->json(['status' => false, 'message' => '無此權限資料']);
         }
     }
 

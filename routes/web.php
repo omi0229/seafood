@@ -9,6 +9,8 @@ use App\Http\Controllers\BasicController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SmsController;
+use App\Http\Controllers\NewsTypeController;
+use App\Http\Controllers\NewsController;
 
 
 /*
@@ -59,4 +61,20 @@ Route::middleware(['auth.web'])->group(function () {
     Route::get('sms', [SmsController::class, 'index']);
     Route::get('sms/get', [SmsController::class, 'get']);
     Route::post('sms/set', [SmsController::class, 'set']);
+
+    # 最新消息分類
+    Route::get('news-type', [NewsTypeController::class, 'index']);
+    Route::get('news-type/count', [NewsTypeController::class, 'count']);
+    Route::get('news-type/list/{page}', [NewsTypeController::class, 'list']);
+    Route::post('news-type/insert', [NewsTypeController::class, 'insert']);
+    Route::post('news-type/update', [NewsTypeController::class, 'update']);
+    Route::delete('news-type/delete', [NewsTypeController::class, 'delete']);
+
+    # 最新消息
+    Route::get('news', [NewsController::class, 'index']);
+    Route::get('news/count', [NewsController::class, 'count']);
+    Route::get('news/list/{page}', [NewsController::class, 'list']);
+    Route::post('news/insert', [NewsController::class, 'insert']);
+    Route::post('news/update', [NewsController::class, 'update']);
+    Route::delete('news/delete', [NewsController::class, 'delete']);
 });

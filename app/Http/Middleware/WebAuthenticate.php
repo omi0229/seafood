@@ -28,6 +28,8 @@ class WebAuthenticate
             'role' => 'set_manager',
             'user' => 'set_manager',
             'sms' => 'set_message',
+            'news-type' => 'news-type',
+            'news' => 'news',
         ];
 
         $login_user = \Session::get('seafood_user');

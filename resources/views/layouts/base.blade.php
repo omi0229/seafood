@@ -80,28 +80,28 @@
                     <nav class="mt-2">
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                             @php
-                                $permission = $permissions->where('name', 'set_basic')->first();
+                                $basic = $permissions->where('name', 'set_basic')->first();
                             @endphp
-                            @if($permission && $login_user->can('set_basic'))
+                            @if($basic && $login_user->can('set_basic'))
                             <li class="nav-item">
                                 <a href="/basic" class="nav-link">
                                     <i class="nav-icon fas fa-th"></i>
                                     <p>
-                                        {{$permission->display_name}}
+                                        {{$basic->display_name}}
                                     </p>
                                 </a>
                             </li>
                             @endif
 
                             @php
-                                $permission = $permissions->where('name', 'set_manager')->first();
+                                $set_manager = $permissions->where('name', 'set_manager')->first();
                             @endphp
-                            @if($permission && $login_user->can('set_manager'))
+                            @if($set_manager && $login_user->can('set_manager'))
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="nav-icon fas fa-user-cog"></i>
                                     <p>
-                                        {{$permission->display_name}}
+                                        {{$set_manager->display_name}}
                                         <i class="right fas fa-angle-left"></i>
                                     </p>
                                 </a>
@@ -123,30 +123,56 @@
                             @endif
 
                             @php
-                                $permission = $permissions->where('name', 'set_message')->first();
+                                $set_message = $permissions->where('name', 'set_message')->first();
                             @endphp
-                            @if($permission && $login_user->can('set_message'))
+                            @if($set_message && $login_user->can('set_message'))
                             <li class="nav-item">
                                 <a href="/sms" class="nav-link">
                                     <i class="nav-icon fas fa-sms"></i>
                                     <p>
-                                        {{$permission->display_name}}
+                                        {{$set_message->display_name}}
                                     </p>
                                 </a>
                             </li>
                             @endif
 
                             @php
-                                $permission = $permissions->where('name', 'news')->first();
+                                $news_manage = $permissions
+                                    ->filter(function ($p){
+                                        if($p->name == 'news-type' || $p->name == 'news'){
+                                            return true;
+                                        }
+
+                                        return false;
+                                    });
                             @endphp
-                            @if($permission && $login_user->can('news'))
+                            @if($news_manage->count() > 0 && $login_user->can('news-type') && $login_user->can('news-type'))
                             <li class="nav-item">
-                                <a href="/news" class="nav-link">
-                                    <i class="nav-icon fas fa-sms"></i>
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon far fa-newspaper"></i>
                                     <p>
-                                        {{$permission->display_name}}
+                                        最新消息
+                                        <i class="right fas fa-angle-left"></i>
                                     </p>
                                 </a>
+                                <ul class="nav nav-treeview">
+                                    @if($login_user->can('news-type'))
+                                    <li class="nav-item">
+                                        <a href="/news-type" class="nav-link">
+                                            <i class="nav-icon far fa-circle"></i>
+                                            <p>{{ $news_manage->where('name', 'news-type')->first()->display_name  }}</p>
+                                        </a>
+                                    </li>
+                                    @endif
+                                    @if($login_user->can('news'))
+                                    <li class="nav-item">
+                                        <a href="/news" class="nav-link">
+                                            <i class="nav-icon far fa-circle"></i>
+                                            <p>{{ $news_manage->where('name', 'news')->first()->display_name  }}</p>
+                                        </a>
+                                    </li>
+                                    @endif
+                                </ul>
                             </li>
                             @endif
 

@@ -101,7 +101,7 @@
                 <div class="modal-body px-5">
                     <div class="form-group">
                         <label for="name">名稱</label>
-                        <input type="text" maxlength="20" class="form-control form-control-sm" id="name" placeholder="請輸入姓名" v-model="user_info.name">
+                        <input type="text" maxlength="20" class="form-control form-control-sm" id="name" placeholder="請輸入名稱" v-model="user_info.name">
                     </div>
                     <div class="form-group">
                         <label>擁有權限</label>

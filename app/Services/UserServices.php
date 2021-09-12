@@ -11,12 +11,16 @@ use Illuminate\Validation\Rule;
 
 class UserServices
 {
+    static $model = 'App\Models\User';
+
     static function authInputData(&$inputs)
     {
+        $model = app()->make(self::$model);
+
         $auth = [
             'account' => [
                 'required',
-                Rule::unique('users')->ignore(User::find(User::decodeSlug($inputs['id'])))->whereNull('deleted_at')
+                Rule::unique('users')->ignore($model::find($model::decodeSlug($inputs['id'])))->whereNull('deleted_at')
             ],
             'name' => 'required',
             'email' => 'required|email',
