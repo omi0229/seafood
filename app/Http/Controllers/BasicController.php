@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Config;
 use App\Traits\Config as TraitsConfig;
 
-class basicController extends Controller
+class BasicController extends Controller
 {
     use TraitsConfig;
 
