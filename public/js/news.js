@@ -62452,6 +62452,16 @@ window.app = createApp({
       return function (datetime) {
         return moment__WEBPACK_IMPORTED_MODULE_1___default()(datetime).format('Y-MM-DD HH:mm');
       };
+    },
+    targetFormat: function targetFormat() {
+      return function (target) {
+        return target ? '開新視窗' : '直接開啟';
+      };
+    },
+    statusFormat: function statusFormat() {
+      return function (status) {
+        return status ? '顯示' : '不顯示';
+      };
     }
   },
   mounted: function mounted() {
@@ -62524,8 +62534,19 @@ window.app = createApp({
         'id': id
       });
 
-      set_info.info.name = info.name;
-      set_info.info.check = _.map(info.permissions, 'name');
+      set_info.info.news_types_id = info.news_types_id;
+      set_info.info.title = info.title;
+      set_info.info.start_date = info.start_date;
+      set_info.info.end_date = info.end_date;
+      set_info.info.href = info.href;
+      set_info.info.description = info.description;
+      set_info.info.target = info.target;
+      set_info.info.keywords = info.keywords.split(',');
+      set_info.info.status = info.status;
+      set_info.info.web_img_name = info.web_img_name;
+      set_info.info.web_img = '';
+      set_info.info.mobile_img_name = info.mobile_img_name;
+      set_info.info.mobile_img = '';
     },
     "delete": function _delete() {
       var _this4 = this;
@@ -62631,7 +62652,7 @@ var set_info = createApp({
       mode: 'create',
       date: new Date(),
       info: {
-        id: null,
+        id: '',
         news_types_id: '',
         title: '',
         start_date: '',
@@ -62639,12 +62660,16 @@ var set_info = createApp({
         href: '',
         description: '',
         target: '0',
+        keywords: [],
         status: '0',
-        web_img: null,
-        mobile_img: null
+        web_img_name: '請選擇檔案',
+        mobile_img_name: '請選擇檔案',
+        web_img: '',
+        mobile_img: ''
       },
-      web_img_name: '請選擇檔案',
-      mobile_img_name: '請選擇檔案',
+      value: {
+        keyword: ''
+      },
       select: {
         news_types: []
       }
@@ -62675,9 +62700,33 @@ var set_info = createApp({
         });
       });
     },
+    addKeyword: function addKeyword() {
+      if (!this.value.keyword) {
+        Toast.fire({
+          icon: 'error',
+          title: '請輸入關鍵字'
+        });
+        return false;
+      }
+
+      if (this.info.keywords.length < 10) {
+        this.info.keywords.push(this.value.keyword);
+      } else {
+        Toast.fire({
+          icon: 'error',
+          title: '最多設定10個關鍵字'
+        });
+      }
+    },
+    deleteKeyword: function deleteKeyword(key) {
+      this.info.keywords = _.remove(this.info.keywords, function (v, k) {
+        return k != key;
+      });
+    },
     dataInit: function dataInit() {
       $('input[data-target="#start_date"]').datetimepicker('clear');
       $('input[data-target="#end_date"]').datetimepicker('clear');
+      this.info.id = null;
       this.info.news_types_id = '';
       this.info.title = '';
       this.info.start_date = '';
@@ -62685,17 +62734,20 @@ var set_info = createApp({
       this.info.href = '';
       this.info.description = '';
       this.info.target = '0';
+      this.info.keywords = [];
       this.info.status = '0';
+      this.info.web_img_name = '';
       this.info.web_img = null;
+      this.info.mobile_img_name = '';
       this.info.mobile_img = null;
     },
     file: function file(e, type) {
       if (e.target && e.target.files[0]) {
         if (type == 'web') {
-          this.web_img_name = e.target.files[0].name;
+          this.info.web_img_name = e.target.files[0].name;
           this.info.web_img = e.target.files[0];
         } else if (type == 'mobile') {
-          this.mobile_img_name = e.target.files[0].name;
+          this.info.mobile_img_name = e.target.files[0].name;
           this.info.mobile_img = e.target.files[0];
         }
       }
@@ -62770,6 +62822,7 @@ var set_info = createApp({
       var url = this.mode === 'create' ? '/news/insert' : '/news/update';
       loading.show = true;
       var formData = new FormData();
+      formData.append("id", this.info.id);
       formData.append("news_types_id", this.info.news_types_id);
       formData.append("title", this.info.title);
       formData.append("start_date", this.info.start_date);
@@ -62777,7 +62830,10 @@ var set_info = createApp({
       formData.append("href", this.info.href);
       formData.append("description", this.info.description);
       formData.append("target", this.info.target);
+      formData.append("keywords", this.info.keywords);
       formData.append("status", this.info.status);
+      formData.append("web_img_name", this.info.web_img_name);
+      formData.append("mobile_img_name", this.info.mobile_img_name);
       formData.append("web_img", this.info.web_img);
       formData.append("mobile_img", this.info.mobile_img);
       var config = {

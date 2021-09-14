@@ -60,6 +60,7 @@
                                     <th class="text-center">結束日期</th>
                                     <th class="text-center">開啟方式</th>
                                     <th class="text-center">跑馬燈顯示</th>
+                                    <th class="text-center">功能</th>
                                 </tr>
                                 <tr v-else>
                                     <th class="text-center" colspan="5"><span class="text-danger">無最新消息資料</span></th>
@@ -71,10 +72,11 @@
                                     <td class="align-middle">
                                         <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check">
                                     </td>
-                                    <td>${item.name}</td>
+                                    <td>${item.title}</td>
                                     <td class="text-center">${dateFormat(item.start_date)}</td>
-                                    <td class="text-center">${dateFormat(item.end_start)}</td>
-                                    <td class="text-center"></td>
+                                    <td class="text-center">${dateFormat(item.end_date)}</td>
+                                    <td class="text-center">${targetFormat(item.target)}</td>
+                                    <td class="text-center">${statusFormat(item.status)}</td>
                                     <td class="text-center">
                                         <button type="button" class="btn btn-sm btn-info px-2" data-toggle="modal" data-target="#set-info" @click="modify(item.id)">
                                             <i class="fa fa-edit mr-1"></i> 編輯
@@ -108,11 +110,11 @@
                         <div class="d-flex align-items-center s-14">
                             <div class="form-check mr-3">
                                 <input id="disabled" class="form-check-input" type="radio" value="0" v-model="info.status">
-                                <label for="disabled" class="form-check-label">否</label>
+                                <label for="disabled" class="form-check-label">不顯示</label>
                             </div>
                             <div class="form-check">
                                 <input id="enabled" class="form-check-input" type="radio" value="1" v-model="info.status">
-                                <label for="enabled" class="form-check-label">是</label>
+                                <label for="enabled" class="form-check-label">顯示</label>
                             </div>
                         </div>
                     </div>
@@ -169,23 +171,16 @@
                     </div>
                     <div class="form-group">
                         <label for="news_keywords">關鍵字（最多10個）</label>
-                        <div class="input-group date" id="end_date" data-target-input="nearest">
-                            <input type="text" class="form-control form-control-sm datetimepicker-input s-14" placeholder="請輸入關鍵字" />
-                            <div class="input-group-append cursor">
+                        <div class="input-group">
+                            <input type="text" class="form-control form-control-sm s-14" maxlength="20" placeholder="請輸入關鍵字" v-model="value.keyword" />
+                            <div class="input-group-append cursor" @click="addKeyword">
                                 <div class="input-group-text bg-info"><i class="fas fa-plus"></i></div>
                             </div>
                         </div>
                         <div class="d-flex align-items-center s-14 mt-2">
                             <div class="border rounded p-2 news-keywords d-flex align-content-start flex-wrap">
-                                <div class="py-1 px-2 mb-1 mr-2 border rounded">1 <i class="text-danger fas fa-times-circle"></i></div>
-                                <div class="py-1 px-2 mb-1 mr-2 border rounded">abc <i class="text-danger fas fa-times-circle"></i></div>
-                                <div class="py-1 px-2 mb-1 mr-2 border rounded">efd <i class="text-danger fas fa-times-circle"></i></div>
-                                <div class="py-1 px-2 mb-1 mr-2 border rounded">fdfsd <i class="text-danger fas fa-times-circle"></i></div>
-                                <div class="py-1 px-2 mb-1 mr-2 border rounded">sdfjsldkfjsldkfjlsdkfj <i class="text-danger fas fa-times-circle"></i></div>
-                                <div class="py-1 px-2 mb-1 mr-2 border rounded">abc <i class="text-danger fas fa-times-circle"></i></div>
-                                <div class="py-1 px-2 mb-1 mr-2 border rounded">efd <i class="text-danger fas fa-times-circle"></i></div>
-                                <div class="py-1 px-2 mb-1 mr-2 border rounded">fdfsdfssdf <i class="text-danger fas fa-times-circle"></i></div>
-                                <div class="py-1 px-2 mb-1 mr-2 border rounded">sdfjsldkfjsldkfjlsdkfj <i class="text-danger fas fa-times-circle"></i></div>
+                                <!-- v-for -->
+                                <div class="py-1 px-2 mb-1 mr-2 rounded news-keywords-border" v-for="(item, key) in info.keywords">${item} <i class="text-danger fas fa-times-circle cursor" @click="deleteKeyword(key)"></i></div>
                             </div>
                         </div>
                     </div>
@@ -193,14 +188,14 @@
                         <label for="web_img">電腦版圖片</label>
                         <div class="custom-file">
                             <input ref="web_img" type="file" class="custom-file-input" id="web_img" @change="(e) => file(e, 'web')">
-                            <label class="custom-file-label s-14" for="web_img">${web_img_name}</label>
+                            <label class="custom-file-label s-14" for="web_img">${info.web_img_name}</label>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="mobile_img">手機版圖片</label>
                         <div class="custom-file">
                             <input ref="mobile_img" type="file" class="custom-file-input" id="mobile_img" @change="(e) => file(e, 'mobile')">
-                            <label class="custom-file-label s-14" for="mobile_img">${mobile_img_name}</label>
+                            <label class="custom-file-label s-14" for="mobile_img">${info.mobile_img_name}</label>
                         </div>
                     </div>
                 </div>
