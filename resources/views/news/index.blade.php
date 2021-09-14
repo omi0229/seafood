@@ -158,12 +158,34 @@
                         <label for="target">開啟方式</label>
                         <div class="d-flex align-items-center s-14">
                             <div class="form-check mr-3">
-                                <input class="form-check-input" type="radio" value="0" v-model="info.target">
-                                <label for="disabled" class="form-check-label">直接開啟</label>
+                                <input id="_top" class="form-check-input" type="radio" value="0" v-model="info.target">
+                                <label for="_top" class="form-check-label">直接開啟</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" value="1" v-model="info.target">
-                                <label for="enabled" class="form-check-label">開新視窗</label>
+                                <input id="_blank" class="form-check-input" type="radio" value="1" v-model="info.target">
+                                <label for="_blank" class="form-check-label">開新視窗</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="news_keywords">關鍵字（最多10個）</label>
+                        <div class="input-group date" id="end_date" data-target-input="nearest">
+                            <input type="text" class="form-control form-control-sm datetimepicker-input s-14" placeholder="請輸入關鍵字" />
+                            <div class="input-group-append cursor">
+                                <div class="input-group-text bg-info"><i class="fas fa-plus"></i></div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center s-14 mt-2">
+                            <div class="border rounded p-2 news-keywords d-flex align-content-start flex-wrap">
+                                <div class="py-1 px-2 mb-1 mr-2 border rounded">1 <i class="text-danger fas fa-times-circle"></i></div>
+                                <div class="py-1 px-2 mb-1 mr-2 border rounded">abc <i class="text-danger fas fa-times-circle"></i></div>
+                                <div class="py-1 px-2 mb-1 mr-2 border rounded">efd <i class="text-danger fas fa-times-circle"></i></div>
+                                <div class="py-1 px-2 mb-1 mr-2 border rounded">fdfsd <i class="text-danger fas fa-times-circle"></i></div>
+                                <div class="py-1 px-2 mb-1 mr-2 border rounded">sdfjsldkfjsldkfjlsdkfj <i class="text-danger fas fa-times-circle"></i></div>
+                                <div class="py-1 px-2 mb-1 mr-2 border rounded">abc <i class="text-danger fas fa-times-circle"></i></div>
+                                <div class="py-1 px-2 mb-1 mr-2 border rounded">efd <i class="text-danger fas fa-times-circle"></i></div>
+                                <div class="py-1 px-2 mb-1 mr-2 border rounded">fdfsdfssdf <i class="text-danger fas fa-times-circle"></i></div>
+                                <div class="py-1 px-2 mb-1 mr-2 border rounded">sdfjsldkfjsldkfjlsdkfj <i class="text-danger fas fa-times-circle"></i></div>
                             </div>
                         </div>
                     </div>

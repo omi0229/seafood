@@ -7,3 +7,8 @@
   padding: 0.45rem 0.75rem;
   content: "選擇檔案";
 }
+
+.news-keywords {
+  min-height: 130px;
+  width: 100%;
+}
