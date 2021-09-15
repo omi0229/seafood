@@ -3,6 +3,7 @@
 @section('content')
     <div id="app" v-cloak>
         <div class="content-header px-4">
+            <!--
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
@@ -16,6 +17,7 @@
                     </div>
                 </div>
             </div>
+            -->
         </div>
 
         <div class="content px-4">
@@ -25,6 +27,10 @@
                         <h2>海龍王 後台管理系統</h2>
                     </div>
                 </div>
+            </div>
+            <div class="mt-4">
+                <div>更新紀錄</div>
+                <div>2021.09.15 最新消息管理初版完成</div>
             </div>
         </div>
     </div>

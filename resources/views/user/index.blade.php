@@ -149,6 +149,7 @@
                     </div>
                 </div>
                 <div class="modal-footer justify-content-end">
+                    <button type="button" class="btn btn-sm btn-danger px-3 mr-1" data-dismiss="modal" aria-label="Close">取消</button>
                     <button type="button" class="btn btn-sm btn-primary px-3" @click="confirm('save')">儲存</button>
                 </div>
             </div>

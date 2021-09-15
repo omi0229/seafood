@@ -2,6 +2,8 @@ import moment from 'moment';
 import { swal2Confirm } from './bootstrap';
 import { search } from './components/search.js';
 import { pagination } from './components/pagination.js';
+import { Fancybox, Carousel, Panzoom } from "@fancyapps/ui";
+import "@fancyapps/ui/dist/fancybox.css";
 
 window.app = createApp({
     components: {
@@ -86,15 +88,21 @@ window.app = createApp({
             set_info.info.title = info.title;
             set_info.info.start_date = info.start_date;
             set_info.info.end_date = info.end_date;
+
+            $('input[data-target="#start_date"]').val(info.start_date.substr(0, 16));
+            $('input[data-target="#end_date"]').val(info.end_date.substr(0, 16));
+
             set_info.info.href = info.href;
             set_info.info.description = info.description;
             set_info.info.target = info.target;
-            set_info.info.keywords = info.keywords.split(',');
+            set_info.info.keywords = info.keywords ? info.keywords.split(',') : [];
             set_info.info.status = info.status;
-            set_info.info.web_img_name = info.web_img_name;
+            set_info.info.web_img_name = info.web_img_name || '請選擇檔案';
             set_info.info.web_img = '';
-            set_info.info.mobile_img_name = info.mobile_img_name;
+            set_info.info.web_img_path = info.web_img_path;
+            set_info.info.mobile_img_name = info.mobile_img_name || '請選擇檔案';
             set_info.info.mobile_img = '';
+            set_info.info.mobile_img_path = info.mobile_img_path;
         },
         delete() {
             if(this.check.length > 0) {
@@ -123,7 +131,7 @@ window.app = createApp({
             });
         },
         confirm() {
-            swal2Confirm('確定刪除選取的權限？').then(confirm => {
+            swal2Confirm('確定刪除選取的項目？').then(confirm => {
                 if (confirm) {
                     this.delete();
                 }
@@ -148,10 +156,14 @@ let set_info = createApp({
                 target: '0',
                 keywords: [],
                 status: '0',
+                web_img_delete: 0,
                 web_img_name: '請選擇檔案',
-                mobile_img_name: '請選擇檔案',
                 web_img: '',
+                web_img_path: '',
+                mobile_img_delete: 0,
+                mobile_img_name: '請選擇檔案',
                 mobile_img: '',
+                mobile_img_path: '',
             },
             value: {
                 keyword: '',
@@ -172,6 +184,13 @@ let set_info = createApp({
         $('#start_date').datetimepicker(datetimepicker_obj);
         $('#end_date').datetimepicker(datetimepicker_obj);
 
+        $(document).on('click', '[data-toggle="lightbox"]', function (event) {
+            event.preventDefault();
+            $(this).ekkoLightbox({
+                alwaysShowClose: true
+            });
+        });
+
         this.getNewsTypes().then(res => {
             this.select.news_types = res.data.data;
         });
@@ -183,6 +202,17 @@ let set_info = createApp({
                     resolve(res);
                 });
             });
+        },
+        deletePicture(type) {
+            if (type == 'web') {
+                this.info.web_img_delete = 1;
+                this.info.web_img_name = '請選擇檔案';
+                this.info.web_img = '';
+            } else if (type == 'mobile') {
+                this.info.mobile_img_delete = 1;
+                this.info.mobile_img_name = '請選擇檔案';
+                this.info.mobile_img = '';
+            }
         },
         addKeyword() {
             if (!this.value.keyword) {
@@ -205,6 +235,7 @@ let set_info = createApp({
             $('input[data-target="#start_date"]').datetimepicker('clear');
             $('input[data-target="#end_date"]').datetimepicker('clear');
 
+            this.value.keyword = '';
 
             this.info.id = null;
             this.info.news_types_id = '';
@@ -216,18 +247,24 @@ let set_info = createApp({
             this.info.target = '0';
             this.info.keywords = [];
             this.info.status = '0';
-            this.info.web_img_name = '';
+            this.info.web_img_delete = 0;
+            this.info.web_img_name = '請選擇檔案';
             this.info.web_img = null;
-            this.info.mobile_img_name = '';
+            this.info.web_img_path = '';
+            this.info.mobile_img_delete = 0;
+            this.info.mobile_img_name = '請選擇檔案';
             this.info.mobile_img = null;
+            this.info.mobile_img_path = '';
         },
         file(e, type) {
             if (e.target && e.target.files[0]) {
                 if (type == 'web') {
+                    this.info.web_img_delete = 0;
                     this.info.web_img_name = e.target.files[0].name;
                     this.info.web_img = e.target.files[0];
 
                 } else if (type == 'mobile') {
+                    this.info.mobile_img_delete = 0;
                     this.info.mobile_img_name = e.target.files[0].name;
                     this.info.mobile_img = e.target.files[0];
                 }
@@ -291,9 +328,11 @@ let set_info = createApp({
             formData.append("target", this.info.target);
             formData.append("keywords", this.info.keywords);
             formData.append("status", this.info.status);
+            formData.append("web_img_delete", this.info.web_img_delete);
             formData.append("web_img_name", this.info.web_img_name);
-            formData.append("mobile_img_name", this.info.mobile_img_name);
             formData.append("web_img", this.info.web_img);
+            formData.append("mobile_img_delete", this.info.mobile_img_delete);
+            formData.append("mobile_img_name", this.info.mobile_img_name);
             formData.append("mobile_img", this.info.mobile_img);
 
             let config = {

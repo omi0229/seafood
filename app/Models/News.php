@@ -12,7 +12,6 @@ class News extends Model
     use HasFactory, SoftDeletes, HashId;
 
     protected $fillable = [
-        'id',
         'news_types_id',
         'title',
         'start_date',
@@ -28,4 +27,9 @@ class News extends Model
         'target',
         'status',
     ];
+
+    public function news_types()
+    {
+        return $this->belongsTo('App\Models\NewsTypes');
+    }
 }

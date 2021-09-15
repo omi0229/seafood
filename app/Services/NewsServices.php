@@ -11,7 +11,7 @@ class NewsServices
 {
     static $model = 'App\Models\News';
 
-    static function authInputData($inputs)
+    static function authInputData(&$inputs)
     {
         $model = app()->make(self::$model);
 

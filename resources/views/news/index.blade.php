@@ -185,14 +185,26 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="web_img">電腦版圖片</label>
+                        <div class="d-flex align-items-center">
+                            <label for="web_img">電腦版圖片</label>
+                            <i class="fas fa-minus-circle text-danger ml-2 mb-2 cursor" title="圖片刪除" @click="deletePicture('web')"></i>
+                            <a data-fancybox class="ml-2 mb-2" :href="info.web_img_path">
+                                <i class="fas fa-image text-info cursor" title="圖片預覽" v-show="mode == 'modify' && info.web_img_path"></i>
+                            </a>
+                        </div>
                         <div class="custom-file">
                             <input ref="web_img" type="file" class="custom-file-input" id="web_img" @change="(e) => file(e, 'web')">
                             <label class="custom-file-label s-14" for="web_img">${info.web_img_name}</label>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="mobile_img">手機版圖片</label>
+                        <div class="d-flex align-items-center">
+                            <label for="mobile_img">手機版圖片</label>
+                            <i class="fas fa-minus-circle text-danger ml-2 mb-2 cursor" title="圖片刪除" @click="deletePicture('mobile')"></i>
+                            <a data-fancybox class="ml-2 mb-2" :href="info.mobile_img_path">
+                                <i class="fas fa-image text-info cursor" title="圖片預覽" v-show="mode == 'modify' && info.mobile_img_path"></i>
+                            </a>
+                        </div>
                         <div class="custom-file">
                             <input ref="mobile_img" type="file" class="custom-file-input" id="mobile_img" @change="(e) => file(e, 'mobile')">
                             <label class="custom-file-label s-14" for="mobile_img">${info.mobile_img_name}</label>
@@ -200,6 +212,7 @@
                     </div>
                 </div>
                 <div class="modal-footer justify-content-end">
+                    <button type="button" class="btn btn-sm btn-danger px-3 mr-1" data-dismiss="modal" aria-label="Close">取消</button>
                     <button type="button" class="btn btn-sm btn-primary px-3" @click="confirm('save')">儲存</button>
                 </div>
             </div>
