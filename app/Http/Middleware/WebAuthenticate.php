@@ -30,6 +30,8 @@ class WebAuthenticate
             'sms' => 'set_message',
             'news-type' => 'news-type',
             'news' => 'news',
+            'cooking-type' => 'cooking-type',
+            'cooking' => 'cooking',
         ];
 
         $login_user = \Session::get('seafood_user');

@@ -146,7 +146,7 @@
                                         return false;
                                     });
                             @endphp
-                            @if($news_manage->count() > 0 && $login_user->can('news-type') && $login_user->can('news-type'))
+                            @if($news_manage->count() > 0 && ($login_user->can('news-type') || $login_user->can('news')))
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="nav-icon far fa-newspaper"></i>
@@ -169,6 +169,46 @@
                                         <a href="/news" class="nav-link">
                                             <i class="nav-icon far fa-circle"></i>
                                             <p>{{ $news_manage->where('name', 'news')->first()->display_name  }}</p>
+                                        </a>
+                                    </li>
+                                    @endif
+                                </ul>
+                            </li>
+                            @endif
+
+                            @php
+                                $cooking_manage = $permissions
+                                    ->filter(function ($p){
+                                        if($p->name == 'cooking-type' || $p->name == 'cooking'){
+                                            return true;
+                                        }
+
+                                        return false;
+                                    });
+                            @endphp
+                            @if($cooking_manage->count() > 0 && ($login_user->can('cooking-type') || $login_user->can('cooking')))
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon fab fa-youtube"></i>
+                                    <p>
+                                        烹飪教學
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @if($login_user->can('cooking-type'))
+                                    <li class="nav-item">
+                                        <a href="/cooking-type" class="nav-link">
+                                            <i class="nav-icon far fa-circle"></i>
+                                            <p>{{ $cooking_manage->where('name', 'cooking-type')->first()->display_name  }}</p>
+                                        </a>
+                                    </li>
+                                    @endif
+                                    @if($login_user->can('cooking'))
+                                    <li class="nav-item">
+                                        <a href="/cooking" class="nav-link">
+                                            <i class="nav-icon far fa-circle"></i>
+                                            <p>{{ $cooking_manage->where('name', 'cooking')->first()->display_name  }}</p>
                                         </a>
                                     </li>
                                     @endif

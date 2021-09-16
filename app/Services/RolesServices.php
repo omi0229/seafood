@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
 
 class RolesServices
 {
-    static $model = 'App\Models\NewsTypes';
+    static $model = 'App\Models\Role';
 
     static function authInputData($inputs)
     {

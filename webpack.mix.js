@@ -43,6 +43,11 @@ mix.js('resources/js/news-types.js', 'public/js')
 // news
 mix.js('resources/js/news.js', 'public/js')
 mix.sass('resources/scss/news.scss', 'public/css')
+// cooking-types
+mix.js('resources/js/cooking-types.js', 'public/js')
+// cooking
+mix.js('resources/js/cooking.js', 'public/js')
+mix.sass('resources/scss/cooking.scss', 'public/css')
 
 // components search
 mix.sass('resources/scss/components/search.scss', 'public/css/components')

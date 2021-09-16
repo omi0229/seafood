@@ -11,6 +11,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\NewsTypeController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\CookingTypeController;
+use App\Http\Controllers\CookingController;
 
 
 /*
@@ -77,4 +79,20 @@ Route::middleware(['auth.web'])->group(function () {
     Route::post('news/insert', [NewsController::class, 'insert']);
     Route::post('news/update', [NewsController::class, 'update']);
     Route::delete('news/delete', [NewsController::class, 'delete']);
+
+    # 最新消息分類
+    Route::get('cooking-type', [CookingTypeController::class, 'index']);
+    Route::get('cooking-type/count', [CookingTypeController::class, 'count']);
+    Route::get('cooking-type/list/{page}', [CookingTypeController::class, 'list']);
+    Route::post('cooking-type/insert', [CookingTypeController::class, 'insert']);
+    Route::post('cooking-type/update', [CookingTypeController::class, 'update']);
+    Route::delete('cooking-type/delete', [CookingTypeController::class, 'delete']);
+
+    # 最新消息
+    Route::get('cooking', [CookingController::class, 'index']);
+    Route::get('cooking/count', [CookingController::class, 'count']);
+    Route::get('cooking/list/{page}', [CookingController::class, 'list']);
+    Route::post('cooking/insert', [CookingController::class, 'insert']);
+    Route::post('cooking/update', [CookingController::class, 'update']);
+    Route::delete('cooking/delete', [CookingController::class, 'delete']);
 });

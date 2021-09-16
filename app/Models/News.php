@@ -19,7 +19,6 @@ class News extends Model
         'href',
         'description',
         'keywords',
-        'keywords',
         'web_img_name',
         'web_img',
         'mobile_img_name',

@@ -19,6 +19,7 @@
         "sass-loader": "12.1.0"
     },
     "dependencies": {
+        "@ckeditor/ckeditor5-upload": "^29.2.0",
         "@fancyapps/ui": "^4.0.4",
         "load-awesome": "^1.1.0",
         "moment": "^2.29.1",

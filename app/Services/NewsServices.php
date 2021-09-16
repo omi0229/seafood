@@ -27,10 +27,10 @@ class NewsServices
 
         $tip = [
             'news_types_id.required' => '請選擇分類',
-            'title.required' => '請填寫權限名稱',
-            'title.unique' => '已有重複權限名稱',
-            'start_date.required' => '請填寫權限名稱',
-            'end_date.required' => '請填寫權限名稱',
+            'title.required' => '請填寫消息名稱',
+            'title.unique' => '已有重複消息名稱',
+            'start_date.required' => '請填寫開始時間',
+            'end_date.required' => '請填寫結束時間',
         ];
 
         return Validator::make($inputs, $auth, $tip);

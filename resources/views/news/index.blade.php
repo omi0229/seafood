@@ -94,7 +94,7 @@
     </div>
 
     <div class="modal fade" id="set-info" data-backdrop="static">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
@@ -154,7 +154,7 @@
                     </div>
                     <div class="form-group">
                         <label for="description">描述</label>
-                        <textarea id="description" placeholder="請輸入描述" class="form-control s-14" v-model="info.description"></textarea>
+                        <textarea id="description" placeholder="請輸入描述"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="target">開啟方式</label>
@@ -222,5 +222,6 @@
     <script src="plugins/moment/moment-with-locales.min.js"></script>
     <script src="plugins/inputmask/jquery.inputmask.min.js"></script>
     <script src="plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="plugins/ckeditor/ckeditor.js"></script>
     <script src="js/news.js"></script>
 @endsection

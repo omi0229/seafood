@@ -15,9 +15,6 @@ class NewsTypes extends Model
         'name',
     ];
 
-    /**
-     * 取得部落格文章的評論。
-     */
     public function news()
     {
         return $this->hasMany('App\Models\News');

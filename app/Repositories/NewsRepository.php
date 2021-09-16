@@ -54,7 +54,7 @@ class NewsRepository extends Repository
     {
         $keywords = data_get($params, 'keywords');
 
-        $data = !$keywords ? $this->model : $this->model->where('name', 'LIKE', '%' . $keywords . '%');
+        $data = !$keywords ? $this->model : $this->model->where('title', 'LIKE', '%' . $keywords . '%');
 
         return $data->count();
     }

@@ -20,7 +20,7 @@ class CreateNewsTable extends Migration
             $table->dateTime('start_date')->comment('發表時間');
             $table->dateTime('end_date')->comment('截止時間');
             $table->string('href', 200)->comment('超連結')->nullable();
-            $table->text('description')->comment('描述')->nullable();
+            $table->longText('description')->comment('描述')->nullable();
             $table->text('keywords')->comment('關鍵字')->nullable();
             $table->string('web_img_name', 50)->comment('電腦版圖片名稱')->nullable();
             $table->string('web_img', 200)->comment('電腦版圖片路徑')->nullable();

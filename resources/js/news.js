@@ -76,6 +76,7 @@ window.app = createApp({
             });
         },
         create() {
+            CKEDITOR.instances["description"].setData('');
             set_info.dataInit();
             set_info.mode = 'create';
         },
@@ -93,7 +94,7 @@ window.app = createApp({
             $('input[data-target="#end_date"]').val(info.end_date.substr(0, 16));
 
             set_info.info.href = info.href;
-            set_info.info.description = info.description;
+            CKEDITOR.instances["description"].setData(info.description);
             set_info.info.target = info.target;
             set_info.info.keywords = info.keywords ? info.keywords.split(',') : [];
             set_info.info.status = info.status;
@@ -152,7 +153,6 @@ let set_info = createApp({
                 start_date: '',
                 end_date: '',
                 href: '',
-                description: '',
                 target: '0',
                 keywords: [],
                 status: '0',
@@ -184,16 +184,11 @@ let set_info = createApp({
         $('#start_date').datetimepicker(datetimepicker_obj);
         $('#end_date').datetimepicker(datetimepicker_obj);
 
-        $(document).on('click', '[data-toggle="lightbox"]', function (event) {
-            event.preventDefault();
-            $(this).ekkoLightbox({
-                alwaysShowClose: true
-            });
-        });
-
         this.getNewsTypes().then(res => {
             this.select.news_types = res.data.data;
         });
+
+        CKEDITOR.replace("description");
     },
     methods: {
         getNewsTypes() {
@@ -243,7 +238,6 @@ let set_info = createApp({
             this.info.start_date = '';
             this.info.end_date = '';
             this.info.href = '';
-            this.info.description = '';
             this.info.target = '0';
             this.info.keywords = [];
             this.info.status = '0';
@@ -324,7 +318,7 @@ let set_info = createApp({
             formData.append("start_date", this.info.start_date);
             formData.append("end_date", this.info.end_date);
             formData.append("href", this.info.href);
-            formData.append("description", this.info.description);
+            formData.append("description", CKEDITOR.instances["description"].getData());
             formData.append("target", this.info.target);
             formData.append("keywords", this.info.keywords);
             formData.append("status", this.info.status);
