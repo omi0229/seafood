@@ -16,13 +16,14 @@ class CookingServices
         $model = app()->make(self::$model);
 
         $auth = [
-            'news_types_id' => 'required',
+            'cooking_types_id' => 'required',
             'title' => [
                 'required',
                 Rule::unique('cooking')->ignore($model::find($model::decodeSlug($inputs['id'])))->whereNull('deleted_at')
             ],
             'start_date' => 'required',
             'end_date' => 'required',
+            'youtube_id' => 'required',
         ];
 
         $tip = [
@@ -31,6 +32,7 @@ class CookingServices
             'title.unique' => '已有重複教學名稱',
             'start_date.required' => '請填寫開始時間',
             'end_date.required' => '請填寫結束時間',
+            'youtube_id.required' => '請填寫youtube網址',
         ];
 
         return Validator::make($inputs, $auth, $tip);

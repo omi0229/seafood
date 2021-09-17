@@ -120,10 +120,10 @@
                     </div>
                     <div class="form-group">
                         <label for="type">分類 <span class="text-danger">*</span></label>
-                        <select id="type" class="form-control form-control-sm s-14" v-model="info.news_types_id">
+                        <select id="type" class="form-control form-control-sm s-14" v-model="info.cooking_types_id">
                             <option value="">請選擇分類</option>
                             <!-- v-for -->
-                            <option v-for="item in select.news_types" :value="item.id">${item.name}</option>
+                            <option v-for="item in select.cooking_types" :value="item.id">${item.name}</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -186,7 +186,7 @@
                     </div>
                     <div class="form-group">
                         <label for="web_img">youtube網址</label>
-                        <input type="text" class="form-control form-control-sm s-14" maxlength="20" placeholder="請輸入網址" v-model="info.youtube_url"/>
+                        <input type="text" class="form-control form-control-sm s-14" maxlength="200" placeholder="請輸入網址" v-model="info.youtube_url"/>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-end">

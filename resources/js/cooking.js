@@ -97,6 +97,7 @@ window.app = createApp({
             set_info.info.keywords = info.keywords ? info.keywords.split(',') : [];
             set_info.info.status = info.status;
             set_info.info.youtube_id = info.youtube_id;
+            set_info.info.youtube_url = info.youtube_url;
         },
         delete() {
             if(this.check.length > 0) {
@@ -247,6 +248,23 @@ let set_info = createApp({
             data.start_date = start_date;
             data.end_date = end_date;
 
+            if (!data.youtube_url) {
+                return {auth: false, message: 'youtube網址不得為空！'};
+            }
+
+            try {
+                let url = new URL(data.youtube_url);
+
+
+
+                let params = url.searchParams;
+                if (!((url.host + url.pathname == 'www.youtube.com/watch' && params.get('v')) || (url.host == 'youtu.be' && url.pathname.substr(1)) || (url.host == 'www.youtube.com' && url.pathname.substr(0, 7) == '/embed/' && url.pathname.substr(7)))) {
+                    return {auth: false, message: 'youtube網址格式錯誤！'};
+                }
+            } catch (e) {
+                return {auth: false, message: 'youtube網址格式錯誤！'};
+            }
+
             return {auth: true, message: 'success'};
         },
         confirm() {
@@ -267,26 +285,19 @@ let set_info = createApp({
         save() {
             let url = this.mode === 'create' ? '/cooking/insert' : '/cooking/update';
             loading.show = true;
-            let formData = new FormData;
-            formData.append("id", this.info.id);
-            formData.append("cooking_types_id", this.info.cooking_types_id);
-            formData.append("title", this.info.title);
-            formData.append("start_date", this.info.start_date);
-            formData.append("end_date", this.info.end_date);
-            formData.append("href", this.info.href);
-            formData.append("description", CKEDITOR.instances["description"].getData());
-            formData.append("target", this.info.target);
-            formData.append("keywords", this.info.keywords);
-            formData.append("status", this.info.status);
-            formData.append("youtube_url", this.info.youtube_url);
 
-            let config = {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
+            let youtube_url = new URL(this.info.youtube_url);
+
+            if (youtube_url.host + youtube_url.pathname == 'www.youtube.com/watch') {
+                let params = youtube_url.searchParams;
+                this.info.youtube_id = params.get('v');
+            } else if (youtube_url.host == 'youtu.be') {
+                this.info.youtube_id = youtube_url.pathname.substr(1);
+            } else if (youtube_url.host == 'www.youtube.com' && youtube_url.pathname.substr(0, 7) == '/embed/' && youtube_url.pathname.substr(7)){
+                this.info.youtube_id = youtube_url.pathname.substr(7);
             }
 
-            axios.post(url, formData, config).then(async res => {
+            axios.post(url, this.info).then(async res => {
                 if (res.data.status) {
                     $('#set-info').modal('hide');
                 }

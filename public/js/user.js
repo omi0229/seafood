@@ -19117,7 +19117,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "swal2Confirm": () => (/* binding */ swal2Confirm),
 /* harmony export */   "getRoles": () => (/* binding */ getRoles)
 /* harmony export */ });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -19142,7 +19150,7 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 // });
 
 
-window.createApp = vue__WEBPACK_IMPORTED_MODULE_0__.createApp;
+window.createApp = vue__WEBPACK_IMPORTED_MODULE_1__.createApp;
 window.Swal = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js"); // 驗證錯誤提示
 
 window.Toast = Swal.mixin({
@@ -19150,7 +19158,137 @@ window.Toast = Swal.mixin({
   position: 'top',
   showConfirmButton: false,
   timer: 3000
-}); // 密碼規則(8碼以上數字+英文)
+}); // 全域性axios post方法封裝
+
+window.axiosGetMethod = function (url) {
+  return new Promise(function (resolve) {
+    axios.get(url).then(function (res) {
+      resolve(res);
+    })["catch"](function (error) {
+      axios.post('/logout').then( /*#__PURE__*/function () {
+        var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(res) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  if (res.data.status) {
+                    location.href = '/login';
+                  }
+
+                case 1:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          }, _callee);
+        }));
+
+        return function (_x) {
+          return _ref.apply(this, arguments);
+        };
+      }());
+    });
+  });
+}; // 全域性axios post方法封裝
+
+
+window.axiosPostMethod = function (url, data) {
+  return new Promise(function (resolve) {
+    axios.post(url, data).then( /*#__PURE__*/function () {
+      var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(res) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                resolve(res);
+
+              case 1:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }));
+
+      return function (_x2) {
+        return _ref2.apply(this, arguments);
+      };
+    }())["catch"](function (error) {
+      axios.post('/logout').then( /*#__PURE__*/function () {
+        var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(res) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+            while (1) {
+              switch (_context3.prev = _context3.next) {
+                case 0:
+                  if (res.data.status) {
+                    location.href = '/login';
+                  }
+
+                case 1:
+                case "end":
+                  return _context3.stop();
+              }
+            }
+          }, _callee3);
+        }));
+
+        return function (_x3) {
+          return _ref3.apply(this, arguments);
+        };
+      }());
+    });
+  });
+}; // 全域性axios delete方法封裝
+
+
+window.axiosDeleteMethod = function (url, data) {
+  return new Promise(function (resolve) {
+    axios["delete"](url, data).then( /*#__PURE__*/function () {
+      var _ref4 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(res) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                resolve(res);
+
+              case 1:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4);
+      }));
+
+      return function (_x4) {
+        return _ref4.apply(this, arguments);
+      };
+    }())["catch"](function (error) {
+      axios.post('/logout').then( /*#__PURE__*/function () {
+        var _ref5 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(res) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
+            while (1) {
+              switch (_context5.prev = _context5.next) {
+                case 0:
+                  if (res.data.status) {
+                    location.href = '/login';
+                  }
+
+                case 1:
+                case "end":
+                  return _context5.stop();
+              }
+            }
+          }, _callee5);
+        }));
+
+        return function (_x5) {
+          return _ref5.apply(this, arguments);
+        };
+      }());
+    });
+  });
+}; // 密碼規則(8碼以上數字+英文)
+
 
 var passwordRule = function passwordRule(password) {
   var rules = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
@@ -19204,7 +19342,7 @@ var getRoles = function getRoles() {
     var url = page ? '/role/list/' + page : '/role/list/all'; // has keyword
 
     url += keywords ? '?keywords=' + keywords : null;
-    axios.get(url).then(function (res) {
+    axiosGetMethod(url).then(function (res) {
       resolve(res);
     });
   });
@@ -41021,7 +41159,7 @@ window.app = createApp({
 
       return new Promise(function (resolve) {
         var url = !_this.search_text ? '/user/count' : '/user/count?keywords=' + _this.search_text;
-        axios.get(url).then(function (res) {
+        axiosGetMethod(url).then(function (res) {
           _this.all_count = res.data.count;
           _this.page_count = res.data.page_count;
           resolve();
@@ -41038,7 +41176,7 @@ window.app = createApp({
           url += '?keywords=' + _this2.search_text;
         }
 
-        axios.get(url).then(function (res) {
+        axiosGetMethod(url).then(function (res) {
           _this2.list = res.data.data;
 
           if (loading && loading.show) {
@@ -41074,7 +41212,7 @@ window.app = createApp({
 
       if (this.check.length > 0) {
         loading.show = true;
-        axios["delete"]('/user/delete', {
+        axiosDeleteMethod('/user/delete', {
           data: this.check
         }).then( /*#__PURE__*/function () {
           var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(res) {
@@ -41082,16 +41220,21 @@ window.app = createApp({
               while (1) {
                 switch (_context.prev = _context.next) {
                   case 0:
-                    if (res.data.status) {
-                      Toast.fire({
-                        icon: 'success',
-                        title: '刪除成功'
-                      });
-
-                      _this3.searchService('delete');
+                    if (!res.data.status) {
+                      _context.next = 4;
+                      break;
                     }
 
-                  case 1:
+                    _context.next = 3;
+                    return _this3.searchService('delete');
+
+                  case 3:
+                    Toast.fire({
+                      icon: 'success',
+                      title: '刪除成功'
+                    });
+
+                  case 4:
                   case "end":
                     return _context.stop();
                 }
@@ -41312,7 +41455,7 @@ var set_user = createApp({
     save: function save() {
       var url = this.mode === 'create' ? '/user/insert' : '/user/update';
       loading.show = true;
-      axios.post(url, this.user_info).then( /*#__PURE__*/function () {
+      axiosPostMethod(url, this.user_info).then( /*#__PURE__*/function () {
         var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(res) {
           var icon;
           return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
@@ -41344,7 +41487,7 @@ var set_user = createApp({
         return function (_x3) {
           return _ref3.apply(this, arguments);
         };
-      }())["catch"](function (error) {});
+      }());
     }
   }
 }).mount('#set-user');

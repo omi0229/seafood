@@ -25,7 +25,7 @@ class CookingController extends Controller
 
     public function insert(Request $request)
     {
-        $inputs = $request->only('id', 'news_types_id', 'title', 'start_date', 'end_date', 'href', 'description', 'target', 'keywords', 'status', 'web_img_name', 'mobile_img_name');
+        $inputs = $request->only('id', 'cooking_types_id', 'title', 'start_date', 'end_date', 'href', 'description', 'target', 'keywords', 'status', 'youtube_id');
 
         # 驗證資料
         $validator = $this->services::authInputData($inputs);
@@ -45,7 +45,7 @@ class CookingController extends Controller
             return response()->json(['status' => false, 'message' => '修改失敗']);
         }
 
-        $inputs = $request->only('id', 'news_types_id', 'title', 'start_date', 'end_date', 'href', 'description', 'target', 'keywords', 'status', 'web_img_name', 'mobile_img_name');
+        $inputs = $request->only('id', 'cooking_types_id', 'title', 'start_date', 'end_date', 'href', 'description', 'target', 'keywords', 'status', 'youtube_id');
 
         # 驗證資料
         $validator = $this->services::authInputData($inputs);

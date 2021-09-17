@@ -42,7 +42,7 @@ class CookingRepository extends Repository
             $list[$key]['cooking_types_id'] = $row->cooking_types->hash_id ?? '';
             $list[$key]['cooking_types_name'] = $row->cooking_types->name ?? '';
 
-            $list[$key]['youtube_url'] = $row->youtube_id;
+            $list[$key]['youtube_url'] = 'https://www.youtube.com/embed/' . $row->youtube_id;
         }
 
         return $list;
@@ -52,8 +52,6 @@ class CookingRepository extends Repository
     {
         $keywords = data_get($params, 'keywords');
 
-        dd($this->model->count());
-
         $data = !$keywords ? $this->model : $this->model->where('title', 'LIKE', '%' . $keywords . '%');
 
         return $data->count();
@@ -62,8 +60,8 @@ class CookingRepository extends Repository
     public function insertCooking($inputs, Request $request)
     {
         unset($inputs['id']);
-        $inputs['cooking_types_id'] = CookingTypes::decodeSlug($inputs['news_types_id']);
-        $inputs['youtube_id'] = 'test';
+        $inputs['cooking_types_id'] = CookingTypes::decodeSlug($inputs['cooking_types_id']);
+        $inputs['keywords'] = implode(',', $inputs['keywords']);
         $this->model::create($inputs);
 
         return true;
@@ -77,7 +75,7 @@ class CookingRepository extends Repository
         $news = $this->model::find($this->model::decodeSlug($id));
         if ($news) {
             $inputs['cooking_types_id'] = CookingTypes::decodeSlug($inputs['cooking_types_id']);
-            $inputs['youtube_id'] = 'test';
+            $inputs['keywords'] = implode(',', $inputs['keywords']);
             $news->update($inputs);
 
             return true;

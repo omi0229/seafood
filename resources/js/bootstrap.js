@@ -40,6 +40,51 @@ window.Toast = Swal.mixin({
     timer: 3000
 });
 
+// 全域性axios post方法封裝
+window.axiosGetMethod = url => {
+    return new Promise(resolve => {
+        axios.get(url).then(res => {
+            resolve(res);
+        }).catch(error => {
+            axios.post('/logout').then(async res => {
+                if (res.data.status) {
+                    location.href = '/login';
+                }
+            })
+        });
+    });
+};
+
+// 全域性axios post方法封裝
+window.axiosPostMethod = (url, data) => {
+    return new Promise(resolve => {
+        axios.post(url, data).then(async res => {
+            resolve(res);
+        }).catch(error => {
+            axios.post('/logout').then(async res => {
+                if (res.data.status) {
+                    location.href = '/login';
+                }
+            })
+        });
+    });
+};
+
+// 全域性axios delete方法封裝
+window.axiosDeleteMethod = (url, data) => {
+    return new Promise(resolve => {
+        axios.delete(url, data).then(async res => {
+            resolve(res);
+        }).catch(error => {
+            axios.post('/logout').then(async res => {
+                if (res.data.status) {
+                    location.href = '/login';
+                }
+            })
+        });
+    });
+};
+
 // 密碼規則(8碼以上數字+英文)
 export const passwordRule = password => {
     let rules = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
@@ -94,6 +139,8 @@ export const getRoles = (page = null, keywords = null) => {
         // has keyword
         url += keywords ? '?keywords=' + keywords : null;
 
-        axios.get(url).then(res => { resolve(res) });
+        axiosGetMethod(url).then(res => {
+            resolve(res);
+        });
     });
 }

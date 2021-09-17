@@ -34,7 +34,7 @@ window.app = createApp({
         getCount() {
             return new Promise(resolve => {
                 let url = !this.search_text ? '/user/count' : '/user/count?keywords=' + this.search_text;
-                axios.get(url).then(res => {
+                axiosGetMethod(url).then(res => {
                     this.all_count = res.data.count;
                     this.page_count = res.data.page_count;
                     resolve();
@@ -49,7 +49,7 @@ window.app = createApp({
                     url += '?keywords=' + this.search_text;
                 }
 
-                axios.get(url).then(res => {
+                axiosGetMethod(url).then(res => {
                     this.list = res.data.data;
                     if (loading && loading.show) {
                         loading.show = false;
@@ -77,10 +77,10 @@ window.app = createApp({
         delete() {
             if(this.check.length > 0) {
                 loading.show = true;
-                axios.delete('/user/delete', {data: this.check}).then(async res => {
+                axiosDeleteMethod('/user/delete', {data: this.check}).then(async res => {
                     if (res.data.status) {
+                        await this.searchService('delete');
                         Toast.fire({icon: 'success', title: '刪除成功'});
-                        this.searchService('delete');
                     }
                 });
             }
@@ -215,7 +215,8 @@ let set_user = createApp({
         save() {
             let url = this.mode === 'create' ? '/user/insert' : '/user/update';
             loading.show = true;
-            axios.post(url, this.user_info).then(async res => {
+
+            axiosPostMethod(url, this.user_info).then(async res => {
                 if (res.data.status) {
                     $('#set-user').modal('hide');
                 }
@@ -224,8 +225,6 @@ let set_user = createApp({
 
                 let icon = res.data.status ? 'success' : 'error';
                 Toast.fire({icon: icon, title: res.data.message});
-            }).catch(error => {
-
             });
         },
     },
