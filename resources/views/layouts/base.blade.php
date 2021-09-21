@@ -216,6 +216,46 @@
                             </li>
                             @endif
 
+                            @php
+                                $product_manage = $permissions
+                                    ->filter(function ($p){
+                                        if($p->name == 'product-type' || $p->name == 'product'){
+                                            return true;
+                                        }
+
+                                        return false;
+                                    });
+                            @endphp
+                            @if($product_manage->count() > 0 && ($login_user->can('product-type') || $login_user->can('product')))
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon fas fa-fish"></i>
+                                    <p>
+                                        產品設定
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @if($login_user->can('product-type'))
+                                    <li class="nav-item">
+                                        <a href="/product-type" class="nav-link">
+                                            <i class="nav-icon far fa-circle"></i>
+                                            <p>{{ $product_manage->where('name', 'product-type')->first()->display_name  }}</p>
+                                        </a>
+                                    </li>
+                                    @endif
+                                    @if($login_user->can('product'))
+                                    <li class="nav-item">
+                                        <a href="/product" class="nav-link">
+                                            <i class="nav-icon far fa-circle"></i>
+                                            <p>{{ $product_manage->where('name', 'product')->first()->display_name  }}</p>
+                                        </a>
+                                    </li>
+                                    @endif
+                                </ul>
+                            </li>
+                            @endif
+
                         </ul>
                     </nav>
                     <!-- /.sidebar-menu -->

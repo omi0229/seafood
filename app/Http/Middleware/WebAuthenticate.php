@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use App\Services\LoginServices;
 
 class WebAuthenticate
 {
@@ -32,6 +33,8 @@ class WebAuthenticate
             'news' => 'news',
             'cooking-type' => 'cooking-type',
             'cooking' => 'cooking',
+            'product-type' => 'product-type',
+            'product' => 'product',
         ];
 
         $login_user = \Session::get('seafood_user');
@@ -39,20 +42,20 @@ class WebAuthenticate
         # 如找不到權限，則登出 or 若沒有此功能權限，則登出
         if ($type !== '') {
             if (!(isset($array[$type]) && $login_user->can($array[$type]))) {
-                \App\Services\LoginServices::logout();
+                LoginServices::logout();
                 return redirect('/login');
             }
         }
 
         # 若沒有token，則登出
         if (!isset($login_user->token)) {
-            \App\Services\LoginServices::logout();
+            LoginServices::logout();
             return redirect('/login');
         }
 
         # 若token過期，則登出
         if ((new \DateTime())->getTimestamp() > (new \DateTime($login_user->token->expires_at))->getTimestamp()) {
-            \App\Services\LoginServices::logout();
+            LoginServices::logout();
             return redirect('/login');
         }
 

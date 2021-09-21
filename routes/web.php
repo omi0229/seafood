@@ -13,6 +13,7 @@ use App\Http\Controllers\NewsTypeController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\CookingTypeController;
 use App\Http\Controllers\CookingController;
+use App\Http\Controllers\ProductTypeController;
 
 
 /*
@@ -95,4 +96,12 @@ Route::middleware(['auth.web'])->group(function () {
     Route::post('cooking/insert', [CookingController::class, 'insert']);
     Route::post('cooking/update', [CookingController::class, 'update']);
     Route::delete('cooking/delete', [CookingController::class, 'delete']);
+
+    # 產品分類
+    Route::get('product-type', [ProductTypeController::class, 'index']);
+    Route::get('product-type/count', [ProductTypeController::class, 'count']);
+    Route::get('product-type/list/{page}', [ProductTypeController::class, 'list']);
+    Route::post('product-type/insert', [ProductTypeController::class, 'insert']);
+    Route::post('product-type/update', [ProductTypeController::class, 'update']);
+    Route::delete('product-type/delete', [ProductTypeController::class, 'delete']);
 });
