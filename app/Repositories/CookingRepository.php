@@ -9,11 +9,12 @@ use App\Models\CookingTypes;
 
 class CookingRepository extends Repository
 {
-    protected $model;
+    protected $model, $types;
 
-    public function __construct(Cooking $model)
+    public function __construct(Cooking $model, CookingTypes $types)
     {
         $this->model = $model;
+        $this->types = $types;
     }
 
     public function model()
@@ -60,7 +61,7 @@ class CookingRepository extends Repository
     public function insertCooking($inputs, Request $request)
     {
         unset($inputs['id']);
-        $inputs['cooking_types_id'] = CookingTypes::decodeSlug($inputs['cooking_types_id']);
+        $inputs['cooking_types_id'] = $this->types::decodeSlug($inputs['cooking_types_id']);
         $inputs['keywords'] = implode(',', $inputs['keywords']);
         $this->model::create($inputs);
 
@@ -74,7 +75,7 @@ class CookingRepository extends Repository
 
         $news = $this->model::find($this->model::decodeSlug($id));
         if ($news) {
-            $inputs['cooking_types_id'] = CookingTypes::decodeSlug($inputs['cooking_types_id']);
+            $inputs['cooking_types_id'] = $this->types::decodeSlug($inputs['cooking_types_id']);
             $inputs['keywords'] = implode(',', $inputs['keywords']);
             $news->update($inputs);
 

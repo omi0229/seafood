@@ -5,14 +5,14 @@ namespace App\Repositories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Repositories\Repository;
-use App\Models\News;
-use App\Models\NewsTypes;
+use App\Models\Product;
+use App\Models\ProductTypes;
 
-class NewsRepository extends Repository
+class ProductRepository extends Repository
 {
     protected $model, $types;
 
-    public function __construct(News $model, NewsTypes $types)
+    public function __construct(Product $model, ProductTypes $types)
     {
         $this->model = $model;
         $this->types = $types;
@@ -20,7 +20,7 @@ class NewsRepository extends Repository
 
     public function model()
     {
-        return 'App\Models\News';
+        return 'App\Models\Product';
     }
 
     public function list($page, array $params = [])

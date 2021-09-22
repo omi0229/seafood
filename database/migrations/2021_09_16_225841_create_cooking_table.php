@@ -15,7 +15,7 @@ class CreateCookingTable extends Migration
     {
         Schema::create('cooking', function (Blueprint $table) {
             $table->id();
-            $table->string('cooking_types_id', 50)->comment('分類ID');
+            $table->integer('cooking_types_id')->comment('分類ID');
             $table->string('title', 50)->comment('標題');
             $table->dateTime('start_date')->comment('發表時間');
             $table->dateTime('end_date')->comment('截止時間');
