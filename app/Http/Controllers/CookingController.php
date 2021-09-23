@@ -34,7 +34,7 @@ class CookingController extends Controller
         }
 
         # 新增資料
-        $this->repository->insertCooking($inputs, $request);
+        $this->repository->insertData($inputs, $request);
 
         return response()->json(['status' => true, 'message' => '新增成功']);
     }
@@ -54,7 +54,7 @@ class CookingController extends Controller
         }
 
         # 編輯資料
-        if ($this->repository->updateCooking($inputs, $request)) {
+        if ($this->repository->updateData($inputs, $request)) {
             return response()->json(['status' => true, 'message' => '編輯成功']);
         }
 

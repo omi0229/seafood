@@ -50,6 +50,9 @@ mix.js('resources/js/cooking.js', 'public/js')
 mix.sass('resources/scss/cooking.scss', 'public/css')
 // product-types
 mix.js('resources/js/product-types.js', 'public/js')
+// news
+mix.js('resources/js/product.js', 'public/js')
+mix.sass('resources/scss/product.scss', 'public/css')
 
 // components search
 mix.sass('resources/scss/components/search.scss', 'public/css/components')

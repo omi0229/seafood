@@ -58,7 +58,7 @@ class CookingRepository extends Repository
         return $data->count();
     }
 
-    public function insertCooking($inputs, Request $request)
+    public function insertData($inputs, Request $request)
     {
         unset($inputs['id']);
         $inputs['cooking_types_id'] = $this->types::decodeSlug($inputs['cooking_types_id']);
@@ -68,7 +68,7 @@ class CookingRepository extends Repository
         return true;
     }
 
-    public function updateCooking($inputs, Request $request)
+    public function updateData($inputs, Request $request)
     {
         $id = $inputs['id'];
         unset($inputs['id']);

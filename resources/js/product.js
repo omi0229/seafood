@@ -50,7 +50,7 @@ window.app = createApp({
     methods: {
         getCount() {
             return new Promise(resolve => {
-                let url = !this.search_text ? '/news/count' : '/news/count?keywords=' + this.search_text;
+                let url = !this.search_text ? '/product/count' : '/product/count?keywords=' + this.search_text;
                 axios.get(url).then(res => {
                     this.all_count = res.data.count;
                     this.page_count = res.data.page_count;
@@ -60,7 +60,7 @@ window.app = createApp({
         },
         getData(page) {
             return new Promise(resolve => {
-                let url = '/news/list/' + page;
+                let url = '/product/list/' + page;
 
                 if (this.search_text) {
                     url += '?keywords=' + this.search_text;
@@ -76,7 +76,7 @@ window.app = createApp({
             });
         },
         create() {
-            CKEDITOR.instances["description"].setData('');
+            CKEDITOR.instances["content"].setData('');
             set_info.dataInit();
             set_info.mode = 'create';
         },
@@ -85,30 +85,24 @@ window.app = createApp({
             set_info.mode = 'modify';
             set_info.info.id = id;
             let info = _.find(this.list, {'id': id});
-            set_info.info.news_types_id = info.news_types_id;
+            set_info.info.product_types_id = info.product_types_id;
             set_info.info.title = info.title;
-            set_info.info.start_date = info.start_date;
-            set_info.info.end_date = info.end_date;
-
-            $('input[data-target="#start_date"]').val(info.start_date.substr(0, 16));
-            $('input[data-target="#end_date"]').val(info.end_date.substr(0, 16));
-
-            set_info.info.href = info.href;
-            CKEDITOR.instances["description"].setData(info.description);
-            set_info.info.target = info.target;
+            CKEDITOR.instances["content"].setData(info.content);
             set_info.info.keywords = info.keywords ? info.keywords.split(',') : [];
-            set_info.info.status = info.status;
+            set_info.info.description = info.description;
             set_info.info.web_img_name = info.web_img_name || '請選擇檔案';
             set_info.info.web_img = '';
             set_info.info.web_img_path = info.web_img_path;
             set_info.info.mobile_img_name = info.mobile_img_name || '請選擇檔案';
             set_info.info.mobile_img = '';
             set_info.info.mobile_img_path = info.mobile_img_path;
+            set_info.info.sales_status = info.sales_status;
+            set_info.info.show_status = info.show_status;
         },
         delete() {
             if(this.check.length > 0) {
                 loading.show = true;
-                axios.delete('/news/delete', {data: this.check}).then(async res => {
+                axios.delete('/product/delete', {data: this.check}).then(async res => {
                     if (res.data.status) {
                         Toast.fire({icon: 'success', title: '刪除成功'});
                         this.searchService('delete');
@@ -148,14 +142,11 @@ let set_info = createApp({
             date: new Date(),
             info: {
                 id: '',
-                news_types_id: '',
+                product_types_id: '',
                 title: '',
-                start_date: '',
-                end_date: '',
-                href: '',
-                target: '0',
+                content: '',
                 keywords: [],
-                status: '0',
+                description: '',
                 web_img_delete: 0,
                 web_img_name: '請選擇檔案',
                 web_img: '',
@@ -164,36 +155,29 @@ let set_info = createApp({
                 mobile_img_name: '請選擇檔案',
                 mobile_img: '',
                 mobile_img_path: '',
+                sales_status: '0',
+                show_status: '0',
             },
             value: {
                 keyword: '',
             },
             select: {
-                news_types: [],
+                product_types: [],
             },
         }
     },
     delimiters: ["${", "}"],
     mounted() {
-        let datetimepicker_obj = {
-            locale: 'zh-tw',
-            format: 'YYYY-MM-DD HH:mm',
-            icons: {time: 'far fa-clock'},
-        };
-
-        $('#start_date').datetimepicker(datetimepicker_obj);
-        $('#end_date').datetimepicker(datetimepicker_obj);
-
-        this.getNewsTypes().then(res => {
-            this.select.news_types = res.data.data;
+        this.getProductTypes().then(res => {
+            this.select.product_types = res.data.data;
         });
 
-        CKEDITOR.replace("description");
+        CKEDITOR.replace("content");
     },
     methods: {
-        getNewsTypes() {
+        getProductTypes() {
             return new Promise(resolve => {
-                axios.get('/news-type/list/all').then(res => {
+                axios.get('/product-type/list/all').then(res => {
                     resolve(res);
                 });
             });
@@ -229,20 +213,14 @@ let set_info = createApp({
             });
         },
         dataInit() {
-            $('input[data-target="#start_date"]').datetimepicker('clear');
-            $('input[data-target="#end_date"]').datetimepicker('clear');
-
             this.value.keyword = '';
 
             this.info.id = null;
-            this.info.news_types_id = '';
+            this.info.product_types_id = '';
             this.info.title = '';
-            this.info.start_date = '';
-            this.info.end_date = '';
-            this.info.href = '';
-            this.info.target = '0';
+            this.info.content = '';
             this.info.keywords = [];
-            this.info.status = '0';
+            this.info.description = '';
             this.info.web_img_delete = 0;
             this.info.web_img_name = '請選擇檔案';
             this.info.web_img = null;
@@ -251,6 +229,8 @@ let set_info = createApp({
             this.info.mobile_img_name = '請選擇檔案';
             this.info.mobile_img = null;
             this.info.mobile_img_path = '';
+            this.info.sales_status = '0';
+            this.info.show_status = '0';
         },
         file(e, type) {
             if (e.target && e.target.files[0]) {
@@ -267,31 +247,13 @@ let set_info = createApp({
             }
         },
         auth(data) {
-            if (!data.news_types_id) {
+            if (!data.product_types_id) {
                 return {auth: false, message: '請選擇分類！'};
             }
 
             if (!data.title) {
                 return {auth: false, message: '標題不得為空！'};
             }
-
-            let start_date = $('input[data-target="#start_date"]').val();
-            let end_date = $('input[data-target="#end_date"]').val();
-
-            if (!start_date) {
-                return {auth: false, message: '請選擇開始日期！'};
-            }
-
-            if (!end_date) {
-                return {auth: false, message: '請選擇結束日期！'};
-            }
-
-            if (start_date >= end_date) {
-                return {auth: false, message: '日期格式或日期範圍錯誤！'};
-            }
-
-            data.start_date = start_date;
-            data.end_date = end_date;
 
             return {auth: true, message: 'success'};
         },
@@ -311,25 +273,23 @@ let set_info = createApp({
             });
         },
         save() {
-            let url = this.mode === 'create' ? '/news/insert' : '/news/update';
+            let url = this.mode === 'create' ? '/product/insert' : '/product/update';
             loading.show = true;
             let formData = new FormData;
             formData.append("id", this.info.id);
-            formData.append("news_types_id", this.info.news_types_id);
+            formData.append("product_types_id", this.info.product_types_id);
             formData.append("title", this.info.title);
-            formData.append("start_date", this.info.start_date);
-            formData.append("end_date", this.info.end_date);
-            formData.append("href", this.info.href);
-            formData.append("description", CKEDITOR.instances["description"].getData());
-            formData.append("target", this.info.target);
+            formData.append("content", CKEDITOR.instances["content"].getData());
             formData.append("keywords", this.info.keywords);
-            formData.append("status", this.info.status);
+            formData.append("description", this.info.description);
             formData.append("web_img_delete", this.info.web_img_delete);
             formData.append("web_img_name", this.info.web_img_name);
             formData.append("web_img", this.info.web_img);
             formData.append("mobile_img_delete", this.info.mobile_img_delete);
             formData.append("mobile_img_name", this.info.mobile_img_name);
             formData.append("mobile_img", this.info.mobile_img);
+            formData.append("sales_status", this.info.sales_status);
+            formData.append("show_status", this.info.show_status);
 
             let config = {
                 headers: {

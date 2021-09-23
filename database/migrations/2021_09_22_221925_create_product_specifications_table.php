@@ -20,8 +20,6 @@ class CreateProductSpecificationsTable extends Migration
             $table->integer('original_price')->comment('原價');
             $table->integer('selling_price')->comment('售價');
             $table->integer('inventory')->comment('庫存');
-            $table->tinyInteger('sales_status')->comment('是否暫停銷售(0 => 暫停, 1 => 開放)')->default(0)->unsigned();
-            $table->tinyInteger('show_status')->comment('是否顯示(0 => 不顯示, 1 => 顯示)')->default(0)->unsigned();
             $table->timestamps();
             $table->softDeletes();
 

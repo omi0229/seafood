@@ -24,6 +24,8 @@ class CreateProductsTable extends Migration
             $table->string('mobile_img', 200)->comment('手機板圖片路徑')->nullable();
             $table->text('keywords')->comment('關鍵字')->nullable();
             $table->longText('description')->comment('描述')->nullable();
+            $table->tinyInteger('sales_status')->comment('是否暫停銷售(0 => 暫停, 1 => 開放)')->default(1)->unsigned();
+            $table->tinyInteger('show_status')->comment('是否於上架管理顯示(0 => 不顯示, 1 => 顯示)')->default(1)->unsigned();
             $table->timestamps();
             $table->softDeletes();
 

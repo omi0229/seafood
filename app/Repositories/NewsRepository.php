@@ -60,7 +60,7 @@ class NewsRepository extends Repository
         return $data->count();
     }
 
-    public function insertNews($inputs, Request $request)
+    public function insertData($inputs, Request $request)
     {
         unset($inputs['id']);
         $inputs['news_types_id'] = $this->types::decodeSlug($inputs['news_types_id']);
@@ -75,8 +75,8 @@ class NewsRepository extends Repository
         if ($request->hasFile('mobile_img')) {
             $inputs['mobile_img'] = $request->file('mobile_img')->store('news');
         } else {
-            $inputs['web_img_name'] = null;
-            $inputs['web_img'] = null;
+            $inputs['mobile_img_name'] = null;
+            $inputs['mobile_img'] = null;
         }
 
         $this->model::create($inputs);
@@ -84,7 +84,7 @@ class NewsRepository extends Repository
         return true;
     }
 
-    public function updateNews($inputs, Request $request)
+    public function updateData($inputs, Request $request)
     {
         $news_id = $inputs['id'];
 
@@ -101,8 +101,7 @@ class NewsRepository extends Repository
                 if ($request->hasFile('web_img')) {
                     $inputs['web_img'] = $request->file('web_img')->store('news');
                 } else {
-                    $inputs['web_img_name'] = null;
-                    $inputs['web_img'] = null;
+                    $inputs['web_img_name'] = !$news['web_img'] ? null : $inputs['web_img_name'];
                 }
             } else {
                 $inputs['web_img_name'] = null;
@@ -114,8 +113,7 @@ class NewsRepository extends Repository
                 if ($request->hasFile('mobile_img')) {
                     $inputs['mobile_img'] = $request->file('mobile_img')->store('news');
                 } else {
-                    $inputs['mobile_img_name'] = null;
-                    $inputs['mobile_img'] = null;
+                    $inputs['mobile_img_name'] = !$news['mobile_img'] ? null : $inputs['mobile_img_name'];
                 }
             } else {
                 $inputs['mobile_img_name'] = null;

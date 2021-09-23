@@ -5,14 +5,14 @@ namespace App\Repositories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Repositories\Repository;
-use App\Models\Product;
+use App\Models\Products;
 use App\Models\ProductTypes;
 
 class ProductRepository extends Repository
 {
     protected $model, $types;
 
-    public function __construct(Product $model, ProductTypes $types)
+    public function __construct(Products $model, ProductTypes $types)
     {
         $this->model = $model;
         $this->types = $types;
@@ -20,7 +20,7 @@ class ProductRepository extends Repository
 
     public function model()
     {
-        return 'App\Models\Product';
+        return 'App\Models\Products';
     }
 
     public function list($page, array $params = [])
@@ -41,8 +41,8 @@ class ProductRepository extends Repository
         foreach ($data as $key => $row) {
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
-            $list[$key]['news_types_id'] = $row->news_types->hash_id ?? '';
-            $list[$key]['news_types_name'] = $row->news_types->name ?? '';
+            $list[$key]['product_types_id'] = $row->product_types->hash_id ?? '';
+            $list[$key]['product_types_name'] = $row->product_types->name ?? '';
 
             $list[$key]['web_img_path'] = $row->web_img ? asset('storage/' . $row->web_img) : null;
             $list[$key]['mobile_img_path'] = $row->mobile_img ? asset('storage/' . $row->mobile_img) : null;
@@ -60,23 +60,23 @@ class ProductRepository extends Repository
         return $data->count();
     }
 
-    public function insertNews($inputs, Request $request)
+    public function insertData($inputs, Request $request)
     {
         unset($inputs['id']);
-        $inputs['news_types_id'] = $this->types::decodeSlug($inputs['news_types_id']);
+        $inputs['product_types_id'] = $this->types::decodeSlug($inputs['product_types_id']);
 
         if ($request->hasFile('web_img')) {
-            $inputs['web_img'] = $request->file('web_img')->store('news');
+            $inputs['web_img'] = $request->file('web_img')->store('product');
         } else {
             $inputs['web_img_name'] = null;
             $inputs['web_img'] = null;
         }
 
         if ($request->hasFile('mobile_img')) {
-            $inputs['mobile_img'] = $request->file('mobile_img')->store('news');
+            $inputs['mobile_img'] = $request->file('mobile_img')->store('product');
         } else {
-            $inputs['web_img_name'] = null;
-            $inputs['web_img'] = null;
+            $inputs['mobile_img_name'] = null;
+            $inputs['mobile_img'] = null;
         }
 
         $this->model::create($inputs);
@@ -84,46 +84,44 @@ class ProductRepository extends Repository
         return true;
     }
 
-    public function updateNews($inputs, Request $request)
+    public function updateData($inputs, Request $request)
     {
-        $news_id = $inputs['id'];
+        $product_id = $inputs['id'];
 
         $web_img_delete = (int)$request->all()['web_img_delete'] ?? 0;
         $mobile_img_delete = (int)$request->all()['mobile_img_delete'] ?? 0;
 
         unset($inputs['id']);
 
-        $news = $this->model::find($this->model::decodeSlug($news_id));
-        if ($news) {
-            $inputs['news_types_id'] = $this->types::decodeSlug($inputs['news_types_id']);
+        $product = $this->model::find($this->model::decodeSlug($product_id));
+        if ($product) {
+            $inputs['product_types_id'] = $this->types::decodeSlug($inputs['product_types_id']);
 
             if (!$web_img_delete) {
                 if ($request->hasFile('web_img')) {
-                    $inputs['web_img'] = $request->file('web_img')->store('news');
+                    $inputs['web_img'] = $request->file('web_img')->store('product');
                 } else {
-                    $inputs['web_img_name'] = null;
-                    $inputs['web_img'] = null;
+                    $inputs['web_img_name'] = !$product['web_img'] ? null : $inputs['web_img_name'];
                 }
             } else {
                 $inputs['web_img_name'] = null;
                 $inputs['web_img'] = null;
-                Storage::disk('local')->delete($news->web_img);
+                Storage::disk('local')->delete($product->web_img);
             }
 
             if (!$mobile_img_delete) {
                 if ($request->hasFile('mobile_img')) {
-                    $inputs['mobile_img'] = $request->file('mobile_img')->store('news');
+                    $inputs['mobile_img'] = $request->file('mobile_img')->store('product');
                 } else {
-                    $inputs['mobile_img_name'] = null;
-                    $inputs['mobile_img'] = null;
+                    $inputs['mobile_img_name'] = !$product['mobile_img'] ? null : $inputs['mobile_img_name'];
                 }
             } else {
                 $inputs['mobile_img_name'] = null;
                 $inputs['mobile_img'] = null;
-                Storage::disk('local')->delete($news->mobile_img);
+                Storage::disk('local')->delete($product->mobile_img);
             }
 
-            $news->update($inputs);
+            $product->update($inputs);
 
             return true;
         }

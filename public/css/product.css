@@ -1,0 +1,23 @@
+@charset "UTF-8";
+.custom-file-label {
+  padding: 0.45rem 0.75rem;
+  color: #AAA !important;
+}
+.custom-file-label:after {
+  padding: 0.45rem 0.75rem;
+  content: "選擇檔案";
+}
+
+.keywords {
+  min-height: 130px;
+  width: 100%;
+}
+
+.keywords-border {
+  border: 2px solid #17a2b8;
+}
+
+.ck-editor__editable_inline {
+  min-height: 200px;
+  max-height: 200px;
+}

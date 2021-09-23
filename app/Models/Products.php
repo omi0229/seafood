@@ -7,9 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\HashId;
 
-class Product extends Model
+class Products extends Model
 {
     use HasFactory, SoftDeletes, HashId;
+
+    protected $fillable = [
+        'product_types_id',
+        'title',
+        'content',
+        'keywords',
+        'description',
+        'web_img_name',
+        'web_img',
+        'mobile_img_name',
+        'mobile_img',
+        'sales_status',
+        'show_status',
+    ];
 
     public function product_types()
     {
