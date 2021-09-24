@@ -29,4 +29,9 @@ class Products extends Model
     {
         return $this->belongsTo('App\Models\ProductTypes');
     }
+
+    public function product_specification()
+    {
+        return $this->hasMany('App\Models\ProductSpecifications');
+    }
 }

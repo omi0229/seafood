@@ -1,8 +1,6 @@
 @extends('layouts.base')
 
 @section('content')
-    <link rel="stylesheet" href="plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
-    <link rel="stylesheet" href="plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="css/product.css">
     <div id="app" v-cloak>
         <div class="content-header px-4">
@@ -81,8 +79,8 @@
                                         <button type="button" class="btn btn-sm btn-info px-2 mr-1" data-toggle="modal" data-target="#set-info" @click="modify(item.id)">
                                             <i class="fa fa-edit mr-1"></i> 編輯
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-secondary px-2 ml-1" data-toggle="modal" data-target="#set-info" @click="modify(item.id)">
-                                            <i class="fa fa-edit mr-1"></i> 規格
+                                        <button type="button" class="btn btn-sm btn-secondary px-2 ml-1" data-toggle="modal" data-target="#set-specification" @click="specification(item.id)">
+                                            <i class="fas fa-list-ul mr-1"></i> 規格
                                         </button>
                                     </td>
                                 </tr>
@@ -203,10 +201,47 @@
             </div>
         </div>
     </div>
-    <script src="plugins/select2/js/select2.full.min.js"></script>
-    <script src="plugins/moment/moment-with-locales.min.js"></script>
-    <script src="plugins/inputmask/jquery.inputmask.min.js"></script>
-    <script src="plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- 規格 -->
+    <div class="modal fade" id="set-specification" data-backdrop="static">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        規格設定
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body px-5">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th> 規格名稱 </th>
+                                    <th> 原價 </th>
+                                    <th> 售價 </th>
+                                    <th> 庫存 </th>
+                                    <th class="text-center"> 功能 </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td> <input name="name" type="text" maxlength="50" class="form-control form-control-sm" placeholder="請輸入名稱" v-model="info.name"> </td>
+                                    <td> <input name="original_price" type="text" maxlength="20" class="form-control form-control-sm" placeholder="請輸入原價" v-model="info.original_price"> </td>
+                                    <td> <input name="selling_price" type="text" maxlength="20" class="form-control form-control-sm" placeholder="請輸入售價" v-model="info.selling_price"> </td>
+                                    <td> <input name="inventory" type="text" maxlength="20" class="form-control form-control-sm" placeholder="請輸入庫存" v-model="info.inventory"> </td>
+                                    <td class="text-center"> <button class="btn btn-sm btn-primary" @click="confirm('create')">新增</button> </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="plugins/ckeditor/ckeditor.js"></script>
     <script src="js/product.js"></script>
 @endsection

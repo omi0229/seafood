@@ -63119,6 +63119,10 @@ window.app = createApp({
       set_info.info.sales_status = info.sales_status;
       set_info.info.show_status = info.show_status;
     },
+    specification: function specification(id) {
+      set_specification.dataInit();
+      set_specification.info.product_id = id;
+    },
     "delete": function _delete() {
       var _this4 = this;
 
@@ -63432,6 +63436,131 @@ var set_info = createApp({
     }
   }
 }).mount('#set-info');
+var set_specification = createApp({
+  data: function data() {
+    return {
+      info: {
+        id: null,
+        product_id: null,
+        name: '',
+        original_price: null,
+        selling_price: null,
+        inventory: null
+      }
+    };
+  },
+  delimiters: ["${", "}"],
+  mounted: function mounted() {},
+  methods: {
+    dataInit: function dataInit() {
+      this.info.id = null;
+      this.info.product_id = null;
+      this.info.name = '';
+      this.info.original_price = null;
+      this.info.selling_price = null;
+      this.info.inventory = null;
+    },
+    auth: function auth(data) {
+      if (!data.name) {
+        return {
+          auth: false,
+          message: '請輸入名稱！'
+        };
+      }
+
+      if (!data.original_price) {
+        return {
+          auth: false,
+          message: '原價不得為空！'
+        };
+      }
+
+      if (isNaN(data.original_price)) {
+        return {
+          auth: false,
+          message: '原價欄位請輸入數字！'
+        };
+      }
+
+      if (!data.selling_price) {
+        return {
+          auth: false,
+          message: '售價不得為空！'
+        };
+      }
+
+      if (isNaN(data.selling_price)) {
+        return {
+          auth: false,
+          message: '售價欄位請輸入數字！'
+        };
+      }
+
+      if (data.inventory === null || isNaN(data.inventory)) {
+        return {
+          auth: false,
+          message: '庫存欄位請輸入數字！'
+        };
+      }
+
+      return {
+        auth: true,
+        message: 'success'
+      };
+    },
+    confirm: function confirm(mode) {
+      var _this9 = this;
+
+      var auth = this.auth(this.info);
+
+      if (!auth.auth) {
+        Toast.fire({
+          icon: 'error',
+          title: auth.message
+        });
+        return false;
+      }
+
+      var text = mode === 'create' ? '新增' : '編輯';
+      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)("\u78BA\u5B9A".concat(text, "\u6B64\u898F\u683C\uFF1F")).then(function (confirm) {
+        if (confirm) {
+          _this9.create();
+        }
+      });
+    },
+    create: function create() {
+      var _this10 = this;
+
+      axios.post('/product-specification/insert', this.info).then( /*#__PURE__*/function () {
+        var _ref4 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(res) {
+          var icon;
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
+            while (1) {
+              switch (_context5.prev = _context5.next) {
+                case 0:
+                  _this10.dataInit();
+
+                  icon = res.data.status ? 'success' : 'error';
+                  Toast.fire({
+                    icon: icon,
+                    title: res.data.message
+                  });
+
+                case 3:
+                case "end":
+                  return _context5.stop();
+              }
+            }
+          }, _callee5);
+        }));
+
+        return function (_x4) {
+          return _ref4.apply(this, arguments);
+        };
+      }())["catch"](function (error) {});
+    }
+  }
+}).mount('#set-specification');
 })();
 
 /******/ })()

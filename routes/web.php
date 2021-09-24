@@ -15,6 +15,7 @@ use App\Http\Controllers\CookingTypeController;
 use App\Http\Controllers\CookingController;
 use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductSpecificationController;
 
 
 /*
@@ -113,4 +114,7 @@ Route::middleware(['auth.web'])->group(function () {
     Route::post('product/insert', [ProductController::class, 'insert']);
     Route::post('product/update', [ProductController::class, 'update']);
     Route::delete('product/delete', [ProductController::class, 'delete']);
+
+    # 產品規格
+    Route::post('product-specification/insert', [ProductSpecificationController::class, 'insert']);
 });

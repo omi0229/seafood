@@ -99,6 +99,10 @@ window.app = createApp({
             set_info.info.sales_status = info.sales_status;
             set_info.info.show_status = info.show_status;
         },
+        specification(id) {
+            set_specification.dataInit();
+            set_specification.info.product_id = id;
+        },
         delete() {
             if(this.check.length > 0) {
                 loading.show = true;
@@ -312,3 +316,83 @@ let set_info = createApp({
         },
     },
 }).mount('#set-info');
+
+let set_specification = createApp({
+    data() {
+        return {
+            info: {
+                id: null,
+                product_id: null,
+                name: '',
+                original_price: null,
+                selling_price: null,
+                inventory: null,
+            }
+        }
+    },
+    delimiters: ["${", "}"],
+    mounted() {
+
+    },
+    methods: {
+        dataInit() {
+            this.info.id = null;
+            this.info.product_id = null;
+            this.info.name = '';
+            this.info.original_price = null;
+            this.info.selling_price = null;
+            this.info.inventory = null;
+        },
+        auth(data) {
+            if (!data.name) {
+                return {auth: false, message: '請輸入名稱！'};
+            }
+
+            if (!data.original_price) {
+                return {auth: false, message: '原價不得為空！'};
+            }
+
+            if (isNaN(data.original_price)) {
+                return {auth: false, message: '原價欄位請輸入數字！'};
+            }
+
+            if (!data.selling_price) {
+                return {auth: false, message: '售價不得為空！'};
+            }
+
+            if (isNaN(data.selling_price)) {
+                return {auth: false, message: '售價欄位請輸入數字！'};
+            }
+
+            if (data.inventory === null || isNaN(data.inventory)) {
+                return {auth: false, message: '庫存欄位請輸入數字！'};
+            }
+
+            return {auth: true, message: 'success'};
+        },
+        confirm(mode) {
+            let auth = this.auth(this.info);
+            if (!auth.auth) {
+                Toast.fire({icon: 'error', title: auth.message});
+                return false;
+            }
+
+            let text = mode === 'create' ? '新增' : '編輯';
+
+            swal2Confirm(`確定${text}此規格？`).then(confirm => {
+                if (confirm) {
+                    this.create();
+                }
+            });
+        },
+        create() {
+            axios.post('/product-specification/insert', this.info).then(async res => {
+                this.dataInit();
+                let icon = res.data.status ? 'success' : 'error';
+                Toast.fire({icon: icon, title: res.data.message});
+            }).catch(error => {
+
+            });
+        },
+    },
+}).mount('#set-specification');
