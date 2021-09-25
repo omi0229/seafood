@@ -44,9 +44,9 @@ trait General
         return response()->json(['status' => true, 'message' => '新增成功']);
     }
 
-    public function delete(Request $request){
-
-        $this->model::whereIn('id', array_map([$this->model, 'decodeSlug'], (array) $request->all()))
+    public function delete(Request $request)
+    {
+        $this->model::whereIn('id', array_map([$this->model, 'decodeSlug'], (array)$request->all()))
             ->delete();
 
         return response()->json(['status' => true, 'message' => '刪除成功']);

@@ -26,23 +26,6 @@ window.app = createApp({
             this.check = newData ? _.map(this.list, 'id') : [];
         },
     },
-    computed: {
-        dateFormat() {
-            return datetime => {
-                return moment(datetime).format('Y-MM-DD HH:mm');
-            }
-        },
-        targetFormat() {
-            return target => {
-                return target ? '開新視窗' : '直接開啟';
-            }
-        },
-        statusFormat() {
-            return status => {
-                return status ? '顯示' : '不顯示';
-            }
-        },
-    },
     async mounted() {
         await this.getCount();
         await this.getData(1);
@@ -51,7 +34,7 @@ window.app = createApp({
         getCount() {
             return new Promise(resolve => {
                 let url = !this.search_text ? '/product/count' : '/product/count?keywords=' + this.search_text;
-                axios.get(url).then(res => {
+                axiosGetMethod(url).then(res => {
                     this.all_count = res.data.count;
                     this.page_count = res.data.page_count;
                     resolve();
@@ -66,7 +49,7 @@ window.app = createApp({
                     url += '?keywords=' + this.search_text;
                 }
 
-                axios.get(url).then(res => {
+                axiosGetMethod(url).then(res => {
                     this.list = res.data.data;
                     if (loading && loading.show) {
                         loading.show = false;
@@ -102,11 +85,12 @@ window.app = createApp({
         specification(id) {
             set_specification.dataInit();
             set_specification.info.product_id = id;
+            set_specification.getSpecification(id);
         },
         delete() {
             if(this.check.length > 0) {
                 loading.show = true;
-                axios.delete('/product/delete', {data: this.check}).then(async res => {
+                axiosDeleteMethod('/product/delete', {data: this.check}).then(async res => {
                     if (res.data.status) {
                         Toast.fire({icon: 'success', title: '刪除成功'});
                         this.searchService('delete');
@@ -181,7 +165,7 @@ let set_info = createApp({
     methods: {
         getProductTypes() {
             return new Promise(resolve => {
-                axios.get('/product-type/list/all').then(res => {
+                axiosGetMethod('/product-type/list/all').then(res => {
                     resolve(res);
                 });
             });
@@ -299,9 +283,9 @@ let set_info = createApp({
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
-            }
+            };
 
-            axios.post(url, formData, config).then(async res => {
+            axiosPostMethod(url, formData, config).then(async res => {
                 if (res.data.status) {
                     $('#set-info').modal('hide');
                 }
@@ -310,8 +294,6 @@ let set_info = createApp({
 
                 let icon = res.data.status ? 'success' : 'error';
                 Toast.fire({icon: icon, title: res.data.message});
-            }).catch(error => {
-
             });
         },
     },
@@ -327,17 +309,39 @@ let set_specification = createApp({
                 original_price: null,
                 selling_price: null,
                 inventory: null,
-            }
+            },
+            modify_key: null,
+            modify_info: {
+                id: null,
+                product_id: null,
+                name: '',
+                original_price: null,
+                selling_price: null,
+                inventory: null,
+            },
+            list: [],
+            new_specification: false,
+            checkAll: false,
+            check: [],
         }
-    },
-    delimiters: ["${", "}"],
-    mounted() {
 
     },
+    delimiters: ["${", "}"],
+    watch: {
+        'checkAll'(newData, oldData) {
+            this.check = newData ? _.map(this.list, 'id') : [];
+        },
+    },
     methods: {
+        getSpecification(id) {
+            axiosGetMethod('product-specification/list/' + id).then(res => {
+                if (res.data.status) {
+                    this.list = res.data.data;
+                }
+            });
+        },
         dataInit() {
             this.info.id = null;
-            this.info.product_id = null;
             this.info.name = '';
             this.info.original_price = null;
             this.info.selling_price = null;
@@ -371,28 +375,100 @@ let set_specification = createApp({
             return {auth: true, message: 'success'};
         },
         confirm(mode) {
-            let auth = this.auth(this.info);
-            if (!auth.auth) {
-                Toast.fire({icon: 'error', title: auth.message});
-                return false;
+            if (mode === 'create' || mode === 'modify') {
+                let auth = this.auth(this.info);
+                if (!auth.auth) {
+                    Toast.fire({icon: 'error', title: auth.message});
+                    return false;
+                }
             }
 
-            let text = mode === 'create' ? '新增' : '編輯';
+            let text = '';
+            switch (mode) {
+                case 'create':
+                    text = '確定新增此規格？';
+                    break;
+                case 'modify':
+                    text = '確定編輯此規格？';
+                    break;
+                case 'delete':
+                    text = '確定刪除選取的規格？';
+                    break;
+            }
 
-            swal2Confirm(`確定${text}此規格？`).then(confirm => {
+            swal2Confirm(text).then(confirm => {
                 if (confirm) {
-                    this.create();
+                    switch (mode) {
+                        case 'create':
+                            this.create();
+                            break;
+                        case 'modify':
+                            this.save();
+                            break;
+                        case 'delete':
+                            this.delete();
+                            break;
+                    }
                 }
             });
         },
         create() {
-            axios.post('/product-specification/insert', this.info).then(async res => {
+            loading.show = true;
+            axiosPostMethod('/product-specification/insert', this.info).then(async res => {
+                if (res.data.status) {
+                    await this.getSpecification(this.info.product_id);
+                    this.new_specification = true;
+                }
+
                 this.dataInit();
                 let icon = res.data.status ? 'success' : 'error';
-                Toast.fire({icon: icon, title: res.data.message});
-            }).catch(error => {
 
+                loading.show = false;
+                Toast.fire({icon: icon, title: res.data.message});
             });
+        },
+        modify(key) {
+            this.modify_key = key;
+            this.modify_info.id = this.list[key].id;
+            this.modify_info.product_id = this.info.product_id;
+            this.modify_info.name = this.list[key].name;
+            this.modify_info.original_price = this.list[key].original_price;
+            this.modify_info.selling_price = this.list[key].selling_price;
+            this.modify_info.inventory = this.list[key].inventory;
+            this.new_specification = false;
+        },
+        save() {
+            swal2Confirm(`確定變更規格資料？`).then(confirm => {
+                if (confirm) {
+                    loading.show = true;
+                    axiosPostMethod('/product-specification/update', this.modify_info).then(async res => {
+                        if (res.data.status) {
+                            await this.getSpecification(this.info.product_id);
+                            this.modify_key = null;
+                        }
+
+                        let icon = res.data.status ? 'success' : 'error';
+
+                        loading.show = false;
+                        Toast.fire({icon: icon, title: res.data.message});
+                    });
+                }
+            });
+        },
+        cancel() {
+            this.modify_key = null;
+        },
+        delete() {
+            if(this.check.length > 0) {
+                loading.show = true;
+                axiosDeleteMethod('/product-specification/delete', {data: this.check}).then(async res => {
+                    if (res.data.status) {
+                        await this.getSpecification(this.info.product_id);
+                        loading.show = false;
+                        Toast.fire({icon: 'success', title: '刪除成功'});
+                    }
+                });
+            }
         },
     },
 }).mount('#set-specification');

@@ -116,5 +116,8 @@ Route::middleware(['auth.web'])->group(function () {
     Route::delete('product/delete', [ProductController::class, 'delete']);
 
     # 產品規格
+    Route::get('product-specification/list/{id}', [ProductSpecificationController::class, 'list']);
     Route::post('product-specification/insert', [ProductSpecificationController::class, 'insert']);
+    Route::post('product-specification/update', [ProductSpecificationController::class, 'update']);
+    Route::delete('product-specification/delete', [ProductSpecificationController::class, 'delete']);
 });

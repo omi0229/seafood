@@ -19193,8 +19193,9 @@ window.axiosGetMethod = function (url) {
 
 
 window.axiosPostMethod = function (url, data) {
+  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
   return new Promise(function (resolve) {
-    axios.post(url, data).then( /*#__PURE__*/function () {
+    axios.post(url, data, config).then( /*#__PURE__*/function () {
       var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(res) {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
           while (1) {

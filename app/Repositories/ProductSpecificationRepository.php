@@ -23,26 +23,17 @@ class ProductSpecificationRepository extends Repository
         return 'App\Models\ProductSpecifications';
     }
 
-    public function list($page, array $params = [])
+    public function list($id)
     {
 
-        $keywords = data_get($params, 'keywords');
-
-        $data = !$keywords ? $this->model : $this->model->where('name', 'LIKE', '%' . $keywords . '%');
-
-        if ($page !== 'all' && is_numeric($page)) {
-            $start = ($page - 1) * 10;
-            $data = $data->skip($start)->take(10)->get();
-        } else {
-            $data = $data->get();
-        }
+        $data = $this->model->where('product_id', $this->types::decodeSlug($id))->orderBy('created_at', 'DESC')->get();
 
         $list = [];
         foreach ($data as $key => $row) {
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
             $list[$key]['product_id'] = $row->product->hash_id ?? '';
-            $list[$key]['product_name'] = $row->product->name ?? '';
+            $list[$key]['product_name'] = $row->product->title ?? '';
         }
 
         return $list;

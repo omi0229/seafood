@@ -56,9 +56,9 @@ window.axiosGetMethod = url => {
 };
 
 // 全域性axios post方法封裝
-window.axiosPostMethod = (url, data) => {
+window.axiosPostMethod = (url, data, config = null) => {
     return new Promise(resolve => {
-        axios.post(url, data).then(async res => {
+        axios.post(url, data, config).then(async res => {
             resolve(res);
         }).catch(error => {
             axios.post('/logout').then(async res => {

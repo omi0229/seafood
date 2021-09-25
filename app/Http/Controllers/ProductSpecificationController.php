@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Traits\General;
 use App\Models\ProductSpecifications;
 use App\Repositories\ProductSpecificationRepository;
 use App\Services\ProductSpecificationServices;
 
 class ProductSpecificationController extends Controller
 {
+    use General;
+
     protected $service_name = 'product-specification';
 
     protected $model, $repository, $services;
@@ -18,6 +21,15 @@ class ProductSpecificationController extends Controller
         $this->model = $model;
         $this->repository = $repository;
         $this->services = $services;
+    }
+
+    public function list($id)
+    {
+        return response()->json([
+            'status' => true,
+            'message' => 'success',
+            'data' => $this->repository->list($id)
+        ]);
     }
 
     public function insert(Request $request)

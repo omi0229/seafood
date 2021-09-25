@@ -19212,8 +19212,9 @@ window.axiosGetMethod = function (url) {
 
 
 window.axiosPostMethod = function (url, data) {
+  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
   return new Promise(function (resolve) {
-    axios.post(url, data).then( /*#__PURE__*/function () {
+    axios.post(url, data, config).then( /*#__PURE__*/function () {
       var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(res) {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
           while (1) {
@@ -63017,23 +63018,6 @@ window.app = createApp({
       this.check = newData ? _.map(this.list, 'id') : [];
     }
   },
-  computed: {
-    dateFormat: function dateFormat() {
-      return function (datetime) {
-        return moment__WEBPACK_IMPORTED_MODULE_1___default()(datetime).format('Y-MM-DD HH:mm');
-      };
-    },
-    targetFormat: function targetFormat() {
-      return function (target) {
-        return target ? '開新視窗' : '直接開啟';
-      };
-    },
-    statusFormat: function statusFormat() {
-      return function (status) {
-        return status ? '顯示' : '不顯示';
-      };
-    }
-  },
   mounted: function mounted() {
     var _this = this;
 
@@ -63063,7 +63047,7 @@ window.app = createApp({
 
       return new Promise(function (resolve) {
         var url = !_this2.search_text ? '/product/count' : '/product/count?keywords=' + _this2.search_text;
-        axios.get(url).then(function (res) {
+        axiosGetMethod(url).then(function (res) {
           _this2.all_count = res.data.count;
           _this2.page_count = res.data.page_count;
           resolve();
@@ -63080,7 +63064,7 @@ window.app = createApp({
           url += '?keywords=' + _this3.search_text;
         }
 
-        axios.get(url).then(function (res) {
+        axiosGetMethod(url).then(function (res) {
           _this3.list = res.data.data;
 
           if (loading && loading.show) {
@@ -63122,13 +63106,14 @@ window.app = createApp({
     specification: function specification(id) {
       set_specification.dataInit();
       set_specification.info.product_id = id;
+      set_specification.getSpecification(id);
     },
     "delete": function _delete() {
       var _this4 = this;
 
       if (this.check.length > 0) {
         loading.show = true;
-        axios["delete"]('/product/delete', {
+        axiosDeleteMethod('/product/delete', {
           data: this.check
         }).then( /*#__PURE__*/function () {
           var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(res) {
@@ -63264,7 +63249,7 @@ var set_info = createApp({
   methods: {
     getProductTypes: function getProductTypes() {
       return new Promise(function (resolve) {
-        axios.get('/product-type/list/all').then(function (res) {
+        axiosGetMethod('/product-type/list/all').then(function (res) {
           resolve(res);
         });
       });
@@ -63400,7 +63385,7 @@ var set_info = createApp({
           'Content-Type': 'multipart/form-data'
         }
       };
-      axios.post(url, formData, config).then( /*#__PURE__*/function () {
+      axiosPostMethod(url, formData, config).then( /*#__PURE__*/function () {
         var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(res) {
           var icon;
           return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
@@ -63432,7 +63417,7 @@ var set_info = createApp({
         return function (_x3) {
           return _ref3.apply(this, arguments);
         };
-      }())["catch"](function (error) {});
+      }());
     }
   }
 }).mount('#set-info');
@@ -63446,15 +63431,40 @@ var set_specification = createApp({
         original_price: null,
         selling_price: null,
         inventory: null
-      }
+      },
+      modify_key: null,
+      modify_info: {
+        id: null,
+        product_id: null,
+        name: '',
+        original_price: null,
+        selling_price: null,
+        inventory: null
+      },
+      list: [],
+      new_specification: false,
+      checkAll: false,
+      check: []
     };
   },
   delimiters: ["${", "}"],
-  mounted: function mounted() {},
+  watch: {
+    'checkAll': function checkAll(newData, oldData) {
+      this.check = newData ? _.map(this.list, 'id') : [];
+    }
+  },
   methods: {
+    getSpecification: function getSpecification(id) {
+      var _this9 = this;
+
+      axiosGetMethod('product-specification/list/' + id).then(function (res) {
+        if (res.data.status) {
+          _this9.list = res.data.data;
+        }
+      });
+    },
     dataInit: function dataInit() {
       this.info.id = null;
-      this.info.product_id = null;
       this.info.name = '';
       this.info.original_price = null;
       this.info.selling_price = null;
@@ -63509,44 +63519,90 @@ var set_specification = createApp({
       };
     },
     confirm: function confirm(mode) {
-      var _this9 = this;
+      var _this10 = this;
 
-      var auth = this.auth(this.info);
+      if (mode === 'create' || mode === 'modify') {
+        var auth = this.auth(this.info);
 
-      if (!auth.auth) {
-        Toast.fire({
-          icon: 'error',
-          title: auth.message
-        });
-        return false;
+        if (!auth.auth) {
+          Toast.fire({
+            icon: 'error',
+            title: auth.message
+          });
+          return false;
+        }
       }
 
-      var text = mode === 'create' ? '新增' : '編輯';
-      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)("\u78BA\u5B9A".concat(text, "\u6B64\u898F\u683C\uFF1F")).then(function (confirm) {
+      var text = '';
+
+      switch (mode) {
+        case 'create':
+          text = '確定新增此規格？';
+          break;
+
+        case 'modify':
+          text = '確定編輯此規格？';
+          break;
+
+        case 'delete':
+          text = '確定刪除選取的規格？';
+          break;
+      }
+
+      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)(text).then(function (confirm) {
         if (confirm) {
-          _this9.create();
+          switch (mode) {
+            case 'create':
+              _this10.create();
+
+              break;
+
+            case 'modify':
+              _this10.save();
+
+              break;
+
+            case 'delete':
+              _this10["delete"]();
+
+              break;
+          }
         }
       });
     },
     create: function create() {
-      var _this10 = this;
+      var _this11 = this;
 
-      axios.post('/product-specification/insert', this.info).then( /*#__PURE__*/function () {
+      loading.show = true;
+      axiosPostMethod('/product-specification/insert', this.info).then( /*#__PURE__*/function () {
         var _ref4 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(res) {
           var icon;
           return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
             while (1) {
               switch (_context5.prev = _context5.next) {
                 case 0:
-                  _this10.dataInit();
+                  if (!res.data.status) {
+                    _context5.next = 4;
+                    break;
+                  }
+
+                  _context5.next = 3;
+                  return _this11.getSpecification(_this11.info.product_id);
+
+                case 3:
+                  _this11.new_specification = true;
+
+                case 4:
+                  _this11.dataInit();
 
                   icon = res.data.status ? 'success' : 'error';
+                  loading.show = false;
                   Toast.fire({
                     icon: icon,
                     title: res.data.message
                   });
 
-                case 3:
+                case 8:
                 case "end":
                   return _context5.stop();
               }
@@ -63557,7 +63613,109 @@ var set_specification = createApp({
         return function (_x4) {
           return _ref4.apply(this, arguments);
         };
-      }())["catch"](function (error) {});
+      }());
+    },
+    modify: function modify(key) {
+      this.modify_key = key;
+      this.modify_info.id = this.list[key].id;
+      this.modify_info.product_id = this.info.product_id;
+      this.modify_info.name = this.list[key].name;
+      this.modify_info.original_price = this.list[key].original_price;
+      this.modify_info.selling_price = this.list[key].selling_price;
+      this.modify_info.inventory = this.list[key].inventory;
+      this.new_specification = false;
+    },
+    save: function save() {
+      var _this12 = this;
+
+      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)("\u78BA\u5B9A\u8B8A\u66F4\u898F\u683C\u8CC7\u6599\uFF1F").then(function (confirm) {
+        if (confirm) {
+          loading.show = true;
+          axiosPostMethod('/product-specification/update', _this12.modify_info).then( /*#__PURE__*/function () {
+            var _ref5 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6(res) {
+              var icon;
+              return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
+                while (1) {
+                  switch (_context6.prev = _context6.next) {
+                    case 0:
+                      if (!res.data.status) {
+                        _context6.next = 4;
+                        break;
+                      }
+
+                      _context6.next = 3;
+                      return _this12.getSpecification(_this12.info.product_id);
+
+                    case 3:
+                      _this12.modify_key = null;
+
+                    case 4:
+                      icon = res.data.status ? 'success' : 'error';
+                      loading.show = false;
+                      Toast.fire({
+                        icon: icon,
+                        title: res.data.message
+                      });
+
+                    case 7:
+                    case "end":
+                      return _context6.stop();
+                  }
+                }
+              }, _callee6);
+            }));
+
+            return function (_x5) {
+              return _ref5.apply(this, arguments);
+            };
+          }());
+        }
+      });
+    },
+    cancel: function cancel() {
+      this.modify_key = null;
+    },
+    "delete": function _delete() {
+      var _this13 = this;
+
+      if (this.check.length > 0) {
+        loading.show = true;
+        axiosDeleteMethod('/product-specification/delete', {
+          data: this.check
+        }).then( /*#__PURE__*/function () {
+          var _ref6 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7(res) {
+            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee7$(_context7) {
+              while (1) {
+                switch (_context7.prev = _context7.next) {
+                  case 0:
+                    if (!res.data.status) {
+                      _context7.next = 5;
+                      break;
+                    }
+
+                    _context7.next = 3;
+                    return _this13.getSpecification(_this13.info.product_id);
+
+                  case 3:
+                    loading.show = false;
+                    Toast.fire({
+                      icon: 'success',
+                      title: '刪除成功'
+                    });
+
+                  case 5:
+                  case "end":
+                    return _context7.stop();
+                }
+              }
+            }, _callee7);
+          }));
+
+          return function (_x6) {
+            return _ref6.apply(this, arguments);
+          };
+        }());
+      }
     }
   }
 }).mount('#set-specification');
