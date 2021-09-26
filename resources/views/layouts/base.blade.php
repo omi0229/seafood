@@ -256,6 +256,46 @@
                             </li>
                             @endif
 
+                            @php
+                                $put_on_manage = $permissions
+                                    ->filter(function ($p){
+                                        if($p->name == 'directory' || $p->name == 'put-on'){
+                                            return true;
+                                        }
+
+                                        return false;
+                                    });
+                            @endphp
+                            @if($put_on_manage->count() > 0 && ($login_user->can('directory') || $login_user->can('put-on')))
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon fas fa-sitemap"></i>
+                                    <p>
+                                        上架設定
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @if($login_user->can('directory'))
+                                    <li class="nav-item">
+                                        <a href="/directory" class="nav-link">
+                                            <i class="nav-icon far fa-circle"></i>
+                                            <p>{{ $put_on_manage->where('name', 'directory')->first()->display_name  }}</p>
+                                        </a>
+                                    </li>
+                                    @endif
+                                    @if($login_user->can('put-on'))
+                                    <li class="nav-item">
+                                        <a href="/put-on" class="nav-link">
+                                            <i class="nav-icon far fa-circle"></i>
+                                            <p>{{ $put_on_manage->where('name', 'put-on')->first()->display_name  }}</p>
+                                        </a>
+                                    </li>
+                                    @endif
+                                </ul>
+                            </li>
+                            @endif
+
                         </ul>
                     </nav>
                     <!-- /.sidebar-menu -->

@@ -1,18 +1,19 @@
 @extends('layouts.base')
 
 @section('content')
-    <link rel="stylesheet" href="css/product.css">
+    <link rel="stylesheet" href="plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="css/put-on.css">
     <div id="app" v-cloak>
         <div class="content-header px-4">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">產品管理</h1>
+                        <h1 class="m-0">上架管理</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="/">首頁</a></li>
-                            <li class="breadcrumb-item active">產品管理</li>
+                            <li class="breadcrumb-item active">上架管理</li>
                         </ol>
                     </div>
                 </div>
@@ -20,10 +21,19 @@
         </div>
 
         <div class="row mx-0 px-3">
-            <div class="mb-3 col-12 col-md-6">
-                <components-search v-model:search_text="search_text" name="產品" @get-count="getCount" @get-data="getData"></components-search>
+            <div class="mb-3 col-12 col-md-3">
+                <!--
+                <components-search v-model:search_text="search_text" name="上架" @get-count="getCount" @get-data="getData"></components-search>
+                -->
+                <div class="form-group">
+                    <select class="form-control form-control-sm select2" v-model="value.directory" @change="getData">
+                        <option value="">請選擇目錄</option>
+                        <!-- v-for -->
+                        <option :value="item.id" v-for="item in select.directories">${item.name}</option>
+                    </select>
+                </div>
             </div>
-            <div class="mb-3 col-12 col-md-6 d-flex justify-content-end">
+            <div class="mb-3 col-12 col-md-9 d-flex justify-content-end">
                 <!-- v-show -->
                 <div class="mr-2" v-show="check.length > 0">
                     <button type="button" class="btn btn-sm btn-danger px-2" @click="confirm('delete')">
@@ -43,13 +53,19 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">產品列表</h3>
+                            <h3 class="card-title">上架列表</h3>
                         </div>
                         <div class="card-body table-responsive p-0">
                             <table class="table table-hover text-nowrap">
                                 <thead>
                                 <!-- v-if -->
-                                <tr v-if="list.length > 0">
+                                <tr v-if="!value.directory">
+                                    <th class="text-center" colspan="6">
+                                        <div class="text-danger">請選擇一個目錄</div>
+                                        <div class="text-danger">上架商品</div>
+                                    </th>
+                                </tr>
+                                <tr v-else-if="list.length > 0">
                                     <th class="align-middle">
                                         <input type="checkbox" class="checkbox-size" v-model="checkAll">
                                     </th>
@@ -60,36 +76,38 @@
                                     <th class="text-center">功能</th>
                                 </tr>
                                 <tr v-else>
-                                    <th class="text-center" colspan="6"><span class="text-danger">無產品資料</span></th>
+                                    <th class="text-center" colspan="6"><span class="text-danger">無上架資料</span></th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <!-- v-for -->
-                                <tr v-for="item in list">
-                                    <td class="align-middle">
-                                        <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check">
-                                    </td>
-                                    <td> ${item.title} </td>
-                                    <td> ${item.product_types_name} </td>
-                                    <td class="text-center">
-                                        <!-- v-if -->
-                                        <span class="right badge badge-success" v-if="item.sales_status == '1'">開放</span>
-                                        <span class="right badge badge-danger" v-else="">暫停</span>
-                                    </td>
-                                    <td class="text-center">
-                                        <!-- v-if -->
-                                        <span class="right badge badge-success" v-if="item.show_status == '1'">顯示</span>
-                                        <span class="right badge badge-danger" v-else="">不顯示</span>
-                                    </td>
-                                    <td class="text-center">
-                                        <button type="button" class="btn btn-sm btn-info px-2 mr-1" data-toggle="modal" data-target="#set-info" @click="modify(item.id)">
-                                            <i class="fa fa-edit mr-1"></i> 編輯
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-secondary px-2 ml-1" data-toggle="modal" data-target="#set-specification" @click="specification(item.id)">
-                                            <i class="fas fa-list-ul mr-1"></i> 規格
-                                        </button>
-                                    </td>
-                                </tr>
+                                <template v-if="value.directory">
+                                    <!-- v-for -->
+                                    <tr v-for="item in list">
+                                        <td class="align-middle">
+                                            <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check">
+                                        </td>
+                                        <td> ${item.title} </td>
+                                        <td> ${item.product_types_name} </td>
+                                        <td class="text-center">
+                                            <!-- v-if -->
+                                            <span class="right badge badge-success" v-if="item.sales_status == '1'">開放</span>
+                                            <span class="right badge badge-danger" v-else="">暫停</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <!-- v-if -->
+                                            <span class="right badge badge-success" v-if="item.show_status == '1'">顯示</span>
+                                            <span class="right badge badge-danger" v-else="">不顯示</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-sm btn-info px-2 mr-1" data-toggle="modal" data-target="#set-info" @click="modify(item.id)">
+                                                <i class="fa fa-edit mr-1"></i> 編輯
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-secondary px-2 ml-1" data-toggle="modal" data-target="#set-specification" @click="specification(item.id)">
+                                                <i class="fas fa-list-ul mr-1"></i> 規格
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </template>
                                 </tbody>
                             </table>
                         </div>
@@ -105,7 +123,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
-                        <template v-if="mode == 'create'">新增</template><template v-else>編輯</template>產品
+                        <template v-if="mode == 'create'">新增</template><template v-else>編輯</template>上架
                     </h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -296,7 +314,7 @@
             </div>
         </div>
     </div>
-
+    <script src="plugins/select2/js/select2.full.min.js"></script>
     <script src="plugins/ckeditor/ckeditor.js"></script>
-    <script src="js/product.js"></script>
+    <script src="js/put-on.js"></script>
 @endsection

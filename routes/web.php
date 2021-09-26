@@ -16,6 +16,8 @@ use App\Http\Controllers\CookingController;
 use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductSpecificationController;
+use App\Http\Controllers\DirectoryController;
+use App\Http\Controllers\PutOnController;
 
 
 /*
@@ -120,4 +122,20 @@ Route::middleware(['auth.web'])->group(function () {
     Route::post('product-specification/insert', [ProductSpecificationController::class, 'insert']);
     Route::post('product-specification/update', [ProductSpecificationController::class, 'update']);
     Route::delete('product-specification/delete', [ProductSpecificationController::class, 'delete']);
+
+    # 目錄管理
+    Route::get('directory', [DirectoryController::class, 'index']);
+    Route::get('directory/count', [DirectoryController::class, 'count']);
+    Route::get('directory/list/{page}', [DirectoryController::class, 'list']);
+    Route::post('directory/insert', [DirectoryController::class, 'insert']);
+    Route::post('directory/update', [DirectoryController::class, 'update']);
+    Route::delete('directory/delete', [DirectoryController::class, 'delete']);
+
+    # 上架管理
+    Route::get('put-on', [PutOnController::class, 'index']);
+    Route::get('put-on/count', [PutOnController::class, 'count']);
+    Route::get('put-on/list/{page}', [PutOnController::class, 'list']);
+    Route::post('put-on/insert', [PutOnController::class, 'insert']);
+    Route::post('put-on/update', [PutOnController::class, 'update']);
+    Route::delete('put-on/delete', [PutOnController::class, 'delete']);
 });

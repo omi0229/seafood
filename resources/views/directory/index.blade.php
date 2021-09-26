@@ -6,12 +6,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">烹飪教學分類</h1>
+                        <h1 class="m-0">目錄管理</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="/">首頁</a></li>
-                            <li class="breadcrumb-item active">烹飪教學分類</li>
+                            <li class="breadcrumb-item active">目錄管理</li>
                         </ol>
                     </div>
                 </div>
@@ -20,7 +20,7 @@
 
         <div class="row mx-0 px-3">
             <div class="mb-3 col-12 col-md-6">
-                <components-search v-model:search_text="search_text" name="分類" @get-count="getCount" @get-data="getData"></components-search>
+                <components-search v-model:search_text="search_text" name="目錄" @get-count="getCount" @get-data="getData"></components-search>
             </div>
             <div class="mb-3 col-12 col-md-6 d-flex justify-content-end">
                 <!-- v-show -->
@@ -42,7 +42,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">分類列表</h3>
+                            <h3 class="card-title">目錄列表</h3>
                         </div>
                         <div class="card-body table-responsive p-0">
                             <table class="table table-hover text-nowrap">
@@ -52,13 +52,13 @@
                                     <th class="align-middle">
                                         <input type="checkbox" class="checkbox-size" v-model="checkAll">
                                     </th>
-                                    <th>分類名稱</th>
+                                    <th>目錄名稱</th>
                                     <th class="text-center">建立日期</th>
                                     <th class="text-center">上次異動日期</th>
                                     <th class="text-center">功能</th>
                                 </tr>
                                 <tr v-else>
-                                    <th class="text-center" colspan="5"><span class="text-danger">無分類資料</span></th>
+                                    <th class="text-center" colspan="5"><span class="text-danger">無目錄資料</span></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -91,7 +91,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
-                        <template v-if="mode == 'create'">新增</template><template v-else>編輯</template>分類
+                        <template v-if="mode == 'create'">新增</template><template v-else>編輯</template>目錄
                     </h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -110,5 +110,5 @@
             </div>
         </div>
     </div>
-    <script src="js/cooking-types.js"></script>
+    <script src="js/directory.js"></script>
 @endsection

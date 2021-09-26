@@ -55,6 +55,7 @@
                                     <th>分類名稱</th>
                                     <th class="text-center">建立日期</th>
                                     <th class="text-center">上次異動日期</th>
+                                    <th class="text-center">功能</th>
                                 </tr>
                                 <tr v-else>
                                     <th class="text-center" colspan="5"><span class="text-danger">無分類資料</span></th>
