@@ -27,7 +27,7 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     forceTLS: true
 // });
 
-import { createApp } from 'vue';
+import { createApp, ref, watch } from 'vue';
 window.createApp = createApp;
 
 window.Swal = require('sweetalert2');
@@ -143,4 +143,19 @@ export const getRoles = (page = null, keywords = null) => {
             resolve(res);
         });
     });
-}
+};
+
+export const checkAllFunction = () => {
+    const list = ref([]);
+    const check = ref([]);
+    const checkAll = ref(false);
+    watch(checkAll, (newData, oldData) => {
+        check.value = newData ? _.map(list.value, 'id') : [];
+    });
+
+    return {
+        list,
+        check,
+        checkAll
+    }
+};

@@ -19134,7 +19134,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "passwordRule": () => (/* binding */ passwordRule),
 /* harmony export */   "emailRule": () => (/* binding */ emailRule),
 /* harmony export */   "swal2Confirm": () => (/* binding */ swal2Confirm),
-/* harmony export */   "getRoles": () => (/* binding */ getRoles)
+/* harmony export */   "getRoles": () => (/* binding */ getRoles),
+/* harmony export */   "checkAllFunction": () => (/* binding */ checkAllFunction)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
@@ -19366,6 +19367,19 @@ var getRoles = function getRoles() {
       resolve(res);
     });
   });
+};
+var checkAllFunction = function checkAllFunction() {
+  var list = (0,vue__WEBPACK_IMPORTED_MODULE_1__.ref)([]);
+  var check = (0,vue__WEBPACK_IMPORTED_MODULE_1__.ref)([]);
+  var checkAll = (0,vue__WEBPACK_IMPORTED_MODULE_1__.ref)(false);
+  (0,vue__WEBPACK_IMPORTED_MODULE_1__.watch)(checkAll, function (newData, oldData) {
+    check.value = newData ? _.map(list.value, 'id') : [];
+  });
+  return {
+    list: list,
+    check: check,
+    checkAll: checkAll
+  };
 };
 
 /***/ }),
@@ -62978,13 +62992,16 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _bootstrap__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
-/* harmony import */ var _components_search_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/search.js */ "./resources/js/components/search.js");
-/* harmony import */ var _components_pagination_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/pagination.js */ "./resources/js/components/pagination.js");
-/* harmony import */ var _fancyapps_ui__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fancyapps/ui */ "./node_modules/@fancyapps/ui/dist/fancybox.esm.js");
-/* harmony import */ var _fancyapps_ui_dist_fancybox_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fancyapps/ui/dist/fancybox.css */ "./node_modules/@fancyapps/ui/dist/fancybox.css");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _bootstrap__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
+/* harmony import */ var _components_search_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/search.js */ "./resources/js/components/search.js");
+/* harmony import */ var _components_pagination_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/pagination.js */ "./resources/js/components/pagination.js");
+/* harmony import */ var _fancyapps_ui__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @fancyapps/ui */ "./node_modules/@fancyapps/ui/dist/fancybox.esm.js");
+/* harmony import */ var _fancyapps_ui_dist_fancybox_css__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @fancyapps/ui/dist/fancybox.css */ "./node_modules/@fancyapps/ui/dist/fancybox.css");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -62997,18 +63014,29 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
+
+
 window.app = createApp({
   components: {
-    'components-search': _components_search_js__WEBPACK_IMPORTED_MODULE_3__.search,
-    'components-pagination': _components_pagination_js__WEBPACK_IMPORTED_MODULE_4__.pagination
+    'components-search': _components_search_js__WEBPACK_IMPORTED_MODULE_5__.search,
+    'components-pagination': _components_pagination_js__WEBPACK_IMPORTED_MODULE_6__.pagination
+  },
+  setup: function setup() {
+    var _checkAllFunction = (0,_bootstrap__WEBPACK_IMPORTED_MODULE_4__.checkAllFunction)(),
+        list = _checkAllFunction.list,
+        check = _checkAllFunction.check,
+        checkAll = _checkAllFunction.checkAll;
+
+    return {
+      list: list,
+      check: check,
+      checkAll: checkAll
+    };
   },
   data: function data() {
     return {
       all_count: 0,
       page_count: 10,
-      checkAll: false,
-      check: [],
-      list: [],
       search_text: '',
       value: {
         directory: ''
@@ -63019,11 +63047,6 @@ window.app = createApp({
     };
   },
   delimiters: ["${", "}"],
-  watch: {
-    'checkAll': function checkAll(newData, oldData) {
-      this.check = newData ? _.map(this.list, 'id') : [];
-    }
-  },
   mounted: function mounted() {
     var _this = this;
 
@@ -63182,7 +63205,7 @@ window.app = createApp({
     confirm: function confirm() {
       var _this6 = this;
 
-      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)('確定刪除選取的項目？').then(function (confirm) {
+      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_4__.swal2Confirm)('確定刪除選取的項目？').then(function (confirm) {
         if (confirm) {
           _this6["delete"]();
         }
@@ -63191,16 +63214,45 @@ window.app = createApp({
   }
 }).mount('#app');
 var set_info = createApp({
-  data: function data() {
-    return {
-      list: [],
-      checkAll: false,
-      value: {
-        product_types_id: ''
-      },
-      select: {
-        product_types_id: []
+  setup: function setup() {
+    var check_list = (0,vue__WEBPACK_IMPORTED_MODULE_1__.ref)([]);
+    var list = (0,vue__WEBPACK_IMPORTED_MODULE_1__.ref)([]);
+    var check = (0,vue__WEBPACK_IMPORTED_MODULE_1__.ref)([]);
+    var checkAll = (0,vue__WEBPACK_IMPORTED_MODULE_1__.ref)(false);
+    (0,vue__WEBPACK_IMPORTED_MODULE_1__.watch)(checkAll, function (newData, oldData) {
+      if (newData) {
+        _.forEach(list.value, function (v) {
+          if (!check.value.includes(v.id)) {
+            check.value.push(v.id);
+          }
+        });
+      } else {
+        _.forEach(list.value, function (v) {
+          _.remove(check.value, function (id) {
+            return id == v.id;
+          });
+        });
       }
+    });
+    var value = (0,vue__WEBPACK_IMPORTED_MODULE_1__.reactive)({
+      product_types_id: ''
+    });
+    var select = (0,vue__WEBPACK_IMPORTED_MODULE_1__.reactive)({
+      product_types_id: []
+    });
+    (0,vue__WEBPACK_IMPORTED_MODULE_1__.watch)(check, function (newData, oldData) {
+      _.forEach(newData, function (v) {
+        if (!_.find(_.find(check_list.value, ['id', v]))) {
+          check_list.value.push(_.find(list.value, ['id', v]));
+        }
+      });
+    });
+    return {
+      list: list,
+      check: check,
+      checkAll: checkAll,
+      value: value,
+      select: select
     };
   },
   delimiters: ["${", "}"],
@@ -63225,25 +63277,10 @@ var set_info = createApp({
     getProductTypes: function getProductTypes() {
       return new Promise(function (resolve) {
         axiosGetMethod('product-type/list/all').then(function (res) {
-          console.log(res);
           resolve(res);
         });
       });
     },
-    // getProducts() {
-    //     return new Promise(resolve => {
-    //
-    //
-    //
-    //
-    //
-    //         axiosGetMethod(url).then(res => {
-    //
-    //             console.log(res);
-    //             resolve(res);
-    //         });
-    //     });
-    // },
     confirm: function confirm() {
       var _this8 = this;
 
@@ -63258,7 +63295,7 @@ var set_info = createApp({
       }
 
       var text = this.mode === 'create' ? '新增' : '編輯';
-      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)("\u78BA\u5B9A".concat(text, "\u6B64\u8CC7\u6599\uFF1F")).then(function (confirm) {
+      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_4__.swal2Confirm)("\u78BA\u5B9A".concat(text, "\u6B64\u8CC7\u6599\uFF1F")).then(function (confirm) {
         if (confirm) {
           _this8.save();
         }
@@ -63451,7 +63488,7 @@ var set_specification = createApp({
           break;
       }
 
-      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)(text).then(function (confirm) {
+      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_4__.swal2Confirm)(text).then(function (confirm) {
         if (confirm) {
           switch (mode) {
             case 'create':
@@ -63530,7 +63567,7 @@ var set_specification = createApp({
     save: function save() {
       var _this12 = this;
 
-      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)("\u78BA\u5B9A\u8B8A\u66F4\u898F\u683C\u8CC7\u6599\uFF1F").then(function (confirm) {
+      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_4__.swal2Confirm)("\u78BA\u5B9A\u8B8A\u66F4\u898F\u683C\u8CC7\u6599\uFF1F").then(function (confirm) {
         if (confirm) {
           loading.show = true;
           axiosPostMethod('/product-specification/update', _this12.modify_info).then( /*#__PURE__*/function () {

@@ -69,7 +69,7 @@
                                     <th class="align-middle">
                                         <input type="checkbox" class="checkbox-size" v-model="checkAll">
                                     </th>
-                                    <th>標題</th>
+                                    <th>產品名稱</th>
                                     <th>分類</th>
                                     <th class="text-center">銷售狀態</th>
                                     <th class="text-center">上架管理顯示</th>
@@ -188,6 +188,9 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="modal-footer">
+
                 </div>
                 <div class="modal-footer justify-content-end">
                     <button type="button" class="btn btn-sm btn-danger px-3 mr-1" data-dismiss="modal" aria-label="Close">取消</button>

@@ -1,22 +1,33 @@
+import { ref, reactive, watch } from 'vue'
+import { filter } from 'lodash'
 import moment from 'moment';
-import { swal2Confirm } from './bootstrap';
+import { swal2Confirm, checkAllFunction } from './bootstrap';
 import { search } from './components/search.js';
 import { pagination } from './components/pagination.js';
 import { Fancybox, Carousel, Panzoom } from "@fancyapps/ui";
 import "@fancyapps/ui/dist/fancybox.css";
+
+
 
 window.app = createApp({
     components: {
         'components-search': search,
         'components-pagination': pagination,
     },
+    setup() {
+
+        const { list, check, checkAll } = checkAllFunction();
+
+        return {
+            list,
+            check,
+            checkAll,
+        }
+    },
     data() {
         return {
             all_count: 0,
             page_count: 10,
-            checkAll: false,
-            check: [],
-            list: [],
             search_text: '',
             value: {
                 directory: '',
@@ -27,11 +38,6 @@ window.app = createApp({
         }
     },
     delimiters: ["${", "}"],
-    watch: {
-        'checkAll'(newData, oldData) {
-            this.check = newData ? _.map(this.list, 'id') : [];
-        },
-    },
     async mounted() {
         await axiosGetMethod('/directory/list/all').then(res => {
             this.select.directories = res.data.data;
@@ -116,16 +122,48 @@ window.app = createApp({
 }).mount('#app');
 
 let set_info = createApp({
-    data() {
+    setup() {
+        const check_list = ref([]);
+
+        const list = ref([]);
+        const check = ref([]);
+        const checkAll = ref(false);
+        watch(checkAll, (newData, oldData) => {
+            if (newData) {
+                _.forEach(list.value, (v) => {
+                    if (!check.value.includes(v.id)) {
+                        check.value.push(v.id);
+                    }
+                });
+            } else {
+                _.forEach(list.value, (v) => {
+                    _.remove(check.value, function(id) { return id == v.id; });
+                });
+            }
+        });
+
+        const value = reactive({
+            product_types_id: '',
+        });
+
+        const select = reactive({
+            product_types_id: [],
+        });
+
+        watch(check, (newData, oldData) => {
+            _.forEach(newData, (v) => {
+                if (!_.find(_.find(check_list.value, ['id', v]))) {
+                    check_list.value.push(_.find(list.value, ['id', v]));
+                }
+            });
+        });
+
         return {
-            list: [],
-            checkAll: false,
-            value: {
-                product_types_id: '',
-            },
-            select: {
-                product_types_id: [],
-            },
+            list,
+            check,
+            checkAll,
+            value,
+            select,
         }
     },
     delimiters: ["${", "}"],
@@ -149,25 +187,10 @@ let set_info = createApp({
         getProductTypes() {
             return new Promise(resolve => {
                 axiosGetMethod('product-type/list/all').then(res => {
-                    console.log(res);
                     resolve(res);
                 });
             });
         },
-        // getProducts() {
-        //     return new Promise(resolve => {
-        //
-        //
-        //
-        //
-        //
-        //         axiosGetMethod(url).then(res => {
-        //
-        //             console.log(res);
-        //             resolve(res);
-        //         });
-        //     });
-        // },
         confirm() {
             let auth = this.auth(this.info);
             if (!auth.auth) {

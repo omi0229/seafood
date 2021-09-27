@@ -19125,7 +19125,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "passwordRule": () => (/* binding */ passwordRule),
 /* harmony export */   "emailRule": () => (/* binding */ emailRule),
 /* harmony export */   "swal2Confirm": () => (/* binding */ swal2Confirm),
-/* harmony export */   "getRoles": () => (/* binding */ getRoles)
+/* harmony export */   "getRoles": () => (/* binding */ getRoles),
+/* harmony export */   "checkAllFunction": () => (/* binding */ checkAllFunction)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
@@ -19357,6 +19358,19 @@ var getRoles = function getRoles() {
       resolve(res);
     });
   });
+};
+var checkAllFunction = function checkAllFunction() {
+  var list = (0,vue__WEBPACK_IMPORTED_MODULE_1__.ref)([]);
+  var check = (0,vue__WEBPACK_IMPORTED_MODULE_1__.ref)([]);
+  var checkAll = (0,vue__WEBPACK_IMPORTED_MODULE_1__.ref)(false);
+  (0,vue__WEBPACK_IMPORTED_MODULE_1__.watch)(checkAll, function (newData, oldData) {
+    check.value = newData ? _.map(list.value, 'id') : [];
+  });
+  return {
+    list: list,
+    check: check,
+    checkAll: checkAll
+  };
 };
 
 /***/ }),
