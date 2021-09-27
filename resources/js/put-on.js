@@ -35,16 +35,17 @@ window.app = createApp({
     async mounted() {
         await axiosGetMethod('/directory/list/all').then(res => {
             this.select.directories = res.data.data;
-            $('.select2').select2();
+            $('.directory-select2').select2();
         });
 
         await this.getCount();
         await this.getData(1);
+        loading.show = false;
 
-        $('.select2').on('select2:select', function (e) {
+        $('.directory-select2').on('select2:select', function (e) {
             loading.show = true;
             app.value.directory = e.params.data.id;
-            app.getData();
+            app.getData(1);
         });
 
     },
@@ -59,48 +60,19 @@ window.app = createApp({
                 });
             });
         },
-        getData() {
-            console.log(this.value.directory);
-            loading.show = false;
-            // return new Promise(resolve => {
-            //     let url = '/product/list/' + page;
-            //
-            //     if (this.search_text) {
-            //         url += '?keywords=' + this.search_text;
-            //     }
-            //
-            //     axiosGetMethod(url).then(res => {
-            //         this.list = res.data.data;
-            //         if (loading && loading.show) {
-            //             loading.show = false;
-            //         }
-            //         resolve();
-            //     });
-            // });
+        getData(page) {
+            return new Promise(resolve => {
+                let url = 'put-on/list/' + page + '?directories_id=' + this.value.directory;
+                axiosGetMethod(url).then(res => {
+                    resolve(res);
+                });
+            });
         },
         create() {
-            CKEDITOR.instances["content"].setData('');
-            set_info.dataInit();
-            set_info.mode = 'create';
+
         },
         modify(id) {
-            set_info.dataInit();
-            set_info.mode = 'modify';
-            set_info.info.id = id;
-            let info = _.find(this.list, {'id': id});
-            set_info.info.product_types_id = info.product_types_id;
-            set_info.info.title = info.title;
-            CKEDITOR.instances["content"].setData(info.content);
-            set_info.info.keywords = info.keywords ? info.keywords.split(',') : [];
-            set_info.info.description = info.description;
-            set_info.info.web_img_name = info.web_img_name || '請選擇檔案';
-            set_info.info.web_img = '';
-            set_info.info.web_img_path = info.web_img_path;
-            set_info.info.mobile_img_name = info.mobile_img_name || '請選擇檔案';
-            set_info.info.mobile_img = '';
-            set_info.info.mobile_img_path = info.mobile_img_path;
-            set_info.info.sales_status = info.sales_status;
-            set_info.info.show_status = info.show_status;
+
         },
         specification(id) {
             set_specification.dataInit();
@@ -146,125 +118,56 @@ window.app = createApp({
 let set_info = createApp({
     data() {
         return {
-            mode: 'create',
-            date: new Date(),
-            info: {
-                id: '',
-                product_types_id: '',
-                title: '',
-                content: '',
-                keywords: [],
-                description: '',
-                web_img_delete: 0,
-                web_img_name: '請選擇檔案',
-                web_img: '',
-                web_img_path: '',
-                mobile_img_delete: 0,
-                mobile_img_name: '請選擇檔案',
-                mobile_img: '',
-                mobile_img_path: '',
-                sales_status: '0',
-                show_status: '0',
-            },
+            list: [],
+            checkAll: false,
             value: {
-                keyword: '',
+                product_types_id: '',
             },
             select: {
-                product_types: [],
+                product_types_id: [],
             },
         }
     },
     delimiters: ["${", "}"],
     mounted() {
         this.getProductTypes().then(res => {
-            this.select.product_types = res.data.data;
+            this.select.product_types_id = res.data.data;
+            $('.product-types-select2').select2();
         });
 
-        CKEDITOR.replace("content");
+        $('.product-types-select2').on('select2:select', function (e) {
+            loading.show = true;
+            set_info.value.product_types_id = e.params.data.id;
+            let url = '/product/list/all?show_status=1&product_types_id=' + set_info.value.product_types_id;
+            axiosGetMethod(url).then(res => {
+                set_info.list = res.data.data;
+                loading.show = false;
+            });
+        });
     },
     methods: {
         getProductTypes() {
             return new Promise(resolve => {
-                axiosGetMethod('/product-type/list/all').then(res => {
+                axiosGetMethod('product-type/list/all').then(res => {
+                    console.log(res);
                     resolve(res);
                 });
             });
         },
-        deletePicture(type) {
-            if (type == 'web') {
-                this.info.web_img_delete = 1;
-                this.info.web_img_name = '請選擇檔案';
-                this.info.web_img = '';
-                this.$refs.web_img.value = '';
-            } else if (type == 'mobile') {
-                this.info.mobile_img_delete = 1;
-                this.info.mobile_img_name = '請選擇檔案';
-                this.info.mobile_img = '';
-                this.$refs.mobile_img.value = '';
-            }
-        },
-        addKeyword() {
-            if (!this.value.keyword) {
-                Toast.fire({icon: 'error', title: '請輸入關鍵字'});
-                return false;
-            }
-
-            if (this.info.keywords.length < 10) {
-                this.info.keywords.push(this.value.keyword);
-            } else {
-                Toast.fire({icon: 'error', title: '最多設定10個關鍵字'});
-            }
-        },
-        deleteKeyword(key) {
-            this.info.keywords = _.remove(this.info.keywords, function (v, k) {
-                return k != key;
-            });
-        },
-        dataInit() {
-            this.value.keyword = '';
-
-            this.info.id = null;
-            this.info.product_types_id = '';
-            this.info.title = '';
-            this.info.content = '';
-            this.info.keywords = [];
-            this.info.description = '';
-            this.info.web_img_delete = 0;
-            this.info.web_img_name = '請選擇檔案';
-            this.info.web_img = null;
-            this.info.web_img_path = '';
-            this.info.mobile_img_delete = 0;
-            this.info.mobile_img_name = '請選擇檔案';
-            this.info.mobile_img = null;
-            this.info.mobile_img_path = '';
-            this.info.sales_status = '0';
-            this.info.show_status = '0';
-        },
-        file(e, type) {
-            if (e.target && e.target.files[0]) {
-                if (type == 'web') {
-                    this.info.web_img_delete = 0;
-                    this.info.web_img_name = e.target.files[0].name;
-                    this.info.web_img = e.target.files[0];
-
-                } else if (type == 'mobile') {
-                    this.info.mobile_img_delete = 0;
-                    this.info.mobile_img_name = e.target.files[0].name;
-                    this.info.mobile_img = e.target.files[0];
-                }
-            }
-        },
-        auth(data) {
-            if (!data.product_types_id) {
-                return {auth: false, message: '請選擇分類！'};
-            }
-
-            if (!data.title) {
-                return {auth: false, message: '標題不得為空！'};
-            }
-
-            return {auth: true, message: 'success'};
-        },
+        // getProducts() {
+        //     return new Promise(resolve => {
+        //
+        //
+        //
+        //
+        //
+        //         axiosGetMethod(url).then(res => {
+        //
+        //             console.log(res);
+        //             resolve(res);
+        //         });
+        //     });
+        // },
         confirm() {
             let auth = this.auth(this.info);
             if (!auth.auth) {

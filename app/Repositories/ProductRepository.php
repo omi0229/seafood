@@ -25,17 +25,22 @@ class ProductRepository extends Repository
 
     public function list($page, array $params = [])
     {
-
         $keywords = data_get($params, 'keywords');
+        $product_types_id = data_get($params, 'product_types_id');
+        $show_status = data_get($params, 'show_status');
 
-        $data = !$keywords ? $this->model : $this->model->where('title', 'LIKE', '%' . $keywords . '%');
+        # 有 產品分類
+        $data = $product_types_id ? $this->model->where('product_types_id', ProductTypes::decodeSlug($product_types_id)) : $this->model;
 
-        if ($page !== 'all' && is_numeric($page)) {
-            $start = ($page - 1) * 10;
-            $data = $data->skip($start)->take(10)->get();
-        } else {
-            $data = $data->get();
-        }
+        # 有 是否於上架管理顯示
+        $data = $show_status !== null ? $data->where('show_status', $show_status) : $data;
+
+        # 有 關鍵字
+        $data = !$keywords ? $data : $data->where('title', 'LIKE', '%' . $keywords . '%');
+
+        # 是否分頁顯示
+        $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;
+        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(10)->get() : $data->get();
 
         $list = [];
         foreach ($data as $key => $row) {

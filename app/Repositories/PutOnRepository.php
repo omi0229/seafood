@@ -2,8 +2,9 @@
 
 namespace App\Repositories;
 
-use App\Repositories\Repository;
 use Illuminate\Http\Request;
+use App\Repositories\Repository;
+use App\Models\Directory;
 
 class PutOnRepository extends Repository
 {
@@ -14,17 +15,18 @@ class PutOnRepository extends Repository
 
     public function list($page, array $params = [])
     {
-
         $keywords = data_get($params, 'keywords');
+        $directories_id = data_get($params, 'directories_id');
 
-        $data = !$keywords ? $this->model : $this->model->where('name', 'LIKE', '%' . $keywords . '%');
+        # 有 目錄ID
+        $data = $directories_id ? $this->model->where('directories_id', Directory::decodeSlug($directories_id)) : $this->model;
 
-        if ($page !== 'all' && is_numeric($page)) {
-            $start = ($page - 1) * 10;
-            $data = $data->skip($start)->take(10)->get();
-        } else {
-            $data = $data->get();
-        }
+        # 有 關鍵字
+        $data = !$keywords ? $data : $data->where('name', 'LIKE', '%' . $keywords . '%');
+
+        # 是否分頁顯示
+        $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;
+        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(10)->get() : $data->get();
 
         $list = [];
         foreach ($data as $key => $row) {

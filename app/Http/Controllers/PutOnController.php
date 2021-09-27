@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PutOn;
 use App\Repositories\PutOnRepository;
-use App\Services\ProductTypesServices;
+use App\Services\PutOnServices;
 use App\Traits\General;
 
 class PutOnController extends Controller
@@ -16,7 +16,7 @@ class PutOnController extends Controller
 
     protected $model, $repository, $services;
 
-    public function __construct(PutOn $model, PutOnRepository $repository, ProductTypesServices $services)
+    public function __construct(PutOn $model, PutOnRepository $repository, PutOnServices $services)
     {
         $this->model = $model;
         $this->repository = $repository;

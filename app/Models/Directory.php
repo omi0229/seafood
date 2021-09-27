@@ -21,4 +21,9 @@ class Directory extends Model
     {
         return $this->hasMany('App\Models\Products');
     }
+
+    public function put_ons()
+    {
+        return $this->hasMany('App\Models\PutOn');
+    }
 }

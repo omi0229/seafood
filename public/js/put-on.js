@@ -63035,7 +63035,7 @@ window.app = createApp({
               _context.next = 2;
               return axiosGetMethod('/directory/list/all').then(function (res) {
                 _this.select.directories = res.data.data;
-                $('.select2').select2();
+                $('.directory-select2').select2();
               });
 
             case 2:
@@ -63047,13 +63047,14 @@ window.app = createApp({
               return _this.getData(1);
 
             case 6:
-              $('.select2').on('select2:select', function (e) {
+              loading.show = false;
+              $('.directory-select2').on('select2:select', function (e) {
                 loading.show = true;
                 app.value.directory = e.params.data.id;
-                app.getData();
+                app.getData(1);
               });
 
-            case 7:
+            case 8:
             case "end":
               return _context.stop();
           }
@@ -63074,59 +63075,25 @@ window.app = createApp({
         });
       });
     },
-    getData: function getData() {
-      console.log(this.value.directory);
-      loading.show = false; // return new Promise(resolve => {
-      //     let url = '/product/list/' + page;
-      //
-      //     if (this.search_text) {
-      //         url += '?keywords=' + this.search_text;
-      //     }
-      //
-      //     axiosGetMethod(url).then(res => {
-      //         this.list = res.data.data;
-      //         if (loading && loading.show) {
-      //             loading.show = false;
-      //         }
-      //         resolve();
-      //     });
-      // });
-    },
-    create: function create() {
-      CKEDITOR.instances["content"].setData('');
-      set_info.dataInit();
-      set_info.mode = 'create';
-    },
-    modify: function modify(id) {
-      set_info.dataInit();
-      set_info.mode = 'modify';
-      set_info.info.id = id;
+    getData: function getData(page) {
+      var _this3 = this;
 
-      var info = _.find(this.list, {
-        'id': id
+      return new Promise(function (resolve) {
+        var url = 'put-on/list/' + page + '?directories_id=' + _this3.value.directory;
+        axiosGetMethod(url).then(function (res) {
+          resolve(res);
+        });
       });
-
-      set_info.info.product_types_id = info.product_types_id;
-      set_info.info.title = info.title;
-      CKEDITOR.instances["content"].setData(info.content);
-      set_info.info.keywords = info.keywords ? info.keywords.split(',') : [];
-      set_info.info.description = info.description;
-      set_info.info.web_img_name = info.web_img_name || '請選擇檔案';
-      set_info.info.web_img = '';
-      set_info.info.web_img_path = info.web_img_path;
-      set_info.info.mobile_img_name = info.mobile_img_name || '請選擇檔案';
-      set_info.info.mobile_img = '';
-      set_info.info.mobile_img_path = info.mobile_img_path;
-      set_info.info.sales_status = info.sales_status;
-      set_info.info.show_status = info.show_status;
     },
+    create: function create() {},
+    modify: function modify(id) {},
     specification: function specification(id) {
       set_specification.dataInit();
       set_specification.info.product_id = id;
       set_specification.getSpecification(id);
     },
     "delete": function _delete() {
-      var _this3 = this;
+      var _this4 = this;
 
       if (this.check.length > 0) {
         loading.show = true;
@@ -63144,7 +63111,7 @@ window.app = createApp({
                         title: '刪除成功'
                       });
 
-                      _this3.searchService('delete');
+                      _this4.searchService('delete');
                     }
 
                   case 1:
@@ -63162,7 +63129,7 @@ window.app = createApp({
       }
     },
     searchService: function searchService() {
-      var _this4 = this;
+      var _this5 = this;
 
       var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       return new Promise( /*#__PURE__*/function () {
@@ -63172,29 +63139,29 @@ window.app = createApp({
               switch (_context3.prev = _context3.next) {
                 case 0:
                   _context3.next = 2;
-                  return _this4.getCount();
+                  return _this5.getCount();
 
                 case 2:
                   _context3.next = 4;
-                  return _this4.getData(_this4.$refs.pagination.page);
+                  return _this5.getData(_this5.$refs.pagination.page);
 
                 case 4:
-                  if (!(_this4.$refs.pagination.page > 1 && _this4.list.length === 0)) {
+                  if (!(_this5.$refs.pagination.page > 1 && _this5.list.length === 0)) {
                     _context3.next = 10;
                     break;
                   }
 
-                  if (!(type === 'delete' || _this4.search_text)) {
+                  if (!(type === 'delete' || _this5.search_text)) {
                     _context3.next = 10;
                     break;
                   }
 
                   loading.show = true;
                   _context3.next = 9;
-                  return _this4.getData(1);
+                  return _this5.getData(1);
 
                 case 9:
-                  _this4.$refs.pagination.setPage(1);
+                  _this5.$refs.pagination.setPage(1);
 
                 case 10:
                   resolve();
@@ -63213,11 +63180,11 @@ window.app = createApp({
       }());
     },
     confirm: function confirm() {
-      var _this5 = this;
+      var _this6 = this;
 
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)('確定刪除選取的項目？').then(function (confirm) {
         if (confirm) {
-          _this5["delete"]();
+          _this6["delete"]();
         }
       });
     }
@@ -63226,141 +63193,59 @@ window.app = createApp({
 var set_info = createApp({
   data: function data() {
     return {
-      mode: 'create',
-      date: new Date(),
-      info: {
-        id: '',
-        product_types_id: '',
-        title: '',
-        content: '',
-        keywords: [],
-        description: '',
-        web_img_delete: 0,
-        web_img_name: '請選擇檔案',
-        web_img: '',
-        web_img_path: '',
-        mobile_img_delete: 0,
-        mobile_img_name: '請選擇檔案',
-        mobile_img: '',
-        mobile_img_path: '',
-        sales_status: '0',
-        show_status: '0'
-      },
+      list: [],
+      checkAll: false,
       value: {
-        keyword: ''
+        product_types_id: ''
       },
       select: {
-        product_types: []
+        product_types_id: []
       }
     };
   },
   delimiters: ["${", "}"],
   mounted: function mounted() {
-    var _this6 = this;
+    var _this7 = this;
 
     this.getProductTypes().then(function (res) {
-      _this6.select.product_types = res.data.data;
+      _this7.select.product_types_id = res.data.data;
+      $('.product-types-select2').select2();
     });
-    CKEDITOR.replace("content");
+    $('.product-types-select2').on('select2:select', function (e) {
+      loading.show = true;
+      set_info.value.product_types_id = e.params.data.id;
+      var url = '/product/list/all?show_status=1&product_types_id=' + set_info.value.product_types_id;
+      axiosGetMethod(url).then(function (res) {
+        set_info.list = res.data.data;
+        loading.show = false;
+      });
+    });
   },
   methods: {
     getProductTypes: function getProductTypes() {
       return new Promise(function (resolve) {
-        axiosGetMethod('/product-type/list/all').then(function (res) {
+        axiosGetMethod('product-type/list/all').then(function (res) {
+          console.log(res);
           resolve(res);
         });
       });
     },
-    deletePicture: function deletePicture(type) {
-      if (type == 'web') {
-        this.info.web_img_delete = 1;
-        this.info.web_img_name = '請選擇檔案';
-        this.info.web_img = '';
-        this.$refs.web_img.value = '';
-      } else if (type == 'mobile') {
-        this.info.mobile_img_delete = 1;
-        this.info.mobile_img_name = '請選擇檔案';
-        this.info.mobile_img = '';
-        this.$refs.mobile_img.value = '';
-      }
-    },
-    addKeyword: function addKeyword() {
-      if (!this.value.keyword) {
-        Toast.fire({
-          icon: 'error',
-          title: '請輸入關鍵字'
-        });
-        return false;
-      }
-
-      if (this.info.keywords.length < 10) {
-        this.info.keywords.push(this.value.keyword);
-      } else {
-        Toast.fire({
-          icon: 'error',
-          title: '最多設定10個關鍵字'
-        });
-      }
-    },
-    deleteKeyword: function deleteKeyword(key) {
-      this.info.keywords = _.remove(this.info.keywords, function (v, k) {
-        return k != key;
-      });
-    },
-    dataInit: function dataInit() {
-      this.value.keyword = '';
-      this.info.id = null;
-      this.info.product_types_id = '';
-      this.info.title = '';
-      this.info.content = '';
-      this.info.keywords = [];
-      this.info.description = '';
-      this.info.web_img_delete = 0;
-      this.info.web_img_name = '請選擇檔案';
-      this.info.web_img = null;
-      this.info.web_img_path = '';
-      this.info.mobile_img_delete = 0;
-      this.info.mobile_img_name = '請選擇檔案';
-      this.info.mobile_img = null;
-      this.info.mobile_img_path = '';
-      this.info.sales_status = '0';
-      this.info.show_status = '0';
-    },
-    file: function file(e, type) {
-      if (e.target && e.target.files[0]) {
-        if (type == 'web') {
-          this.info.web_img_delete = 0;
-          this.info.web_img_name = e.target.files[0].name;
-          this.info.web_img = e.target.files[0];
-        } else if (type == 'mobile') {
-          this.info.mobile_img_delete = 0;
-          this.info.mobile_img_name = e.target.files[0].name;
-          this.info.mobile_img = e.target.files[0];
-        }
-      }
-    },
-    auth: function auth(data) {
-      if (!data.product_types_id) {
-        return {
-          auth: false,
-          message: '請選擇分類！'
-        };
-      }
-
-      if (!data.title) {
-        return {
-          auth: false,
-          message: '標題不得為空！'
-        };
-      }
-
-      return {
-        auth: true,
-        message: 'success'
-      };
-    },
+    // getProducts() {
+    //     return new Promise(resolve => {
+    //
+    //
+    //
+    //
+    //
+    //         axiosGetMethod(url).then(res => {
+    //
+    //             console.log(res);
+    //             resolve(res);
+    //         });
+    //     });
+    // },
     confirm: function confirm() {
-      var _this7 = this;
+      var _this8 = this;
 
       var auth = this.auth(this.info);
 
@@ -63375,7 +63260,7 @@ var set_info = createApp({
       var text = this.mode === 'create' ? '新增' : '編輯';
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)("\u78BA\u5B9A".concat(text, "\u6B64\u8CC7\u6599\uFF1F")).then(function (confirm) {
         if (confirm) {
-          _this7.save();
+          _this8.save();
         }
       });
     },
@@ -63472,11 +63357,11 @@ var set_specification = createApp({
   },
   methods: {
     getSpecification: function getSpecification(id) {
-      var _this8 = this;
+      var _this9 = this;
 
       axiosGetMethod('product-specification/list/' + id).then(function (res) {
         if (res.data.status) {
-          _this8.list = res.data.data;
+          _this9.list = res.data.data;
         }
       });
     },
@@ -63536,7 +63421,7 @@ var set_specification = createApp({
       };
     },
     confirm: function confirm(mode) {
-      var _this9 = this;
+      var _this10 = this;
 
       if (mode === 'create' || mode === 'modify') {
         var auth = this.auth(this.info);
@@ -63570,17 +63455,17 @@ var set_specification = createApp({
         if (confirm) {
           switch (mode) {
             case 'create':
-              _this9.create();
+              _this10.create();
 
               break;
 
             case 'modify':
-              _this9.save();
+              _this10.save();
 
               break;
 
             case 'delete':
-              _this9["delete"]();
+              _this10["delete"]();
 
               break;
           }
@@ -63588,7 +63473,7 @@ var set_specification = createApp({
       });
     },
     create: function create() {
-      var _this10 = this;
+      var _this11 = this;
 
       loading.show = true;
       axiosPostMethod('/product-specification/insert', this.info).then( /*#__PURE__*/function () {
@@ -63604,13 +63489,13 @@ var set_specification = createApp({
                   }
 
                   _context5.next = 3;
-                  return _this10.getSpecification(_this10.info.product_id);
+                  return _this11.getSpecification(_this11.info.product_id);
 
                 case 3:
-                  _this10.new_specification = true;
+                  _this11.new_specification = true;
 
                 case 4:
-                  _this10.dataInit();
+                  _this11.dataInit();
 
                   icon = res.data.status ? 'success' : 'error';
                   loading.show = false;
@@ -63643,12 +63528,12 @@ var set_specification = createApp({
       this.new_specification = false;
     },
     save: function save() {
-      var _this11 = this;
+      var _this12 = this;
 
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)("\u78BA\u5B9A\u8B8A\u66F4\u898F\u683C\u8CC7\u6599\uFF1F").then(function (confirm) {
         if (confirm) {
           loading.show = true;
-          axiosPostMethod('/product-specification/update', _this11.modify_info).then( /*#__PURE__*/function () {
+          axiosPostMethod('/product-specification/update', _this12.modify_info).then( /*#__PURE__*/function () {
             var _ref5 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6(res) {
               var icon;
               return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
@@ -63661,10 +63546,10 @@ var set_specification = createApp({
                       }
 
                       _context6.next = 3;
-                      return _this11.getSpecification(_this11.info.product_id);
+                      return _this12.getSpecification(_this12.info.product_id);
 
                     case 3:
-                      _this11.modify_key = null;
+                      _this12.modify_key = null;
 
                     case 4:
                       icon = res.data.status ? 'success' : 'error';
@@ -63693,7 +63578,7 @@ var set_specification = createApp({
       this.modify_key = null;
     },
     "delete": function _delete() {
-      var _this12 = this;
+      var _this13 = this;
 
       if (this.check.length > 0) {
         loading.show = true;
@@ -63711,7 +63596,7 @@ var set_specification = createApp({
                     }
 
                     _context7.next = 3;
-                    return _this12.getSpecification(_this12.info.product_id);
+                    return _this13.getSpecification(_this13.info.product_id);
 
                   case 3:
                     loading.show = false;

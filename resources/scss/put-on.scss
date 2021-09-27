@@ -34,3 +34,13 @@ select.form-control-sm ~ .select2-container--default .select2-selection--single 
 .select2-results__option {
   font-size: 14px;
 }
+
+#set-info {
+    .select2 {
+        width: 100% !important;
+    }
+
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        padding-left: 0 !important;
+    }
+}
