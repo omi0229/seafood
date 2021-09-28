@@ -63233,6 +63233,8 @@ var set_info = createApp({
           });
         });
       }
+
+      setCheckList(check.value);
     });
     var value = (0,vue__WEBPACK_IMPORTED_MODULE_1__.reactive)({
       product_types_id: ''
@@ -63241,18 +63243,31 @@ var set_info = createApp({
       product_types_id: []
     });
     (0,vue__WEBPACK_IMPORTED_MODULE_1__.watch)(check, function (newData, oldData) {
-      _.forEach(newData, function (v) {
-        if (!_.find(_.find(check_list.value, ['id', v]))) {
+      setCheckList(newData);
+    });
+
+    var setCheckList = function setCheckList(check) {
+      _.forEach(list.value, function (v) {
+        _.remove(check_list.value, function (vv) {
+          return vv.id == v.id;
+        });
+      });
+
+      _.forEach(check, function (v) {
+        if (!_.find(check_list.value, ['id', v])) {
           check_list.value.push(_.find(list.value, ['id', v]));
         }
       });
-    });
+    };
+
     return {
       list: list,
       check: check,
       checkAll: checkAll,
       value: value,
-      select: select
+      select: select,
+      check_list: check_list,
+      setCheckList: setCheckList
     };
   },
   delimiters: ["${", "}"],
@@ -63284,20 +63299,17 @@ var set_info = createApp({
     confirm: function confirm() {
       var _this8 = this;
 
-      var auth = this.auth(this.info);
-
-      if (!auth.auth) {
+      if (this.check_list.length <= 0) {
         Toast.fire({
           icon: 'error',
-          title: auth.message
+          title: '請選擇產品'
         });
         return false;
       }
 
-      var text = this.mode === 'create' ? '新增' : '編輯';
-      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_4__.swal2Confirm)("\u78BA\u5B9A".concat(text, "\u6B64\u8CC7\u6599\uFF1F")).then(function (confirm) {
+      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_4__.swal2Confirm)("\u78BA\u5B9A\u4FEE\u6539\u4E0A\u67B6\u7522\u54C1\uFF1F").then(function (confirm) {
         if (confirm) {
-          _this8.save();
+          console.log(_this8.check_list);
         }
       });
     },

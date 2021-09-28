@@ -36,7 +36,7 @@ class ProductRepository extends Repository
         $data = $show_status !== null ? $data->where('show_status', $show_status) : $data;
 
         # 有 關鍵字
-        $data = !$keywords ? $data : $data->where('title', 'LIKE', '%' . $keywords . '%');
+        $data = $keywords ? $data->where('title', 'LIKE', '%' . $keywords . '%') : $data;
 
         # 是否分頁顯示
         $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;

@@ -130,8 +130,17 @@
                     </button>
                 </div>
                 <div class="modal-body px-4">
-                    <div class="row mx-0">
-                        <div class="mb-3 px-0 col-12 col-md-3">
+                    <div class="s-14">
+                        <div class="s-1-1-rem">已選擇產品</div>
+                        <div class="border rounded p-2 d-flex align-content-start flex-wrap mt-2 check-list">
+                            <!-- v-for -->
+                            <div class="py-1 px-2 mb-1 mr-2 rounded check-list-border" v-for="(item, key) in check_list">
+                                ${item.title}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mx-0 mt-3">
+                        <div class="px-0 col-12 col-md-3">
                             <select class="form-control form-control-sm w-100 product-types-select2" v-model="value.product_types_id">
                                 <option value="">請選擇產品分類</option>
                                 <!-- v-for -->
@@ -139,7 +148,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mt-3">
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-header">
@@ -194,7 +203,7 @@
                 </div>
                 <div class="modal-footer justify-content-end">
                     <button type="button" class="btn btn-sm btn-danger px-3 mr-1" data-dismiss="modal" aria-label="Close">取消</button>
-                    <button type="button" class="btn btn-sm btn-primary px-3">儲存</button>
+                    <button type="button" class="btn btn-sm btn-primary px-3" @click="confirm">儲存</button>
                 </div>
             </div>
         </div>

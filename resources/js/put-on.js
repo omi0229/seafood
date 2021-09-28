@@ -140,6 +140,8 @@ let set_info = createApp({
                     _.remove(check.value, function(id) { return id == v.id; });
                 });
             }
+
+            setCheckList(check.value);
         });
 
         const value = reactive({
@@ -151,12 +153,22 @@ let set_info = createApp({
         });
 
         watch(check, (newData, oldData) => {
-            _.forEach(newData, (v) => {
-                if (!_.find(_.find(check_list.value, ['id', v]))) {
+            setCheckList(newData);
+        });
+
+        const setCheckList = (check) => {
+            _.forEach(list.value, v => {
+                _.remove(check_list.value, function (vv) {
+                    return vv.id == v.id;
+                });
+            });
+
+            _.forEach(check, v => {
+                if (!_.find(check_list.value, ['id', v])) {
                     check_list.value.push(_.find(list.value, ['id', v]));
                 }
             });
-        });
+        }
 
         return {
             list,
@@ -164,6 +176,8 @@ let set_info = createApp({
             checkAll,
             value,
             select,
+            check_list,
+            setCheckList,
         }
     },
     delimiters: ["${", "}"],
@@ -192,17 +206,14 @@ let set_info = createApp({
             });
         },
         confirm() {
-            let auth = this.auth(this.info);
-            if (!auth.auth) {
-                Toast.fire({icon: 'error', title: auth.message});
+            if (this.check_list.length <= 0) {
+                Toast.fire({icon: 'error', title: '請選擇產品'});
                 return false;
             }
 
-            let text = this.mode === 'create' ? '新增' : '編輯';
-
-            swal2Confirm(`確定${text}此資料？`).then(confirm => {
+            swal2Confirm(`確定修改上架產品？`).then(confirm => {
                 if (confirm) {
-                    this.save();
+                    console.log(this.check_list);
                 }
             });
         },
