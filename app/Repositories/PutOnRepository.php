@@ -5,6 +5,7 @@ namespace App\Repositories;
 use Illuminate\Http\Request;
 use App\Repositories\Repository;
 use App\Models\Directory;
+use App\Models\Products;
 
 class PutOnRepository extends Repository
 {
@@ -19,7 +20,7 @@ class PutOnRepository extends Repository
         $directories_id = data_get($params, 'directories_id');
 
         # 有 目錄ID
-        $data = $directories_id ? $this->model->where('directories_id', Directory::decodeSlug($directories_id)) : $this->model;
+        $data = $directories_id ? $this->model::with('product')->where('directories_id', Directory::decodeSlug($directories_id)) : $this->model::with('product');
 
         # 有 關鍵字
         $data = !$keywords ? $data : $data->where('name', 'LIKE', '%' . $keywords . '%');
@@ -32,6 +33,8 @@ class PutOnRepository extends Repository
         foreach ($data as $key => $row) {
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
+            $list[$key]['product'] = $row->product->toArray();
+            $list[$key]['product']['id'] = $row->product->hash_id;
         }
 
         return $list;
@@ -44,5 +47,46 @@ class PutOnRepository extends Repository
         $data = !$keywords ? $this->model : $this->model->where('name', 'LIKE', '%' . $keywords . '%');
 
         return $data->count();
+    }
+
+    public function insertData($inputs)
+    {
+        $directories_id = Directory::decodeSlug($inputs['directories_id']);
+
+        $list = $this->model->where('directories_id', $directories_id)->get();
+        foreach ($list as $model) {
+            $count = collect($inputs['check_list'])
+                ->map(function ($c) {
+                    return [
+                        'id' => Products::decodeSlug($c['id']),
+                    ];
+                })
+                ->filter(function ($c) use ($model) {
+
+                    if($c['id'] == $model['product_id']){
+                        return true;
+                    }
+
+                    return false;
+                })
+                ->count();
+
+            if($count <= 0){
+                $model->delete();
+            }
+        }
+
+        foreach ($inputs['check_list'] as $row) {
+            $product_id = Products::decodeSlug($row['id']);
+            $count = $this->model->where('directories_id', $directories_id)->where('product_id', $product_id)->count();
+            if ($count <= 0) {
+                $this->model->create([
+                    'directories_id' => $directories_id,
+                    'product_id' => $product_id,
+                ]);
+            }
+        }
+
+        return true;
     }
 }

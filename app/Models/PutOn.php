@@ -10,4 +10,17 @@ use App\Traits\HashId;
 class PutOn extends Model
 {
     use HasFactory, SoftDeletes, HashId;
+
+    protected $fillable = [
+        'directories_id',
+        'product_id',
+        'start_date',
+        'end_date',
+        'status',
+    ];
+
+    public function product()
+    {
+        return $this->belongsTo('App\Models\Products');
+    }
 }

@@ -44,14 +44,19 @@ window.app = createApp({
             $('.directory-select2').select2();
         });
 
-        await this.getCount();
-        await this.getData(1);
         loading.show = false;
 
-        $('.directory-select2').on('select2:select', function (e) {
+        $('.directory-select2').on('select2:select', async function (e) {
             loading.show = true;
+            set_info.check_list = [];
             app.value.directory = e.params.data.id;
-            app.getData(1);
+            await app.getCount();
+            await app.getData(1).then(res => {
+                app.list = res.data.data;
+                set_info.check = _.map(app.list, 'product.id');
+                set_info.check_list = _.map(app.list, 'product');
+                loading.show = false;
+            });
         });
 
     },
@@ -74,16 +79,19 @@ window.app = createApp({
                 });
             });
         },
-        create() {
-
+        modify() {
+            set_info.check = set_info.check_list = [];
+            set_info.check = _.map(app.list, 'product.id');
+            set_info.check_list = _.map(app.list, 'product');
         },
-        modify(id) {
+        put() {
+            set_put.check = this.check;
+            set_put.list = [];
+            _.forEach(set_put.check, v => {
+                set_put.list.push(_.find(app.list, ['id', v]));
+            })
 
-        },
-        specification(id) {
-            set_specification.dataInit();
-            set_specification.info.product_id = id;
-            set_specification.getSpecification(id);
+            console.log(set_put.list);
         },
         delete() {
             if(this.check.length > 0) {
@@ -157,18 +165,22 @@ let set_info = createApp({
         });
 
         const setCheckList = (check) => {
-            _.forEach(list.value, v => {
-                _.remove(check_list.value, function (vv) {
-                    return vv.id == v.id;
+            if (value.product_types_id && list.value.length > 0) {
+                _.forEach(list.value, v => {
+                    _.remove(check_list.value, function (vv) {
+                        return vv.id == v.id;
+                    });
                 });
-            });
 
-            _.forEach(check, v => {
-                if (!_.find(check_list.value, ['id', v])) {
-                    check_list.value.push(_.find(list.value, ['id', v]));
-                }
-            });
-        }
+                _.forEach(check, v => {
+                    if (!_.find(check_list.value, ['id', v])) {
+                        check_list.value.push(_.find(list.value, ['id', v]));
+                    }
+                });
+            } else {
+
+            }
+        };
 
         return {
             list,
@@ -206,48 +218,31 @@ let set_info = createApp({
             });
         },
         confirm() {
-            if (this.check_list.length <= 0) {
-                Toast.fire({icon: 'error', title: '請選擇產品'});
-                return false;
-            }
-
             swal2Confirm(`確定修改上架產品？`).then(confirm => {
                 if (confirm) {
-                    console.log(this.check_list);
+                    this.save();
                 }
             });
         },
         save() {
-            let url = this.mode === 'create' ? '/product/insert' : '/product/update';
+            let url = 'put-on/insert';
             loading.show = true;
-            let formData = new FormData;
-            formData.append("id", this.info.id);
-            formData.append("product_types_id", this.info.product_types_id);
-            formData.append("title", this.info.title);
-            formData.append("content", CKEDITOR.instances["content"].getData());
-            formData.append("keywords", this.info.keywords);
-            formData.append("description", this.info.description);
-            formData.append("web_img_delete", this.info.web_img_delete);
-            formData.append("web_img_name", this.info.web_img_name);
-            formData.append("web_img", this.info.web_img);
-            formData.append("mobile_img_delete", this.info.mobile_img_delete);
-            formData.append("mobile_img_name", this.info.mobile_img_name);
-            formData.append("mobile_img", this.info.mobile_img);
-            formData.append("sales_status", this.info.sales_status);
-            formData.append("show_status", this.info.show_status);
 
-            let config = {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
+            let form_data = {
+                directories_id: app.value.directory,
+                check_list: this.check_list,
             };
 
-            axiosPostMethod(url, formData, config).then(async res => {
+            axiosPostMethod(url, form_data).then(async res => {
                 if (res.data.status) {
                     $('#set-info').modal('hide');
                 }
 
-                await app.searchService();
+                await app.getData(1).then(res => {
+                    app.list = res.data.data;
+                });
+
+                loading.show = false;
 
                 let icon = res.data.status ? 'success' : 'error';
                 Toast.fire({icon: icon, title: res.data.message});
@@ -256,176 +251,18 @@ let set_info = createApp({
     },
 }).mount('#set-info');
 
-let set_specification = createApp({
+let set_put = createApp({
     data() {
         return {
-            info: {
-                id: null,
-                product_id: null,
-                name: '',
-                original_price: null,
-                selling_price: null,
-                inventory: null,
-            },
-            modify_key: null,
-            modify_info: {
-                id: null,
-                product_id: null,
-                name: '',
-                original_price: null,
-                selling_price: null,
-                inventory: null,
-            },
-            list: [],
-            new_specification: false,
-            checkAll: false,
             check: [],
+            list: [],
+            value: {
+                status: '0',
+            },
         }
-
     },
     delimiters: ["${", "}"],
-    watch: {
-        'checkAll'(newData, oldData) {
-            this.check = newData ? _.map(this.list, 'id') : [];
-        },
-    },
     methods: {
-        getSpecification(id) {
-            axiosGetMethod('product-specification/list/' + id).then(res => {
-                if (res.data.status) {
-                    this.list = res.data.data;
-                }
-            });
-        },
-        dataInit() {
-            this.info.id = null;
-            this.info.name = '';
-            this.info.original_price = null;
-            this.info.selling_price = null;
-            this.info.inventory = null;
-        },
-        auth(data) {
-            if (!data.name) {
-                return {auth: false, message: '請輸入名稱！'};
-            }
 
-            if (!data.original_price) {
-                return {auth: false, message: '原價不得為空！'};
-            }
-
-            if (isNaN(data.original_price)) {
-                return {auth: false, message: '原價欄位請輸入數字！'};
-            }
-
-            if (!data.selling_price) {
-                return {auth: false, message: '售價不得為空！'};
-            }
-
-            if (isNaN(data.selling_price)) {
-                return {auth: false, message: '售價欄位請輸入數字！'};
-            }
-
-            if (data.inventory === null || isNaN(data.inventory)) {
-                return {auth: false, message: '庫存欄位請輸入數字！'};
-            }
-
-            return {auth: true, message: 'success'};
-        },
-        confirm(mode) {
-            if (mode === 'create' || mode === 'modify') {
-                let auth = this.auth(this.info);
-                if (!auth.auth) {
-                    Toast.fire({icon: 'error', title: auth.message});
-                    return false;
-                }
-            }
-
-            let text = '';
-            switch (mode) {
-                case 'create':
-                    text = '確定新增此規格？';
-                    break;
-                case 'modify':
-                    text = '確定編輯此規格？';
-                    break;
-                case 'delete':
-                    text = '確定刪除選取的規格？';
-                    break;
-            }
-
-            swal2Confirm(text).then(confirm => {
-                if (confirm) {
-                    switch (mode) {
-                        case 'create':
-                            this.create();
-                            break;
-                        case 'modify':
-                            this.save();
-                            break;
-                        case 'delete':
-                            this.delete();
-                            break;
-                    }
-                }
-            });
-        },
-        create() {
-            loading.show = true;
-            axiosPostMethod('/product-specification/insert', this.info).then(async res => {
-                if (res.data.status) {
-                    await this.getSpecification(this.info.product_id);
-                    this.new_specification = true;
-                }
-
-                this.dataInit();
-                let icon = res.data.status ? 'success' : 'error';
-
-                loading.show = false;
-                Toast.fire({icon: icon, title: res.data.message});
-            });
-        },
-        modify(key) {
-            this.modify_key = key;
-            this.modify_info.id = this.list[key].id;
-            this.modify_info.product_id = this.info.product_id;
-            this.modify_info.name = this.list[key].name;
-            this.modify_info.original_price = this.list[key].original_price;
-            this.modify_info.selling_price = this.list[key].selling_price;
-            this.modify_info.inventory = this.list[key].inventory;
-            this.new_specification = false;
-        },
-        save() {
-            swal2Confirm(`確定變更規格資料？`).then(confirm => {
-                if (confirm) {
-                    loading.show = true;
-                    axiosPostMethod('/product-specification/update', this.modify_info).then(async res => {
-                        if (res.data.status) {
-                            await this.getSpecification(this.info.product_id);
-                            this.modify_key = null;
-                        }
-
-                        let icon = res.data.status ? 'success' : 'error';
-
-                        loading.show = false;
-                        Toast.fire({icon: icon, title: res.data.message});
-                    });
-                }
-            });
-        },
-        cancel() {
-            this.modify_key = null;
-        },
-        delete() {
-            if(this.check.length > 0) {
-                loading.show = true;
-                axiosDeleteMethod('/product-specification/delete', {data: this.check}).then(async res => {
-                    if (res.data.status) {
-                        await this.getSpecification(this.info.product_id);
-                        loading.show = false;
-                        Toast.fire({icon: 'success', title: '刪除成功'});
-                    }
-                });
-            }
-        },
     },
-}).mount('#set-specification');
+}).mount('#set-put');

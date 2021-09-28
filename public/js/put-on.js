@@ -63050,39 +63050,59 @@ window.app = createApp({
   mounted: function mounted() {
     var _this = this;
 
-    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
         while (1) {
-          switch (_context.prev = _context.next) {
+          switch (_context2.prev = _context2.next) {
             case 0:
-              _context.next = 2;
+              _context2.next = 2;
               return axiosGetMethod('/directory/list/all').then(function (res) {
                 _this.select.directories = res.data.data;
                 $('.directory-select2').select2();
               });
 
             case 2:
-              _context.next = 4;
-              return _this.getCount();
+              loading.show = false;
+              $('.directory-select2').on('select2:select', /*#__PURE__*/function () {
+                var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(e) {
+                  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+                    while (1) {
+                      switch (_context.prev = _context.next) {
+                        case 0:
+                          loading.show = true;
+                          set_info.check_list = [];
+                          app.value.directory = e.params.data.id;
+                          _context.next = 5;
+                          return app.getCount();
+
+                        case 5:
+                          _context.next = 7;
+                          return app.getData(1).then(function (res) {
+                            app.list = res.data.data;
+                            set_info.check = _.map(app.list, 'product.id');
+                            set_info.check_list = _.map(app.list, 'product');
+                            loading.show = false;
+                          });
+
+                        case 7:
+                        case "end":
+                          return _context.stop();
+                      }
+                    }
+                  }, _callee);
+                }));
+
+                return function (_x) {
+                  return _ref.apply(this, arguments);
+                };
+              }());
 
             case 4:
-              _context.next = 6;
-              return _this.getData(1);
-
-            case 6:
-              loading.show = false;
-              $('.directory-select2').on('select2:select', function (e) {
-                loading.show = true;
-                app.value.directory = e.params.data.id;
-                app.getData(1);
-              });
-
-            case 8:
             case "end":
-              return _context.stop();
+              return _context2.stop();
           }
         }
-      }, _callee);
+      }, _callee2);
     }))();
   },
   methods: {
@@ -63108,12 +63128,20 @@ window.app = createApp({
         });
       });
     },
-    create: function create() {},
-    modify: function modify(id) {},
-    specification: function specification(id) {
-      set_specification.dataInit();
-      set_specification.info.product_id = id;
-      set_specification.getSpecification(id);
+    modify: function modify() {
+      set_info.check = set_info.check_list = [];
+      set_info.check = _.map(app.list, 'product.id');
+      set_info.check_list = _.map(app.list, 'product');
+    },
+    put: function put() {
+      set_put.check = this.check;
+      set_put.list = [];
+
+      _.forEach(set_put.check, function (v) {
+        set_put.list.push(_.find(app.list, ['id', v]));
+      });
+
+      console.log(set_put.list);
     },
     "delete": function _delete() {
       var _this4 = this;
@@ -63123,10 +63151,10 @@ window.app = createApp({
         axiosDeleteMethod('/product/delete', {
           data: this.check
         }).then( /*#__PURE__*/function () {
-          var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(res) {
-            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+          var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(res) {
+            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
               while (1) {
-                switch (_context2.prev = _context2.next) {
+                switch (_context3.prev = _context3.next) {
                   case 0:
                     if (res.data.status) {
                       Toast.fire({
@@ -63139,14 +63167,14 @@ window.app = createApp({
 
                   case 1:
                   case "end":
-                    return _context2.stop();
+                    return _context3.stop();
                 }
               }
-            }, _callee2);
+            }, _callee3);
           }));
 
-          return function (_x) {
-            return _ref.apply(this, arguments);
+          return function (_x2) {
+            return _ref2.apply(this, arguments);
           };
         }());
       }
@@ -63156,31 +63184,31 @@ window.app = createApp({
 
       var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       return new Promise( /*#__PURE__*/function () {
-        var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(resolve) {
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+        var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(resolve) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
             while (1) {
-              switch (_context3.prev = _context3.next) {
+              switch (_context4.prev = _context4.next) {
                 case 0:
-                  _context3.next = 2;
+                  _context4.next = 2;
                   return _this5.getCount();
 
                 case 2:
-                  _context3.next = 4;
+                  _context4.next = 4;
                   return _this5.getData(_this5.$refs.pagination.page);
 
                 case 4:
                   if (!(_this5.$refs.pagination.page > 1 && _this5.list.length === 0)) {
-                    _context3.next = 10;
+                    _context4.next = 10;
                     break;
                   }
 
                   if (!(type === 'delete' || _this5.search_text)) {
-                    _context3.next = 10;
+                    _context4.next = 10;
                     break;
                   }
 
                   loading.show = true;
-                  _context3.next = 9;
+                  _context4.next = 9;
                   return _this5.getData(1);
 
                 case 9:
@@ -63191,14 +63219,14 @@ window.app = createApp({
 
                 case 11:
                 case "end":
-                  return _context3.stop();
+                  return _context4.stop();
               }
             }
-          }, _callee3);
+          }, _callee4);
         }));
 
-        return function (_x2) {
-          return _ref2.apply(this, arguments);
+        return function (_x3) {
+          return _ref3.apply(this, arguments);
         };
       }());
     },
@@ -63247,17 +63275,19 @@ var set_info = createApp({
     });
 
     var setCheckList = function setCheckList(check) {
-      _.forEach(list.value, function (v) {
-        _.remove(check_list.value, function (vv) {
-          return vv.id == v.id;
+      if (value.product_types_id && list.value.length > 0) {
+        _.forEach(list.value, function (v) {
+          _.remove(check_list.value, function (vv) {
+            return vv.id == v.id;
+          });
         });
-      });
 
-      _.forEach(check, function (v) {
-        if (!_.find(check_list.value, ['id', v])) {
-          check_list.value.push(_.find(list.value, ['id', v]));
-        }
-      });
+        _.forEach(check, function (v) {
+          if (!_.find(check_list.value, ['id', v])) {
+            check_list.value.push(_.find(list.value, ['id', v]));
+          }
+        });
+      } else {}
     };
 
     return {
@@ -63299,261 +63329,44 @@ var set_info = createApp({
     confirm: function confirm() {
       var _this8 = this;
 
-      if (this.check_list.length <= 0) {
-        Toast.fire({
-          icon: 'error',
-          title: '請選擇產品'
-        });
-        return false;
-      }
-
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_4__.swal2Confirm)("\u78BA\u5B9A\u4FEE\u6539\u4E0A\u67B6\u7522\u54C1\uFF1F").then(function (confirm) {
         if (confirm) {
-          console.log(_this8.check_list);
+          _this8.save();
         }
       });
     },
     save: function save() {
-      var url = this.mode === 'create' ? '/product/insert' : '/product/update';
+      var url = 'put-on/insert';
       loading.show = true;
-      var formData = new FormData();
-      formData.append("id", this.info.id);
-      formData.append("product_types_id", this.info.product_types_id);
-      formData.append("title", this.info.title);
-      formData.append("content", CKEDITOR.instances["content"].getData());
-      formData.append("keywords", this.info.keywords);
-      formData.append("description", this.info.description);
-      formData.append("web_img_delete", this.info.web_img_delete);
-      formData.append("web_img_name", this.info.web_img_name);
-      formData.append("web_img", this.info.web_img);
-      formData.append("mobile_img_delete", this.info.mobile_img_delete);
-      formData.append("mobile_img_name", this.info.mobile_img_name);
-      formData.append("mobile_img", this.info.mobile_img);
-      formData.append("sales_status", this.info.sales_status);
-      formData.append("show_status", this.info.show_status);
-      var config = {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+      var form_data = {
+        directories_id: app.value.directory,
+        check_list: this.check_list
       };
-      axiosPostMethod(url, formData, config).then( /*#__PURE__*/function () {
-        var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(res) {
-          var icon;
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
-            while (1) {
-              switch (_context4.prev = _context4.next) {
-                case 0:
-                  if (res.data.status) {
-                    $('#set-info').modal('hide');
-                  }
-
-                  _context4.next = 3;
-                  return app.searchService();
-
-                case 3:
-                  icon = res.data.status ? 'success' : 'error';
-                  Toast.fire({
-                    icon: icon,
-                    title: res.data.message
-                  });
-
-                case 5:
-                case "end":
-                  return _context4.stop();
-              }
-            }
-          }, _callee4);
-        }));
-
-        return function (_x3) {
-          return _ref3.apply(this, arguments);
-        };
-      }());
-    }
-  }
-}).mount('#set-info');
-var set_specification = createApp({
-  data: function data() {
-    return {
-      info: {
-        id: null,
-        product_id: null,
-        name: '',
-        original_price: null,
-        selling_price: null,
-        inventory: null
-      },
-      modify_key: null,
-      modify_info: {
-        id: null,
-        product_id: null,
-        name: '',
-        original_price: null,
-        selling_price: null,
-        inventory: null
-      },
-      list: [],
-      new_specification: false,
-      checkAll: false,
-      check: []
-    };
-  },
-  delimiters: ["${", "}"],
-  watch: {
-    'checkAll': function checkAll(newData, oldData) {
-      this.check = newData ? _.map(this.list, 'id') : [];
-    }
-  },
-  methods: {
-    getSpecification: function getSpecification(id) {
-      var _this9 = this;
-
-      axiosGetMethod('product-specification/list/' + id).then(function (res) {
-        if (res.data.status) {
-          _this9.list = res.data.data;
-        }
-      });
-    },
-    dataInit: function dataInit() {
-      this.info.id = null;
-      this.info.name = '';
-      this.info.original_price = null;
-      this.info.selling_price = null;
-      this.info.inventory = null;
-    },
-    auth: function auth(data) {
-      if (!data.name) {
-        return {
-          auth: false,
-          message: '請輸入名稱！'
-        };
-      }
-
-      if (!data.original_price) {
-        return {
-          auth: false,
-          message: '原價不得為空！'
-        };
-      }
-
-      if (isNaN(data.original_price)) {
-        return {
-          auth: false,
-          message: '原價欄位請輸入數字！'
-        };
-      }
-
-      if (!data.selling_price) {
-        return {
-          auth: false,
-          message: '售價不得為空！'
-        };
-      }
-
-      if (isNaN(data.selling_price)) {
-        return {
-          auth: false,
-          message: '售價欄位請輸入數字！'
-        };
-      }
-
-      if (data.inventory === null || isNaN(data.inventory)) {
-        return {
-          auth: false,
-          message: '庫存欄位請輸入數字！'
-        };
-      }
-
-      return {
-        auth: true,
-        message: 'success'
-      };
-    },
-    confirm: function confirm(mode) {
-      var _this10 = this;
-
-      if (mode === 'create' || mode === 'modify') {
-        var auth = this.auth(this.info);
-
-        if (!auth.auth) {
-          Toast.fire({
-            icon: 'error',
-            title: auth.message
-          });
-          return false;
-        }
-      }
-
-      var text = '';
-
-      switch (mode) {
-        case 'create':
-          text = '確定新增此規格？';
-          break;
-
-        case 'modify':
-          text = '確定編輯此規格？';
-          break;
-
-        case 'delete':
-          text = '確定刪除選取的規格？';
-          break;
-      }
-
-      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_4__.swal2Confirm)(text).then(function (confirm) {
-        if (confirm) {
-          switch (mode) {
-            case 'create':
-              _this10.create();
-
-              break;
-
-            case 'modify':
-              _this10.save();
-
-              break;
-
-            case 'delete':
-              _this10["delete"]();
-
-              break;
-          }
-        }
-      });
-    },
-    create: function create() {
-      var _this11 = this;
-
-      loading.show = true;
-      axiosPostMethod('/product-specification/insert', this.info).then( /*#__PURE__*/function () {
+      axiosPostMethod(url, form_data).then( /*#__PURE__*/function () {
         var _ref4 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(res) {
           var icon;
           return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
             while (1) {
               switch (_context5.prev = _context5.next) {
                 case 0:
-                  if (!res.data.status) {
-                    _context5.next = 4;
-                    break;
+                  if (res.data.status) {
+                    $('#set-info').modal('hide');
                   }
 
                   _context5.next = 3;
-                  return _this11.getSpecification(_this11.info.product_id);
+                  return app.getData(1).then(function (res) {
+                    app.list = res.data.data;
+                  });
 
                 case 3:
-                  _this11.new_specification = true;
-
-                case 4:
-                  _this11.dataInit();
-
-                  icon = res.data.status ? 'success' : 'error';
                   loading.show = false;
+                  icon = res.data.status ? 'success' : 'error';
                   Toast.fire({
                     icon: icon,
                     title: res.data.message
                   });
 
-                case 8:
+                case 6:
                 case "end":
                   return _context5.stop();
               }
@@ -63565,111 +63378,22 @@ var set_specification = createApp({
           return _ref4.apply(this, arguments);
         };
       }());
-    },
-    modify: function modify(key) {
-      this.modify_key = key;
-      this.modify_info.id = this.list[key].id;
-      this.modify_info.product_id = this.info.product_id;
-      this.modify_info.name = this.list[key].name;
-      this.modify_info.original_price = this.list[key].original_price;
-      this.modify_info.selling_price = this.list[key].selling_price;
-      this.modify_info.inventory = this.list[key].inventory;
-      this.new_specification = false;
-    },
-    save: function save() {
-      var _this12 = this;
-
-      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_4__.swal2Confirm)("\u78BA\u5B9A\u8B8A\u66F4\u898F\u683C\u8CC7\u6599\uFF1F").then(function (confirm) {
-        if (confirm) {
-          loading.show = true;
-          axiosPostMethod('/product-specification/update', _this12.modify_info).then( /*#__PURE__*/function () {
-            var _ref5 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6(res) {
-              var icon;
-              return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
-                while (1) {
-                  switch (_context6.prev = _context6.next) {
-                    case 0:
-                      if (!res.data.status) {
-                        _context6.next = 4;
-                        break;
-                      }
-
-                      _context6.next = 3;
-                      return _this12.getSpecification(_this12.info.product_id);
-
-                    case 3:
-                      _this12.modify_key = null;
-
-                    case 4:
-                      icon = res.data.status ? 'success' : 'error';
-                      loading.show = false;
-                      Toast.fire({
-                        icon: icon,
-                        title: res.data.message
-                      });
-
-                    case 7:
-                    case "end":
-                      return _context6.stop();
-                  }
-                }
-              }, _callee6);
-            }));
-
-            return function (_x5) {
-              return _ref5.apply(this, arguments);
-            };
-          }());
-        }
-      });
-    },
-    cancel: function cancel() {
-      this.modify_key = null;
-    },
-    "delete": function _delete() {
-      var _this13 = this;
-
-      if (this.check.length > 0) {
-        loading.show = true;
-        axiosDeleteMethod('/product-specification/delete', {
-          data: this.check
-        }).then( /*#__PURE__*/function () {
-          var _ref6 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7(res) {
-            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee7$(_context7) {
-              while (1) {
-                switch (_context7.prev = _context7.next) {
-                  case 0:
-                    if (!res.data.status) {
-                      _context7.next = 5;
-                      break;
-                    }
-
-                    _context7.next = 3;
-                    return _this13.getSpecification(_this13.info.product_id);
-
-                  case 3:
-                    loading.show = false;
-                    Toast.fire({
-                      icon: 'success',
-                      title: '刪除成功'
-                    });
-
-                  case 5:
-                  case "end":
-                    return _context7.stop();
-                }
-              }
-            }, _callee7);
-          }));
-
-          return function (_x6) {
-            return _ref6.apply(this, arguments);
-          };
-        }());
-      }
     }
   }
-}).mount('#set-specification');
+}).mount('#set-info');
+var set_put = createApp({
+  data: function data() {
+    return {
+      check: [],
+      list: [],
+      value: {
+        status: '0'
+      }
+    };
+  },
+  delimiters: ["${", "}"],
+  methods: {}
+}).mount('#set-put');
 })();
 
 /******/ })()

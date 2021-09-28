@@ -34,4 +34,9 @@ class Products extends Model
     {
         return $this->hasMany('App\Models\ProductSpecifications');
     }
+
+    public function put_ons()
+    {
+        return $this->hasMany('App\Models\PutOn');
+    }
 }
