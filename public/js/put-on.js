@@ -19184,29 +19184,11 @@ window.axiosGetMethod = function (url) {
   return new Promise(function (resolve) {
     axios.get(url).then(function (res) {
       resolve(res);
-    })["catch"](function (error) {
-      axios.post('/logout').then( /*#__PURE__*/function () {
-        var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(res) {
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  if (res.data.status) {
-                    location.href = '/login';
-                  }
-
-                case 1:
-                case "end":
-                  return _context.stop();
-              }
-            }
-          }, _callee);
-        }));
-
-        return function (_x) {
-          return _ref.apply(this, arguments);
-        };
-      }());
+    })["catch"](function (error) {// axios.post('/logout').then(async res => {
+      //     if (res.data.status) {
+      //         location.href = '/login';
+      //     }
+      // })
     });
   });
 }; // 全域性axios post方法封裝
@@ -19216,30 +19198,30 @@ window.axiosPostMethod = function (url, data) {
   var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
   return new Promise(function (resolve) {
     axios.post(url, data, config).then( /*#__PURE__*/function () {
-      var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(res) {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+      var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(res) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context.prev = _context.next) {
               case 0:
                 resolve(res);
 
               case 1:
               case "end":
-                return _context2.stop();
+                return _context.stop();
             }
           }
-        }, _callee2);
+        }, _callee);
       }));
 
-      return function (_x2) {
-        return _ref2.apply(this, arguments);
+      return function (_x) {
+        return _ref.apply(this, arguments);
       };
     }())["catch"](function (error) {
       axios.post('/logout').then( /*#__PURE__*/function () {
-        var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(res) {
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+        var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(res) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
             while (1) {
-              switch (_context3.prev = _context3.next) {
+              switch (_context2.prev = _context2.next) {
                 case 0:
                   if (res.data.status) {
                     location.href = '/login';
@@ -19247,14 +19229,14 @@ window.axiosPostMethod = function (url, data) {
 
                 case 1:
                 case "end":
-                  return _context3.stop();
+                  return _context2.stop();
               }
             }
-          }, _callee3);
+          }, _callee2);
         }));
 
-        return function (_x3) {
-          return _ref3.apply(this, arguments);
+        return function (_x2) {
+          return _ref2.apply(this, arguments);
         };
       }());
     });
@@ -19265,30 +19247,30 @@ window.axiosPostMethod = function (url, data) {
 window.axiosDeleteMethod = function (url, data) {
   return new Promise(function (resolve) {
     axios["delete"](url, data).then( /*#__PURE__*/function () {
-      var _ref4 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(res) {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
+      var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(res) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 resolve(res);
 
               case 1:
               case "end":
-                return _context4.stop();
+                return _context3.stop();
             }
           }
-        }, _callee4);
+        }, _callee3);
       }));
 
-      return function (_x4) {
-        return _ref4.apply(this, arguments);
+      return function (_x3) {
+        return _ref3.apply(this, arguments);
       };
     }())["catch"](function (error) {
       axios.post('/logout').then( /*#__PURE__*/function () {
-        var _ref5 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(res) {
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
+        var _ref4 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(res) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
             while (1) {
-              switch (_context5.prev = _context5.next) {
+              switch (_context4.prev = _context4.next) {
                 case 0:
                   if (res.data.status) {
                     location.href = '/login';
@@ -19296,14 +19278,14 @@ window.axiosDeleteMethod = function (url, data) {
 
                 case 1:
                 case "end":
-                  return _context5.stop();
+                  return _context4.stop();
               }
             }
-          }, _callee5);
+          }, _callee4);
         }));
 
-        return function (_x5) {
-          return _ref5.apply(this, arguments);
+        return function (_x4) {
+          return _ref4.apply(this, arguments);
         };
       }());
     });
@@ -63065,21 +63047,30 @@ window.app = createApp({
               loading.show = false;
               $('.directory-select2').on('select2:select', /*#__PURE__*/function () {
                 var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(e) {
+                  var url;
                   return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
                     while (1) {
                       switch (_context.prev = _context.next) {
                         case 0:
                           loading.show = true;
+                          app.check = [];
+                          app.checkAll = false;
                           set_info.check_list = [];
-                          app.value.directory = e.params.data.id;
-                          _context.next = 5;
+                          app.value.directory = e.params.data.id; // 建構已上架清單
+
+                          url = 'put-on/list/all?directories_id=' + app.value.directory;
+                          axiosGetMethod(url).then(function (res) {
+                            set_info.check = _.map(res.data.data, 'product.id');
+                            set_info.check_list = _.map(res.data.data, 'product');
+                          });
+                          _context.next = 9;
                           return app.getCount();
 
-                        case 5:
-                          _context.next = 7;
+                        case 9:
+                          _context.next = 11;
                           return app.getData(1);
 
-                        case 7:
+                        case 11:
                         case "end":
                           return _context.stop();
                       }
@@ -63119,18 +63110,14 @@ window.app = createApp({
 
       return new Promise(function (resolve) {
         var url = 'put-on/list/' + page + '?directories_id=' + _this3.value.directory;
+        url += !_this3.search_text ? '' : '&keywords=' + _this3.search_text;
         axiosGetMethod(url).then(function (res) {
+          app.check = [];
+          app.checkAll = false;
           app.list = res.data.data;
-          set_info.check = _.map(app.list, 'product.id');
-          set_info.check_list = _.map(app.list, 'product');
           loading.show = false;
         });
       });
-    },
-    modify: function modify() {
-      set_info.check = set_info.check_list = [];
-      set_info.check = _.map(app.list, 'product.id');
-      set_info.check_list = _.map(app.list, 'product');
     },
     put: function put() {
       set_put.dataInit();
@@ -63139,102 +63126,6 @@ window.app = createApp({
 
       _.forEach(set_put.check, function (v) {
         set_put.list.push(_.find(app.list, ['id', v]));
-      });
-    },
-    "delete": function _delete() {
-      var _this4 = this;
-
-      if (this.check.length > 0) {
-        loading.show = true;
-        axiosDeleteMethod('/product/delete', {
-          data: this.check
-        }).then( /*#__PURE__*/function () {
-          var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(res) {
-            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
-              while (1) {
-                switch (_context3.prev = _context3.next) {
-                  case 0:
-                    if (res.data.status) {
-                      Toast.fire({
-                        icon: 'success',
-                        title: '刪除成功'
-                      });
-
-                      _this4.searchService('delete');
-                    }
-
-                  case 1:
-                  case "end":
-                    return _context3.stop();
-                }
-              }
-            }, _callee3);
-          }));
-
-          return function (_x2) {
-            return _ref2.apply(this, arguments);
-          };
-        }());
-      }
-    },
-    searchService: function searchService() {
-      var _this5 = this;
-
-      var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-      return new Promise( /*#__PURE__*/function () {
-        var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(resolve) {
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
-            while (1) {
-              switch (_context4.prev = _context4.next) {
-                case 0:
-                  _context4.next = 2;
-                  return _this5.getCount();
-
-                case 2:
-                  _context4.next = 4;
-                  return _this5.getData(_this5.$refs.pagination.page);
-
-                case 4:
-                  if (!(_this5.$refs.pagination.page > 1 && _this5.list.length === 0)) {
-                    _context4.next = 10;
-                    break;
-                  }
-
-                  if (!(type === 'delete' || _this5.search_text)) {
-                    _context4.next = 10;
-                    break;
-                  }
-
-                  loading.show = true;
-                  _context4.next = 9;
-                  return _this5.getData(1);
-
-                case 9:
-                  _this5.$refs.pagination.setPage(1);
-
-                case 10:
-                  resolve();
-
-                case 11:
-                case "end":
-                  return _context4.stop();
-              }
-            }
-          }, _callee4);
-        }));
-
-        return function (_x3) {
-          return _ref3.apply(this, arguments);
-        };
-      }());
-    },
-    confirm: function confirm() {
-      var _this6 = this;
-
-      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_4__.swal2Confirm)('確定刪除選取的項目？').then(function (confirm) {
-        if (confirm) {
-          _this6["delete"]();
-        }
       });
     }
   }
@@ -63300,10 +63191,10 @@ var set_info = createApp({
   },
   delimiters: ["${", "}"],
   mounted: function mounted() {
-    var _this7 = this;
+    var _this4 = this;
 
     this.getProductTypes().then(function (res) {
-      _this7.select.product_types_id = res.data.data;
+      _this4.select.product_types_id = res.data.data;
       $('.product-types-select2').select2();
     });
     $('.product-types-select2').on('select2:select', function (e) {
@@ -63325,11 +63216,11 @@ var set_info = createApp({
       });
     },
     confirm: function confirm() {
-      var _this8 = this;
+      var _this5 = this;
 
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_4__.swal2Confirm)("\u78BA\u5B9A\u4FEE\u6539\u4E0A\u67B6\u7522\u54C1\uFF1F").then(function (confirm) {
         if (confirm) {
-          _this8.save();
+          _this5.save();
         }
       });
     },
@@ -63341,21 +63232,21 @@ var set_info = createApp({
         check_list: this.check_list
       };
       axiosPostMethod(url, form_data).then( /*#__PURE__*/function () {
-        var _ref4 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(res) {
+        var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(res) {
           var icon;
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
             while (1) {
-              switch (_context5.prev = _context5.next) {
+              switch (_context3.prev = _context3.next) {
                 case 0:
                   if (res.data.status) {
                     $('#set-info').modal('hide');
                   }
 
-                  _context5.next = 3;
+                  _context3.next = 3;
                   return app.getCount();
 
                 case 3:
-                  _context5.next = 5;
+                  _context3.next = 5;
                   return app.getData(1);
 
                 case 5:
@@ -63367,14 +63258,14 @@ var set_info = createApp({
 
                 case 7:
                 case "end":
-                  return _context5.stop();
+                  return _context3.stop();
               }
             }
-          }, _callee5);
+          }, _callee3);
         }));
 
-        return function (_x4) {
-          return _ref4.apply(this, arguments);
+        return function (_x2) {
+          return _ref2.apply(this, arguments);
         };
       }());
     }
@@ -63439,7 +63330,7 @@ var set_put = createApp({
       };
     },
     confirm: function confirm() {
-      var _this9 = this;
+      var _this6 = this;
 
       var auth = this.auth();
 
@@ -63453,14 +63344,50 @@ var set_put = createApp({
 
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_4__.swal2Confirm)("\u78BA\u5B9A\u4FEE\u6539\u4E0A\u67B6\u7522\u54C1\uFF1F").then(function (confirm) {
         if (confirm) {
-          _this9.save();
+          _this6.save();
         }
       });
     },
     save: function save() {
-      console.log(this.list);
-      console.log(this.value);
-      $('#set-put').modal('hide');
+      var url = '/put-on/update';
+      loading.show = true;
+      var form_data = {
+        list: this.list,
+        status: this.value.status,
+        start_date: this.value.start_date,
+        end_date: this.value.end_date
+      };
+      axiosPostMethod(url, form_data).then( /*#__PURE__*/function () {
+        var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(res) {
+          var icon;
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
+            while (1) {
+              switch (_context4.prev = _context4.next) {
+                case 0:
+                  if (res.data.status) {
+                    $('#set-put').modal('hide');
+                  }
+
+                  icon = res.data.status ? 'success' : 'error';
+                  Toast.fire({
+                    icon: icon,
+                    title: res.data.message
+                  });
+                  _context4.next = 5;
+                  return app.getData(app.$refs.pagination.page);
+
+                case 5:
+                case "end":
+                  return _context4.stop();
+              }
+            }
+          }, _callee4);
+        }));
+
+        return function (_x3) {
+          return _ref3.apply(this, arguments);
+        };
+      }());
     }
   }
 }).mount('#set-put');

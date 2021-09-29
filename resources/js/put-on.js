@@ -48,8 +48,20 @@ window.app = createApp({
 
         $('.directory-select2').on('select2:select', async function (e) {
             loading.show = true;
+            app.check = [];
+            app.checkAll = false;
             set_info.check_list = [];
+
             app.value.directory = e.params.data.id;
+
+            // 建構已上架清單
+            let url = 'put-on/list/all?directories_id=' + app.value.directory;
+            axiosGetMethod(url).then(res => {
+                set_info.check = _.map(res.data.data, 'product.id');
+                set_info.check_list = _.map(res.data.data, 'product');
+
+            });
+
             await app.getCount();
             await app.getData(1);
         });
@@ -70,18 +82,14 @@ window.app = createApp({
         getData(page) {
             return new Promise(resolve => {
                 let url = 'put-on/list/' + page + '?directories_id=' + this.value.directory;
+                url += !this.search_text ? '' : '&keywords=' + this.search_text;
                 axiosGetMethod(url).then(res => {
+                    app.check = [];
+                    app.checkAll = false;
                     app.list = res.data.data;
-                    set_info.check = _.map(app.list, 'product.id');
-                    set_info.check_list = _.map(app.list, 'product');
                     loading.show = false;
                 });
             });
-        },
-        modify() {
-            set_info.check = set_info.check_list = [];
-            set_info.check = _.map(app.list, 'product.id');
-            set_info.check_list = _.map(app.list, 'product');
         },
         put() {
             set_put.dataInit();
@@ -90,39 +98,6 @@ window.app = createApp({
             _.forEach(set_put.check, v => {
                 set_put.list.push(_.find(app.list, ['id', v]));
             })
-        },
-        delete() {
-            if(this.check.length > 0) {
-                loading.show = true;
-                axiosDeleteMethod('/product/delete', {data: this.check}).then(async res => {
-                    if (res.data.status) {
-                        Toast.fire({icon: 'success', title: '刪除成功'});
-                        this.searchService('delete');
-                    }
-                });
-            }
-        },
-        searchService(type = null) {
-            return new Promise(async resolve => {
-                await this.getCount();
-                await this.getData(this.$refs.pagination.page);
-                if (this.$refs.pagination.page > 1 && this.list.length === 0) {
-                    if (type === 'delete' || this.search_text) {
-                        loading.show = true;
-                        await this.getData(1);
-                        this.$refs.pagination.setPage(1);
-                    }
-                }
-
-                resolve();
-            });
-        },
-        confirm() {
-            swal2Confirm('確定刪除選取的項目？').then(confirm => {
-                if (confirm) {
-                    this.delete();
-                }
-            });
         },
     },
 }).mount('#app');
@@ -308,10 +283,27 @@ let set_put = createApp({
             });
         },
         save() {
-            console.log(this.list);
-            console.log(this.value);
+            let url = '/put-on/update';
+            loading.show = true;
 
-            $('#set-put').modal('hide');
+            let form_data = {
+                list: this.list,
+                status: this.value.status,
+                start_date: this.value.start_date,
+                end_date: this.value.end_date,
+            };
+
+            axiosPostMethod(url, form_data).then(async res => {
+                if (res.data.status) {
+                    $('#set-put').modal('hide');
+                }
+
+                let icon = res.data.status ? 'success' : 'error';
+                Toast.fire({icon: icon, title: res.data.message});
+
+                await app.getData(app.$refs.pagination.page);
+            });
+
         },
     },
 }).mount('#set-put');

@@ -19184,29 +19184,11 @@ window.axiosGetMethod = function (url) {
   return new Promise(function (resolve) {
     axios.get(url).then(function (res) {
       resolve(res);
-    })["catch"](function (error) {
-      axios.post('/logout').then( /*#__PURE__*/function () {
-        var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(res) {
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  if (res.data.status) {
-                    location.href = '/login';
-                  }
-
-                case 1:
-                case "end":
-                  return _context.stop();
-              }
-            }
-          }, _callee);
-        }));
-
-        return function (_x) {
-          return _ref.apply(this, arguments);
-        };
-      }());
+    })["catch"](function (error) {// axios.post('/logout').then(async res => {
+      //     if (res.data.status) {
+      //         location.href = '/login';
+      //     }
+      // })
     });
   });
 }; // 全域性axios post方法封裝
@@ -19216,30 +19198,30 @@ window.axiosPostMethod = function (url, data) {
   var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
   return new Promise(function (resolve) {
     axios.post(url, data, config).then( /*#__PURE__*/function () {
-      var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(res) {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+      var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(res) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context.prev = _context.next) {
               case 0:
                 resolve(res);
 
               case 1:
               case "end":
-                return _context2.stop();
+                return _context.stop();
             }
           }
-        }, _callee2);
+        }, _callee);
       }));
 
-      return function (_x2) {
-        return _ref2.apply(this, arguments);
+      return function (_x) {
+        return _ref.apply(this, arguments);
       };
     }())["catch"](function (error) {
       axios.post('/logout').then( /*#__PURE__*/function () {
-        var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(res) {
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+        var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(res) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
             while (1) {
-              switch (_context3.prev = _context3.next) {
+              switch (_context2.prev = _context2.next) {
                 case 0:
                   if (res.data.status) {
                     location.href = '/login';
@@ -19247,14 +19229,14 @@ window.axiosPostMethod = function (url, data) {
 
                 case 1:
                 case "end":
-                  return _context3.stop();
+                  return _context2.stop();
               }
             }
-          }, _callee3);
+          }, _callee2);
         }));
 
-        return function (_x3) {
-          return _ref3.apply(this, arguments);
+        return function (_x2) {
+          return _ref2.apply(this, arguments);
         };
       }());
     });
@@ -19265,30 +19247,30 @@ window.axiosPostMethod = function (url, data) {
 window.axiosDeleteMethod = function (url, data) {
   return new Promise(function (resolve) {
     axios["delete"](url, data).then( /*#__PURE__*/function () {
-      var _ref4 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(res) {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
+      var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(res) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 resolve(res);
 
               case 1:
               case "end":
-                return _context4.stop();
+                return _context3.stop();
             }
           }
-        }, _callee4);
+        }, _callee3);
       }));
 
-      return function (_x4) {
-        return _ref4.apply(this, arguments);
+      return function (_x3) {
+        return _ref3.apply(this, arguments);
       };
     }())["catch"](function (error) {
       axios.post('/logout').then( /*#__PURE__*/function () {
-        var _ref5 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(res) {
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
+        var _ref4 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(res) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
             while (1) {
-              switch (_context5.prev = _context5.next) {
+              switch (_context4.prev = _context4.next) {
                 case 0:
                   if (res.data.status) {
                     location.href = '/login';
@@ -19296,14 +19278,14 @@ window.axiosDeleteMethod = function (url, data) {
 
                 case 1:
                 case "end":
-                  return _context5.stop();
+                  return _context4.stop();
               }
             }
-          }, _callee5);
+          }, _callee4);
         }));
 
-        return function (_x5) {
-          return _ref5.apply(this, arguments);
+        return function (_x4) {
+          return _ref4.apply(this, arguments);
         };
       }());
     });

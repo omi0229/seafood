@@ -36,4 +36,16 @@ class PutOnController extends Controller
 
         return response()->json(['status' => true, 'message' => '新增成功']);
     }
+
+    public function update(Request $request)
+    {
+        $inputs = $request->all();
+
+        # 編輯資料
+        if ($this->repository->updateData($inputs)) {
+            return response()->json(['status' => true, 'message' => '設定成功']);
+        }
+
+        return response()->json(['status' => false, 'message' => '設定失敗']);
+    }
 }

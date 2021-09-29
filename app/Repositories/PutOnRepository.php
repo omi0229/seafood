@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
 use App\Repositories\Repository;
 use App\Models\Directory;
 use App\Models\Products;
@@ -23,7 +24,9 @@ class PutOnRepository extends Repository
         $data = $directories_id ? $this->model::with('product')->where('directories_id', Directory::decodeSlug($directories_id)) : $this->model::with('product');
 
         # 有 關鍵字
-        $data = !$keywords ? $data : $data->where('name', 'LIKE', '%' . $keywords . '%');
+        $data = !$keywords ? $data : $data->whereHas('product', function (Builder $query) use ($keywords) {
+            $query->where('title', 'LIKE', '%' . $keywords . '%');
+        });
 
         # 是否分頁顯示
         $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;
@@ -90,6 +93,19 @@ class PutOnRepository extends Repository
                 ]);
             }
         }
+
+        return true;
+    }
+
+    public function updateData($inputs)
+    {
+        $list = collect($inputs['list'])
+            ->map(function ($p) {
+                return $this->model::decodeSlug($p['id']);
+            })
+            ->toArray();
+        unset($inputs['list']);
+        $this->model->whereIn('id', $list)->update($inputs);
 
         return true;
     }

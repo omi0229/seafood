@@ -137,5 +137,4 @@ Route::middleware(['auth.web'])->group(function () {
     Route::get('put-on/list/{page}', [PutOnController::class, 'list']);
     Route::post('put-on/insert', [PutOnController::class, 'insert']);
     Route::post('put-on/update', [PutOnController::class, 'update']);
-    Route::delete('put-on/delete', [PutOnController::class, 'delete']);
 });

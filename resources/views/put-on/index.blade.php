@@ -23,9 +23,6 @@
 
         <div class="row mx-0 px-3">
             <div class="col-12 col-md-3">
-                <!--
-                <components-search v-model:search_text="search_text" name="上架" @get-count="getCount" @get-data="getData"></components-search>
-                -->
                 <div class="form-group">
                     <select class="form-control form-control-sm directory-select2" v-model="value.directory" @change="getData">
                         <option value="">請選擇目錄</option>
@@ -34,7 +31,12 @@
                     </select>
                 </div>
             </div>
-            <div class="col-12 col-md-9 d-flex justify-content-end">
+            <div class="col-12 col-md-3 mb-3">
+                <template v-if="value.directory">
+                    <components-search v-model:search_text="search_text" name="產品" @get-count="getCount" @get-data="getData"></components-search>
+                </template>
+            </div>
+            <div class="col-12 col-md-6 d-flex justify-content-end">
                 <!-- v-show -->
                 <div class="mr-2" v-show="check.length > 0">
                     <button type="button" class="btn btn-sm btn-info px-2" data-toggle="modal" data-target="#set-put" @click="put">
@@ -43,7 +45,7 @@
                 </div>
                 <!-- v-show -->
                 <div v-show="value.directory">
-                    <button type="button" class="btn btn-sm btn-primary px-2" data-toggle="modal" data-target="#set-info" @click="modify">
+                    <button type="button" class="btn btn-sm btn-primary px-2" data-toggle="modal" data-target="#set-info">
                         <i class="fa fa-plus mr-1"></i> 修改上架產品
                     </button>
                 </div>
@@ -72,8 +74,8 @@
                                         <input type="checkbox" class="checkbox-size" v-model="checkAll">
                                     </th>
                                     <th>產品名稱</th>
-                                    <th class="text-center">開始時間</th>
-                                    <th class="text-center">結束時間</th>
+                                    <th class="text-center">上架時間</th>
+                                    <th class="text-center">下架時間</th>
                                     <th class="text-center">上架狀態</th>
                                 </tr>
                                 <tr v-else>
@@ -103,7 +105,9 @@
                         </div>
                     </div>
                 </div>
-                <components-pagination ref="pagination" :all_count="all_count" :page_count="page_count" @get-data="getData"></components-pagination>
+                <template v-if="value.directory">
+                    <components-pagination ref="pagination" :all_count="all_count" :page_count="page_count" @get-data="getData"></components-pagination>
+                </template>
             </div>
         </div>
     </div>
@@ -113,7 +117,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
-                        新增上架產品
+                        變更上架產品
                     </h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
