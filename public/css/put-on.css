@@ -1,13 +1,3 @@
-@charset "UTF-8";
-.custom-file-label {
-  padding: 0.45rem 0.75rem;
-  color: #AAA !important;
-}
-.custom-file-label:after {
-  padding: 0.45rem 0.75rem;
-  content: "選擇檔案";
-}
-
 .check-list {
   min-height: 80px;
   max-height: 80px;
@@ -42,4 +32,12 @@ select.form-control-sm ~ .select2-container--default .select2-selection--single 
 }
 #set-info .select2-container .select2-selection--single .select2-selection__rendered {
   padding-left: 0 !important;
+}
+
+#set-put .radio {
+  height: 31px;
+  line-height: 31px;
+}
+#set-put .input-group {
+  width: 200px !important;
 }

@@ -63077,12 +63077,7 @@ window.app = createApp({
 
                         case 5:
                           _context.next = 7;
-                          return app.getData(1).then(function (res) {
-                            app.list = res.data.data;
-                            set_info.check = _.map(app.list, 'product.id');
-                            set_info.check_list = _.map(app.list, 'product');
-                            loading.show = false;
-                          });
+                          return app.getData(1);
 
                         case 7:
                         case "end":
@@ -63110,7 +63105,8 @@ window.app = createApp({
       var _this2 = this;
 
       return new Promise(function (resolve) {
-        var url = !_this2.search_text ? '/product/count' : '/product/count?keywords=' + _this2.search_text;
+        var url = '/put-on/count?directories_id=' + _this2.value.directory;
+        url += !_this2.search_text ? '' : '&keywords=' + _this2.search_text;
         axiosGetMethod(url).then(function (res) {
           _this2.all_count = res.data.count;
           _this2.page_count = res.data.page_count;
@@ -63124,7 +63120,10 @@ window.app = createApp({
       return new Promise(function (resolve) {
         var url = 'put-on/list/' + page + '?directories_id=' + _this3.value.directory;
         axiosGetMethod(url).then(function (res) {
-          resolve(res);
+          app.list = res.data.data;
+          set_info.check = _.map(app.list, 'product.id');
+          set_info.check_list = _.map(app.list, 'product');
+          loading.show = false;
         });
       });
     },
@@ -63134,14 +63133,13 @@ window.app = createApp({
       set_info.check_list = _.map(app.list, 'product');
     },
     put: function put() {
+      set_put.dataInit();
       set_put.check = this.check;
       set_put.list = [];
 
       _.forEach(set_put.check, function (v) {
         set_put.list.push(_.find(app.list, ['id', v]));
       });
-
-      console.log(set_put.list);
     },
     "delete": function _delete() {
       var _this4 = this;
@@ -63354,19 +63352,20 @@ var set_info = createApp({
                   }
 
                   _context5.next = 3;
-                  return app.getData(1).then(function (res) {
-                    app.list = res.data.data;
-                  });
+                  return app.getCount();
 
                 case 3:
-                  loading.show = false;
+                  _context5.next = 5;
+                  return app.getData(1);
+
+                case 5:
                   icon = res.data.status ? 'success' : 'error';
                   Toast.fire({
                     icon: icon,
                     title: res.data.message
                   });
 
-                case 6:
+                case 7:
                 case "end":
                   return _context5.stop();
               }
@@ -63387,12 +63386,83 @@ var set_put = createApp({
       check: [],
       list: [],
       value: {
-        status: '0'
+        status: '0',
+        start_date: '',
+        end_date: ''
       }
     };
   },
   delimiters: ["${", "}"],
-  methods: {}
+  mounted: function mounted() {
+    var datetimepicker_obj = {
+      locale: 'zh-tw',
+      format: 'YYYY-MM-DD HH:mm',
+      icons: {
+        time: 'far fa-clock'
+      }
+    };
+    $('#start_date').datetimepicker(datetimepicker_obj);
+    $('#end_date').datetimepicker(datetimepicker_obj);
+  },
+  methods: {
+    dataInit: function dataInit() {
+      $('input[data-target="#start_date"]').datetimepicker('clear');
+      $('input[data-target="#end_date"]').datetimepicker('clear');
+      this.value.status = '0';
+    },
+    auth: function auth() {
+      if (this.value.status == '2') {
+        var start_date = $('input[data-target="#start_date"]').val();
+        var end_date = $('input[data-target="#end_date"]').val();
+
+        if (!start_date && !end_date) {
+          return {
+            auth: false,
+            message: '請選擇開始或結束日期！'
+          };
+        }
+
+        if (start_date && end_date && start_date >= end_date) {
+          return {
+            auth: false,
+            message: '日期格式或日期範圍錯誤！'
+          };
+        }
+
+        this.value.start_date = start_date;
+        this.value.end_date = end_date;
+      }
+
+      return {
+        auth: true,
+        message: 'success'
+      };
+    },
+    confirm: function confirm() {
+      var _this9 = this;
+
+      var auth = this.auth();
+
+      if (!auth.auth) {
+        Toast.fire({
+          icon: 'error',
+          title: auth.message
+        });
+        return false;
+      }
+
+      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_4__.swal2Confirm)("\u78BA\u5B9A\u4FEE\u6539\u4E0A\u67B6\u7522\u54C1\uFF1F").then(function (confirm) {
+        if (confirm) {
+          _this9.save();
+        }
+      });
+    },
+    save: function save() {
+      console.log(this.list);
+      console.log(this.value);
+      $('#set-put').modal('hide');
+    }
+  }
 }).mount('#set-put');
 })();
 

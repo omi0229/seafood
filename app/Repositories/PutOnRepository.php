@@ -43,8 +43,12 @@ class PutOnRepository extends Repository
     public function count(array $params = [])
     {
         $keywords = data_get($params, 'keywords');
+        $directories_id = data_get($params, 'directories_id');
 
-        $data = !$keywords ? $this->model : $this->model->where('name', 'LIKE', '%' . $keywords . '%');
+        # 有 目錄ID
+        $data = $directories_id ? $this->model->where('directories_id', Directory::decodeSlug($directories_id)) : $this->model;
+
+        $data = !$keywords ? $data : $data->where('name', 'LIKE', '%' . $keywords . '%');
 
         return $data->count();
     }

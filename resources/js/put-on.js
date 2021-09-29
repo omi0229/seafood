@@ -51,19 +51,15 @@ window.app = createApp({
             set_info.check_list = [];
             app.value.directory = e.params.data.id;
             await app.getCount();
-            await app.getData(1).then(res => {
-                app.list = res.data.data;
-                set_info.check = _.map(app.list, 'product.id');
-                set_info.check_list = _.map(app.list, 'product');
-                loading.show = false;
-            });
+            await app.getData(1);
         });
 
     },
     methods: {
         getCount() {
             return new Promise(resolve => {
-                let url = !this.search_text ? '/product/count' : '/product/count?keywords=' + this.search_text;
+                let url = '/put-on/count?directories_id=' + this.value.directory;
+                url += !this.search_text ? '' : '&keywords=' + this.search_text;
                 axiosGetMethod(url).then(res => {
                     this.all_count = res.data.count;
                     this.page_count = res.data.page_count;
@@ -75,7 +71,10 @@ window.app = createApp({
             return new Promise(resolve => {
                 let url = 'put-on/list/' + page + '?directories_id=' + this.value.directory;
                 axiosGetMethod(url).then(res => {
-                    resolve(res);
+                    app.list = res.data.data;
+                    set_info.check = _.map(app.list, 'product.id');
+                    set_info.check_list = _.map(app.list, 'product');
+                    loading.show = false;
                 });
             });
         },
@@ -85,13 +84,12 @@ window.app = createApp({
             set_info.check_list = _.map(app.list, 'product');
         },
         put() {
+            set_put.dataInit();
             set_put.check = this.check;
             set_put.list = [];
             _.forEach(set_put.check, v => {
                 set_put.list.push(_.find(app.list, ['id', v]));
             })
-
-            console.log(set_put.list);
         },
         delete() {
             if(this.check.length > 0) {
@@ -238,11 +236,8 @@ let set_info = createApp({
                     $('#set-info').modal('hide');
                 }
 
-                await app.getData(1).then(res => {
-                    app.list = res.data.data;
-                });
-
-                loading.show = false;
+                await app.getCount();
+                await app.getData(1);
 
                 let icon = res.data.status ? 'success' : 'error';
                 Toast.fire({icon: icon, title: res.data.message});
@@ -258,11 +253,65 @@ let set_put = createApp({
             list: [],
             value: {
                 status: '0',
+                start_date: '',
+                end_date: '',
             },
         }
     },
     delimiters: ["${", "}"],
-    methods: {
+    mounted() {
+        let datetimepicker_obj = {
+            locale: 'zh-tw',
+            format: 'YYYY-MM-DD HH:mm',
+            icons: {time: 'far fa-clock'},
+        };
 
+        $('#start_date').datetimepicker(datetimepicker_obj);
+        $('#end_date').datetimepicker(datetimepicker_obj);
+    },
+    methods: {
+        dataInit() {
+            $('input[data-target="#start_date"]').datetimepicker('clear');
+            $('input[data-target="#end_date"]').datetimepicker('clear');
+            this.value.status = '0';
+        },
+        auth() {
+            if (this.value.status == '2') {
+                let start_date = $('input[data-target="#start_date"]').val();
+                let end_date = $('input[data-target="#end_date"]').val();
+
+                if (!start_date && !end_date) {
+                    return {auth: false, message: '請選擇開始或結束日期！'};
+                }
+
+                if (start_date && end_date && start_date >= end_date) {
+                    return {auth: false, message: '日期格式或日期範圍錯誤！'};
+                }
+
+                this.value.start_date = start_date;
+                this.value.end_date = end_date;
+            }
+
+            return {auth: true, message: 'success'};
+        },
+        confirm() {
+            let auth = this.auth();
+            if (!auth.auth) {
+                Toast.fire({icon: 'error', title: auth.message});
+                return false;
+            }
+
+            swal2Confirm(`確定修改上架產品？`).then(confirm => {
+                if (confirm) {
+                    this.save();
+                }
+            });
+        },
+        save() {
+            console.log(this.list);
+            console.log(this.value);
+
+            $('#set-put').modal('hide');
+        },
     },
 }).mount('#set-put');

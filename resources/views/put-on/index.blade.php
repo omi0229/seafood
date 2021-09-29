@@ -1,6 +1,7 @@
 @extends('layouts.base')
 
 @section('content')
+    <link rel="stylesheet" href="plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
     <link rel="stylesheet" href="plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="css/put-on.css">
     <div id="app" v-cloak>
@@ -187,9 +188,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-
-                </div>
                 <div class="modal-footer justify-content-end">
                     <button type="button" class="btn btn-sm btn-danger px-3 mr-1" data-dismiss="modal" aria-label="Close">取消</button>
                     <button type="button" class="btn btn-sm btn-primary px-3" @click="confirm">儲存</button>
@@ -222,23 +220,44 @@
                     </div>
                     <div class="s-14 mt-4">
                         <div class="s-1-1-rem mb-2">上/下架設定</div>
-                        <div class="d-flex align-items-center mb-1">
+                        <div class="d-flex align-items-center radio mb-2">
                             <input type="radio" id="status1" name="status" class="mr-2" value="1" v-model="value.status">
                             <label class="s-14 mb-0" for="status1">上架</label>
                         </div>
-                        <div class="d-flex align-items-center mb-1">
+                        <div class="d-flex align-items-center radio mb-2">
                             <input type="radio" id="status0" name="status" class="mr-2" value="0" v-model="value.status">
                             <label class="s-14 mb-0" for="status0">下架</label>
                         </div>
-                        <div class="d-flex align-items-center">
-                            <input type="radio" id="status2" name="status" class="mr-2" value="2" v-model="value.status">
-                            <label class="s-14 mb-0" for="status2">排程</label>
+                        <div class="d-flex align-items-center radio flex-wrap h-auto">
+                            <div class="mb-2 mr-3">
+                                <input type="radio" id="status2" name="status" class="mr-2" value="2" v-model="value.status">
+                                <label class="s-14 mb-0" for="status2">排程</label>
+                            </div>
+                            <div class="input-group date mb-2 mr-3" id="start_date" data-target-input="nearest">
+                                <input type="text" class="form-control form-control-sm datetimepicker-input s-14" placeholder="上架時間" data-target="#start_date" />
+                                <div class="input-group-append" data-target="#start_date" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                            <div class="input-group date mb-2" id="end_date" data-target-input="nearest">
+                                <input type="text" class="form-control form-control-sm datetimepicker-input s-14" placeholder="下架時間" data-target="#end_date" />
+                                <div class="input-group-append" data-target="#end_date" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
+                <div class="modal-footer justify-content-end">
+                    <button type="button" class="btn btn-sm btn-danger px-3 mr-1" data-dismiss="modal" aria-label="Close">取消</button>
+                    <button type="button" class="btn btn-sm btn-primary px-3" @click="confirm">儲存</button>
                 </div>
             </div>
         </div>
     </div>
     <script src="plugins/select2/js/select2.full.min.js"></script>
+    <script src="plugins/moment/moment-with-locales.min.js"></script>
+    <script src="plugins/inputmask/jquery.inputmask.min.js"></script>
+    <script src="plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
     <script src="js/put-on.js"></script>
 @endsection
