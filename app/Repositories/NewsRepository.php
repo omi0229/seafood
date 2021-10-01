@@ -27,15 +27,16 @@ class NewsRepository extends Repository
     {
 
         $keywords = data_get($params, 'keywords');
+        $status = data_get($params, 'status');
 
         $data = !$keywords ? $this->model : $this->model->where('title', 'LIKE', '%' . $keywords . '%');
 
-        if ($page !== 'all' && is_numeric($page)) {
-            $start = ($page - 1) * 10;
-            $data = $data->skip($start)->take(10)->get();
-        } else {
-            $data = $data->get();
-        }
+        # 有 是否於上架管理顯示
+        $data = $status ? $data->where('status', $status) : $data;
+
+        # 是否分頁顯示
+        $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;
+        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(10)->get() : $data->get();
 
         $list = [];
         foreach ($data as $key => $row) {

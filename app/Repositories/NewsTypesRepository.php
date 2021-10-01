@@ -19,12 +19,9 @@ class NewsTypesRepository extends Repository
 
         $data = !$keywords ? $this->model : $this->model->where('name', 'LIKE', '%' . $keywords . '%');
 
-        if ($page !== 'all' && is_numeric($page)) {
-            $start = ($page - 1) * 10;
-            $data = $data->skip($start)->take(10)->get();
-        } else {
-            $data = $data->get();
-        }
+        # 是否分頁顯示
+        $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;
+        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(10)->get() : $data->get();
 
         $list = [];
         foreach ($data as $key => $row) {
