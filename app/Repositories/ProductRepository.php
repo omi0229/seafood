@@ -56,6 +56,45 @@ class ProductRepository extends Repository
         return $list;
     }
 
+    public function apiData($type_id, $page = null)
+    {
+        $data = $this->model->where('product_types_id', ProductTypes::decodeSlug($type_id))->where('status', 1);
+
+        # 此分類的全部數量
+        $all_count = $data->count();
+
+        # 此分類共有幾頁
+        $page_count = ceil($all_count / 10);
+
+        $page = $page ? $page : 1;
+
+        # 是否分頁顯示
+        $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;
+        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(10)->get() : $data->get();
+
+        $list = [];
+        foreach ($data as $key => $row) {
+            array_push($list, json_decode($row, true));
+            $list[$key]['id'] = $row->hash_id;
+            $list[$key]['product_types_id'] = $row->product_types->hash_id ?? '';
+            $list[$key]['product_types_name'] = $row->product_types->name ?? '';
+
+            $list[$key]['web_img_path'] = $row->web_img ? asset('storage/' . $row->web_img) : null;
+            $list[$key]['mobile_img_path'] = $row->mobile_img ? asset('storage/' . $row->mobile_img) : null;
+        }
+
+        return ['list' => $list, 'all_count' => $all_count, 'page_count' => $page_count];
+    }
+
+    public function apiInfo($id)
+    {
+        $info = $this->model->where('id', News::decodeSlug($id))->where('status', 1)->get()->first();
+        $item = $info->toArray();
+        $item['web_img_path'] = $info->web_img ? asset('storage/' . $info->web_img) : null;
+        $item['mobile_img_path'] = $info->mobile_img ? asset('storage/' . $info->mobile_img) : null;
+        return $item;
+    }
+
     public function count(array $params = [])
     {
         $keywords = data_get($params, 'keywords');

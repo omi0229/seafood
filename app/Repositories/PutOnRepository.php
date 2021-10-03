@@ -43,6 +43,33 @@ class PutOnRepository extends Repository
         return $list;
     }
 
+    public function apiData($type_id, $page = null)
+    {
+        $data = $this->model->where('directories_id', Directory::decodeSlug($type_id))->where('status', 1);
+
+        # 此分類的全部數量
+        $all_count = $data->count();
+
+        # 此分類共有幾頁
+        $page_count = ceil($all_count / env('PRODUCT_PAGE_ITEM_COUNT', 10));
+
+        $page = $page ? $page : 1;
+
+        # 是否分頁顯示
+        $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * env('PRODUCT_PAGE_ITEM_COUNT', 10) : null;
+        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(env('PRODUCT_PAGE_ITEM_COUNT', 10))->get() : $data->get();
+
+        $list = [];
+        foreach ($data as $key => $row) {
+            array_push($list, json_decode($row, true));
+            $list[$key]['id'] = $row->hash_id;
+            $list[$key]['product'] = $row->product->toArray();
+            $list[$key]['product']['id'] = $row->product->hash_id;
+        }
+
+        return ['list' => $list, 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => env('PRODUCT_PAGE_ITEM_COUNT', 10)];
+    }
+
     public function count(array $params = [])
     {
         $keywords = data_get($params, 'keywords');

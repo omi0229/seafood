@@ -21,7 +21,9 @@ class NewsTypesRepository extends Repository
 
         # 是否分頁顯示
         $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;
-        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(10)->get() : $data->get();
+        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(10) : $data;
+
+        $data = $data->orderBy('created_at', 'DESC')->get();
 
         $list = [];
         foreach ($data as $key => $row) {
