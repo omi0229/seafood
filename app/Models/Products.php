@@ -32,7 +32,7 @@ class Products extends Model
 
     public function product_specification()
     {
-        return $this->hasMany('App\Models\ProductSpecifications');
+        return $this->hasMany('App\Models\ProductSpecifications', 'product_id');
     }
 
     public function put_ons()

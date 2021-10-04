@@ -86,7 +86,7 @@ class NewsRepository extends Repository
 
     public function apiInfo($id)
     {
-        $info = $this->model->where('id', News::decodeSlug($id))->where('status', 1)->get()->first();
+        $info = $this->model->where('id', $this->model::decodeSlug($id))->where('status', 1)->get()->first();
         $item = $info->toArray();
         $item['web_img_path'] = $info->web_img ? asset('storage/' . $info->web_img) : null;
         $item['mobile_img_path'] = $info->mobile_img ? asset('storage/' . $info->mobile_img) : null;

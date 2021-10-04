@@ -19,4 +19,9 @@ class PutOnController extends Controller
     {
         return response()->json($this->repository->apiData($type_id, $page));
     }
+
+    public function info($id)
+    {
+        return response()->json($this->repository->apiInfo($id));
+    }
 }

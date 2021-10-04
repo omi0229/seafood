@@ -30,3 +30,4 @@ Route::get('news-info/{id}', [NewsController::class, 'info']);
 #線上購物
 Route::get('directory/list/{page}', [DirectoryController::class, 'list']);
 Route::get('product/{type_id}/{page?}', [PutOnController::class, 'list']);
+Route::get('product-info/{id}', [PutOnController::class, 'info']);

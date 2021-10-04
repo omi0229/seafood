@@ -65,9 +65,25 @@ class PutOnRepository extends Repository
             $list[$key]['id'] = $row->hash_id;
             $list[$key]['product'] = $row->product->toArray();
             $list[$key]['product']['id'] = $row->product->hash_id;
+            $list[$key]['product']['web_img_path'] = $row->product->web_img ? asset('storage/' . $row->product->web_img) : null;
+            $list[$key]['product']['mobile_img_path'] = $row->product->mobile_img ? asset('storage/' . $row->product->mobile_img) : null;
         }
 
         return ['list' => $list, 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => env('PRODUCT_PAGE_ITEM_COUNT', 10)];
+    }
+
+    public function apiInfo($id)
+    {
+        $info = $this->model->where('id', $this->model::decodeSlug($id))->where('status', 1)->get()->first();
+        $item = $info->toArray();
+        $item['id'] = $info->hash_id;
+        $item['product'] = $info->product->toArray();
+        $item['product']['id'] = $info->product->hash_id;
+        $item['product']['description_html'] = nl2br($info->product->description);
+        $item['product']['specification'] = $info->product->product_specification;
+        $item['product']['web_img_path'] = $info->product->web_img ? asset('storage/' . $info->product->web_img) : null;
+        $item['product']['mobile_img_path'] = $info->product->mobile_img ? asset('storage/' . $info->product->mobile_img) : null;
+        return $item;
     }
 
     public function count(array $params = [])
