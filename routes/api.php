@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\NewsTypeController;
 use App\Http\Controllers\Api\NewsController;
 use App\Http\Controllers\Api\DirectoryController;
@@ -21,6 +22,13 @@ use App\Http\Controllers\Api\PutOnController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+# 購物車
+Route::get('cart/getCartId', [CartController::class, 'getCartId']);
+Route::post('cart/getCartCount', [CartController::class, 'getCartCount']);
+Route::post('cart/showCart', [CartController::class, 'showCart']);
+Route::post('cart/addCart', [CartController::class, 'addCart']);
+
 
 # 最新消息
 Route::get('news-type/list/{page}', [NewsTypeController::class, 'list']);
