@@ -46,11 +46,11 @@ window.axiosGetMethod = url => {
         axios.get(url).then(res => {
             resolve(res);
         }).catch(error => {
-            // axios.post('/logout').then(async res => {
-            //     if (res.data.status) {
-            //         location.href = '/login';
-            //     }
-            // })
+            axios.post('/logout').then(async res => {
+                if (res.data.status) {
+                    location.href = '/login';
+                }
+            })
         });
     });
 };

@@ -9,6 +9,7 @@ use App\Http\Controllers\BasicController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SmsController;
+use App\Http\Controllers\BannersController;
 use App\Http\Controllers\NewsTypeController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\CookingTypeController;
@@ -68,6 +69,13 @@ Route::middleware(['auth.web'])->group(function () {
     Route::get('sms', [SmsController::class, 'index']);
     Route::get('sms/get', [SmsController::class, 'get']);
     Route::post('sms/set', [SmsController::class, 'set']);
+
+    # 大圖輪播
+    Route::get('banners', [BannersController::class, 'index']);
+    Route::get('banners/list', [BannersController::class, 'list']);
+    Route::post('banners/insert', [BannersController::class, 'insert']);
+    Route::post('banners/update', [BannersController::class, 'update']);
+    Route::delete('banners/delete', [BannersController::class, 'delete']);
 
     # 最新消息分類
     Route::get('news-type', [NewsTypeController::class, 'index']);

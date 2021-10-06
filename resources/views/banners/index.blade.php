@@ -1,20 +1,18 @@
 @extends('layouts.base')
 
 @section('content')
-    <link rel="stylesheet" href="plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
-    <link rel="stylesheet" href="plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="css/news.css">
     <div id="app" v-cloak>
         <div class="content-header px-4">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">最新消息管理</h1>
+                        <h1 class="m-0">大圖輪播管理</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="/">首頁</a></li>
-                            <li class="breadcrumb-item active">最新消息管理</li>
+                            <li class="breadcrumb-item active">大圖輪播管理</li>
                         </ol>
                     </div>
                 </div>
@@ -22,10 +20,7 @@
         </div>
 
         <div class="row mx-0 px-3">
-            <div class="mb-3 col-12 col-md-6">
-                <components-search v-model:search_text="search_text" name="最新消息" @get-count="getCount" @get-data="getData"></components-search>
-            </div>
-            <div class="mb-3 col-12 col-md-6 d-flex justify-content-end">
+            <div class="mb-3 col-12 d-flex justify-content-end">
                 <!-- v-show -->
                 <div class="mr-2" v-show="check.length > 0">
                     <button type="button" class="btn btn-sm btn-danger px-2" @click="confirm('delete')">
@@ -45,7 +40,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">最新消息列表</h3>
+                            <h3 class="card-title">大圖輪播列表</h3>
                         </div>
                         <div class="card-body table-responsive p-0">
                             <table class="table table-hover text-nowrap">
@@ -55,15 +50,14 @@
                                     <th class="align-middle">
                                         <input type="checkbox" class="checkbox-size" v-model="checkAll">
                                     </th>
-                                    <th>標題</th>
-                                    <th class="text-center">開始日期</th>
-                                    <th class="text-center">結束日期</th>
+                                    <th>網頁圖片</th>
+                                    <th>手機圖片</th>
                                     <th class="text-center">開啟方式</th>
                                     <th class="text-center">跑馬燈顯示</th>
                                     <th class="text-center">功能</th>
                                 </tr>
                                 <tr v-else>
-                                    <th class="text-center" colspan="5"><span class="text-danger">無最新消息資料</span></th>
+                                    <th class="text-center" colspan="5"><span class="text-danger">無大圖輪播資料</span></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -72,9 +66,8 @@
                                     <td class="align-middle">
                                         <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check">
                                     </td>
-                                    <td><div class="text-wrap">${item.title}</div></td>
-                                    <td class="text-center">${dateFormat(item.start_date)}</td>
-                                    <td class="text-center">${dateFormat(item.end_date)}</td>
+                                    <td><div class="text-wrap">${item.web_img_name}</div></td>
+                                    <td><div class="text-wrap">${item.mobile_img_name}</div></td>
                                     <td class="text-center">${targetFormat(item.target)}</td>
                                     <td class="text-center">${statusFormat(item.status)}</td>
                                     <td class="text-center">
@@ -88,7 +81,6 @@
                         </div>
                     </div>
                 </div>
-                <components-pagination ref="pagination" :all_count="all_count" :page_count="page_count" @get-data="getData"></components-pagination>
             </div>
         </div>
     </div>
@@ -98,7 +90,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
-                        <template v-if="mode == 'create'">新增</template><template v-else>編輯</template>最新消息
+                        <template v-if="mode == 'create'">新增</template><template v-else>編輯</template>大圖
                     </h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -119,42 +111,8 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="type">分類 <span class="text-danger">*</span></label>
-                        <select id="type" class="form-control form-control-sm s-14" v-model="info.news_types_id">
-                            <option value="">請選擇分類</option>
-                            <!-- v-for -->
-                            <option v-for="item in select.news_types" :value="item.id">${item.name}</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="title">標題 <span class="text-danger">*</span></label>
-                        <input type="text" maxlength="50" class="form-control form-control-sm" id="title" placeholder="請輸入標題" v-model="info.title">
-                    </div>
-                    <div class="form-group">
-                        <label for="start_date">開始日期 <span class="text-danger">*</span></label>
-                        <div class="input-group date" id="start_date" data-target-input="nearest">
-                            <input type="text" class="form-control form-control-sm datetimepicker-input s-14" placeholder="請選擇開始日期" data-target="#start_date" />
-                            <div class="input-group-append" data-target="#start_date" data-toggle="datetimepicker">
-                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="end_date">結束日期 <span class="text-danger">*</span></label>
-                        <div class="input-group date" id="end_date" data-target-input="nearest">
-                            <input type="text" class="form-control form-control-sm datetimepicker-input s-14" placeholder="請選擇結束日期" data-target="#end_date" />
-                            <div class="input-group-append" data-target="#end_date" data-toggle="datetimepicker">
-                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
                         <label for="href">超連結</label>
                         <input type="href" maxlength="200" class="form-control form-control-sm s-14" id="href" placeholder="請輸入超連結" v-model="info.href">
-                    </div>
-                    <div class="form-group">
-                        <label for="description">描述</label>
-                        <textarea id="description" placeholder="請輸入描述"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="target">開啟方式</label>
@@ -170,23 +128,8 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="news_keywords">關鍵字（最多10個）</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control form-control-sm s-14" maxlength="20" placeholder="請輸入關鍵字" v-model="value.keyword" />
-                            <div class="input-group-append cursor" @click="addKeyword">
-                                <div class="input-group-text bg-info"><i class="fas fa-plus"></i></div>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center s-14 mt-2">
-                            <div class="border rounded p-2 news-keywords d-flex align-content-start flex-wrap">
-                                <!-- v-for -->
-                                <div class="py-1 px-2 mb-1 mr-2 rounded news-keywords-border" v-for="(item, key) in info.keywords">${item} <i class="text-danger fas fa-times-circle cursor" @click="deleteKeyword(key)"></i></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
                         <div class="d-flex align-items-center">
-                            <label for="web_img">電腦版圖片</label>
+                            <label for="web_img">網頁版圖片</label>
                             <i class="fas fa-minus-circle text-danger ml-2 mb-2 cursor" title="圖片刪除" @click="deletePicture('web')"></i>
                             <a data-fancybox class="ml-2 mb-2" :href="info.web_img_path">
                                 <i class="fas fa-image text-info cursor" title="圖片預覽" v-show="mode == 'modify' && info.web_img_path"></i>
@@ -218,10 +161,5 @@
             </div>
         </div>
     </div>
-    <script src="plugins/select2/js/select2.full.min.js"></script>
-    <script src="plugins/moment/moment-with-locales.min.js"></script>
-    <script src="plugins/inputmask/jquery.inputmask.min.js"></script>
-    <script src="plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-    <script src="plugins/ckeditor/ckeditor.js"></script>
-    <script src="js/news.js"></script>
+    <script src="js/banners.js"></script>
 @endsection

@@ -139,14 +139,14 @@
                             @php
                                 $news_manage = $permissions
                                     ->filter(function ($p){
-                                        if($p->name == 'news-type' || $p->name == 'news'){
+                                        if($p->name == 'news-type' || $p->name == 'news' || $p->name == 'banners'){
                                             return true;
                                         }
 
                                         return false;
                                     });
                             @endphp
-                            @if($news_manage->count() > 0 && ($login_user->can('news-type') || $login_user->can('news')))
+                            @if($news_manage->count() > 0 && ($login_user->can('news-type') || $login_user->can('news') || $login_user->can('banners')))
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="nav-icon far fa-newspaper"></i>
@@ -156,6 +156,14 @@
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview">
+                                    @if($login_user->can('banners'))
+                                    <li class="nav-item">
+                                        <a href="/banners" class="nav-link">
+                                            <i class="nav-icon far fa-circle"></i>
+                                            <p>{{ $news_manage->where('name', 'banners')->first()->display_name  }}</p>
+                                        </a>
+                                    </li>
+                                    @endif
                                     @if($login_user->can('news-type'))
                                     <li class="nav-item">
                                         <a href="/news-type" class="nav-link">
