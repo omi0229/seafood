@@ -21,7 +21,7 @@ class BannersRepository extends Repository
         return 'App\Models\Banners';
     }
 
-    public function list($page, array $params = [])
+    public function list(array $params = [])
     {
         $status = data_get($params, 'status');
 
@@ -41,43 +41,9 @@ class BannersRepository extends Repository
         return $list;
     }
 
-    public function apiData($type_id, $page = null)
+    public function apiList()
     {
-        $data = $this->model->where('news_types_id', NewsTypes::decodeSlug($type_id))->where('status', 1);
-
-        # 此分類的全部數量
-        $all_count = $data->count();
-
-        # 此分類共有幾頁
-        $page_count = ceil($all_count / 10);
-
-        $page = $page ? $page : 1;
-
-        # 是否分頁顯示
-        $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;
-        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(10)->get() : $data->get();
-
-        $list = [];
-        foreach ($data as $key => $row) {
-            array_push($list, json_decode($row, true));
-            $list[$key]['id'] = $row->hash_id;
-            $list[$key]['news_types_id'] = $row->news_types->hash_id ?? '';
-            $list[$key]['news_types_name'] = $row->news_types->name ?? '';
-
-            $list[$key]['web_img_path'] = $row->web_img ? asset('storage/' . $row->web_img) : null;
-            $list[$key]['mobile_img_path'] = $row->mobile_img ? asset('storage/' . $row->mobile_img) : null;
-        }
-
-        return ['list' => $list, 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => 10];
-    }
-
-    public function apiInfo($id)
-    {
-        $info = $this->model->where('id', $this->model::decodeSlug($id))->where('status', 1)->get()->first();
-        $item = $info->toArray();
-        $item['web_img_path'] = $info->web_img ? asset('storage/' . $info->web_img) : null;
-        $item['mobile_img_path'] = $info->mobile_img ? asset('storage/' . $info->mobile_img) : null;
-        return $item;
+        return $this->list(['status' => 1]);
     }
 
     public function count(array $params = [])

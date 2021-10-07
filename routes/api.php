@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\NewsTypeController;
 use App\Http\Controllers\Api\NewsController;
 use App\Http\Controllers\Api\DirectoryController;
 use App\Http\Controllers\Api\PutOnController;
+use App\Http\Controllers\Api\BannersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +30,8 @@ Route::post('cart/getCartCount', [CartController::class, 'getCartCount']);
 Route::post('cart/showCart', [CartController::class, 'showCart']);
 Route::post('cart/addCart', [CartController::class, 'addCart']);
 
+# 大圖輪播
+Route::get('banners/list', [BannersController::class, 'list']);
 
 # 最新消息
 Route::get('news-type/list/{page}', [NewsTypeController::class, 'list']);

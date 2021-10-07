@@ -1,0 +1,13 @@
+@charset "UTF-8";
+.custom-file-label {
+  padding: 0.45rem 0.75rem;
+  color: #AAA !important;
+}
+.custom-file-label:after {
+  padding: 0.45rem 0.75rem;
+  content: "選擇檔案";
+}
+
+.methods {
+  height: calc(30.36px + 1rem);
+}

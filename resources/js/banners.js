@@ -55,7 +55,7 @@ window.app = createApp({
             set_info.mode = 'modify';
             set_info.info.id = id;
             let info = _.find(this.list, {'id': id});
-            set_info.info.href = info.href;
+            set_info.info.href = info.href || '';
             set_info.info.target = info.target;
             set_info.info.status = info.status;
             set_info.info.web_img_name = info.web_img_name || '請選擇檔案';
@@ -152,12 +152,22 @@ let set_info = createApp({
             }
         },
         auth(data) {
-            if ((!data.web_img && !data.web_img_name) || data.web_img_delete === 1) {
-                return {auth: false, message: '請選擇一張網頁版圖片！'};
-            }
+            if (this.mode == 'create') {
+                if (!data.web_img) {
+                    return {auth: false, message: '請選擇一張網頁版圖片！'};
+                }
 
-            if ((!data.mobile_img && !data.mobile_img_name) || data.mobile_img_delete === 1) {
-                return {auth: false, message: '請選擇一張手機版圖片！'};
+                if (!data.mobile_img) {
+                    return {auth: false, message: '請選擇一張手機版圖片！'};
+                }
+            } else if (this.mode == 'modify') {
+                if (data.web_img_delete === 1) {
+                    return {auth: false, message: '請選擇一張網頁版圖片！'};
+                }
+
+                if (data.mobile_img_delete === 1) {
+                    return {auth: false, message: '請選擇一張手機版圖片！'};
+                }
             }
 
             return {auth: true, message: 'success'};

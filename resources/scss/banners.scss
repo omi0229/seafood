@@ -1,0 +1,13 @@
+.custom-file-label {
+  padding: .450rem .75rem;
+  color: #AAA !important;
+
+  &:after {
+    padding: .450rem .75rem;
+    content: '選擇檔案'
+  }
+}
+
+.methods {
+    height: calc(30.36px + 1rem);
+}

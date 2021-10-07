@@ -40,6 +40,7 @@ mix.js('resources/js/sms.js', 'public/js')
 mix.sass('resources/scss/sms.scss', 'public/css')
 // banners
 mix.js('resources/js/banners.js', 'public/js')
+mix.sass('resources/scss/banners.scss', 'public/css')
 // news-types
 mix.js('resources/js/news-types.js', 'public/js')
 // news

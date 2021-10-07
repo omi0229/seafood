@@ -17,6 +17,15 @@ class BannersServices
             return ['status' => false, 'message' => '無此大圖資料'];
         }
 
+        if (data_get($request->all(), 'href') && !filter_var($request->all()['href'], FILTER_VALIDATE_URL)) {
+            return ['status' => false, 'message' => '超連結格式錯誤'];
+        }
+
+        $model = app()->make(self::$model);
+        if ($model->count() >= 5) {
+            return ['status' => false, 'message' => '最多五張大圖輪播'];
+        }
+
         $inputs = $request->only('web_img_name', 'mobile_img_name');
 
         $auth = [

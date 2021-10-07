@@ -37,7 +37,7 @@ class BannersController extends Controller
         # 驗證資料
         $validator = $this->services::authInputData($request, 'create');
         if (!$validator['status']) {
-            return response()->json(['status' => false, 'message' => $validator->errors()->first()]);
+            return response()->json(['status' => false, 'message' => $validator['message']]);
         }
 
         # 新增資料

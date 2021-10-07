@@ -1,7 +1,7 @@
 @extends('layouts.base')
 
 @section('content')
-    <link rel="stylesheet" href="css/news.css">
+    <link rel="stylesheet" href="css/banners.css">
     <div id="app" v-cloak>
         <div class="content-header px-4">
             <div class="container-fluid">
@@ -19,15 +19,15 @@
             </div>
         </div>
 
-        <div class="row mx-0 px-3">
+        <div class="row mx-0 px-3 methods">
             <div class="mb-3 col-12 d-flex justify-content-end">
                 <!-- v-show -->
-                <div class="mr-2" v-show="check.length > 0">
+                <div v-show="check.length > 0">
                     <button type="button" class="btn btn-sm btn-danger px-2" @click="confirm('delete')">
                         <i class="fa fa-minus mr-1"></i> 刪除
                     </button>
                 </div>
-                <div>
+                <div class="ml-2" v-show="list.length < 5">
                     <button type="button" class="btn btn-sm btn-primary px-2" data-toggle="modal" data-target="#set-info" @click="create">
                         <i class="fa fa-plus mr-1"></i> 新增
                     </button>
@@ -66,8 +66,16 @@
                                     <td class="align-middle">
                                         <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check">
                                     </td>
-                                    <td><div class="text-wrap">${item.web_img_name}</div></td>
-                                    <td><div class="text-wrap">${item.mobile_img_name}</div></td>
+                                    <td>
+                                        <div class="text-wrap">
+                                            <a data-fancybox :href="item.web_img_path"> ${item.web_img_name} </a>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-wrap">
+                                            <a data-fancybox :href="item.mobile_img_path"> ${item.mobile_img_name} </a>
+                                        </div>
+                                    </td>
                                     <td class="text-center">${targetFormat(item.target)}</td>
                                     <td class="text-center">${statusFormat(item.status)}</td>
                                     <td class="text-center">

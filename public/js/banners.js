@@ -19384,9 +19384,9 @@ var checkAllFunction = function checkAllFunction() {
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[15].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[15].oneOf[1].use[2]!./node_modules/@fancyapps/ui/dist/fancybox.css":
+/***/ "./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[16].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[16].oneOf[1].use[2]!./node_modules/@fancyapps/ui/dist/fancybox.css":
 /*!******************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[15].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[15].oneOf[1].use[2]!./node_modules/@fancyapps/ui/dist/fancybox.css ***!
+  !*** ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[16].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[16].oneOf[1].use[2]!./node_modules/@fancyapps/ui/dist/fancybox.css ***!
   \******************************************************************************************************************************************************************************************************************/
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
@@ -37667,7 +37667,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
 /* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _css_loader_dist_cjs_js_ruleSet_1_rules_15_oneOf_1_use_1_postcss_loader_dist_cjs_js_ruleSet_1_rules_15_oneOf_1_use_2_fancybox_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../css-loader/dist/cjs.js??ruleSet[1].rules[15].oneOf[1].use[1]!../../../postcss-loader/dist/cjs.js??ruleSet[1].rules[15].oneOf[1].use[2]!./fancybox.css */ "./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[15].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[15].oneOf[1].use[2]!./node_modules/@fancyapps/ui/dist/fancybox.css");
+/* harmony import */ var _css_loader_dist_cjs_js_ruleSet_1_rules_16_oneOf_1_use_1_postcss_loader_dist_cjs_js_ruleSet_1_rules_16_oneOf_1_use_2_fancybox_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../css-loader/dist/cjs.js??ruleSet[1].rules[16].oneOf[1].use[1]!../../../postcss-loader/dist/cjs.js??ruleSet[1].rules[16].oneOf[1].use[2]!./fancybox.css */ "./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[16].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[16].oneOf[1].use[2]!./node_modules/@fancyapps/ui/dist/fancybox.css");
 
             
 
@@ -37676,11 +37676,11 @@ var options = {};
 options.insert = "head";
 options.singleton = false;
 
-var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_ruleSet_1_rules_15_oneOf_1_use_1_postcss_loader_dist_cjs_js_ruleSet_1_rules_15_oneOf_1_use_2_fancybox_css__WEBPACK_IMPORTED_MODULE_1__.default, options);
+var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_ruleSet_1_rules_16_oneOf_1_use_1_postcss_loader_dist_cjs_js_ruleSet_1_rules_16_oneOf_1_use_2_fancybox_css__WEBPACK_IMPORTED_MODULE_1__.default, options);
 
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_ruleSet_1_rules_15_oneOf_1_use_1_postcss_loader_dist_cjs_js_ruleSet_1_rules_15_oneOf_1_use_2_fancybox_css__WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_ruleSet_1_rules_16_oneOf_1_use_1_postcss_loader_dist_cjs_js_ruleSet_1_rules_16_oneOf_1_use_2_fancybox_css__WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
 
 /***/ }),
 
@@ -41510,7 +41510,7 @@ window.app = createApp({
         'id': id
       });
 
-      set_info.info.href = info.href;
+      set_info.info.href = info.href || '';
       set_info.info.target = info.target;
       set_info.info.status = info.status;
       set_info.info.web_img_name = info.web_img_name || '請選擇檔案';
@@ -41635,18 +41635,34 @@ var set_info = createApp({
       }
     },
     auth: function auth(data) {
-      if (!data.web_img && !data.web_img_name || data.web_img_delete === 1) {
-        return {
-          auth: false,
-          message: '請選擇一張網頁版圖片！'
-        };
-      }
+      if (this.mode == 'create') {
+        if (!data.web_img) {
+          return {
+            auth: false,
+            message: '請選擇一張網頁版圖片！'
+          };
+        }
 
-      if (!data.mobile_img && !data.mobile_img_name || data.mobile_img_delete === 1) {
-        return {
-          auth: false,
-          message: '請選擇一張手機版圖片！'
-        };
+        if (!data.mobile_img) {
+          return {
+            auth: false,
+            message: '請選擇一張手機版圖片！'
+          };
+        }
+      } else if (this.mode == 'modify') {
+        if (data.web_img_delete === 1) {
+          return {
+            auth: false,
+            message: '請選擇一張網頁版圖片！'
+          };
+        }
+
+        if (data.mobile_img_delete === 1) {
+          return {
+            auth: false,
+            message: '請選擇一張手機版圖片！'
+          };
+        }
       }
 
       return {
