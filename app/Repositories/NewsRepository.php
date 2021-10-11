@@ -54,21 +54,27 @@ class NewsRepository extends Repository
         return $list;
     }
 
-    public function apiData($type_id, $page = null)
+    public function apiData($type_id = null, $page = null)
     {
-        $data = $this->model->where('news_types_id', NewsTypes::decodeSlug($type_id))->where('status', 1);
+        $data = $type_id ? $this->model->where('news_types_id', NewsTypes::decodeSlug($type_id)) : $this->model->where('carousel', 1);
+
+        $data = $data->where('status', 1);
 
         # 此分類的全部數量
         $all_count = $data->count();
 
         # 此分類共有幾頁
-        $page_count = ceil($all_count / 10);
+        $page_count = $type_id ? ceil($all_count / 10) : 1;
 
-        $page = $page ? $page : 1;
+        if ($type_id) {
+            $page = $page ? $page : 1;
 
-        # 是否分頁顯示
-        $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;
-        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(10)->get() : $data->get();
+            # 是否分頁顯示
+            $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;
+            $data = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(10)->get() : $data->get();
+        } else {
+            $data = $data->get();
+        }
 
         $list = [];
         foreach ($data as $key => $row) {

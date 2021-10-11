@@ -24,6 +24,7 @@ class News extends Model
         'mobile_img_name',
         'mobile_img',
         'target',
+        'carousel',
         'status',
     ];
 

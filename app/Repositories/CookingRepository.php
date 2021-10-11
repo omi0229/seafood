@@ -24,17 +24,35 @@ class CookingRepository extends Repository
 
     public function list($page, array $params = [])
     {
-
         $keywords = data_get($params, 'keywords');
 
         $data = !$keywords ? $this->model : $this->model->where('title', 'LIKE', '%' . $keywords . '%');
 
-        if ($page !== 'all' && is_numeric($page)) {
-            $start = ($page - 1) * 10;
-            $data = $data->skip($start)->take(10)->get();
-        } else {
-            $data = $data->get();
-        }
+        return $this->__formatData($data, $page);
+    }
+
+    public function apiList($type_id = null, $page = null)
+    {
+        $data = $type_id ? $this->model->where('cooking_types_id', CookingTypes::decodeSlug($type_id)) : $this->model;
+
+        $data = $data->where('status', 1);
+
+        # 此分類的全部數量
+        $all_count = $data->count();
+
+        # 此分類共有幾頁
+        $page_count = ceil($all_count / env('COOKING_PAGE_ITEM_COUNT', 10));
+
+        return ['list' => $this->__formatData($data, $page, env('COOKING_PAGE_ITEM_COUNT', 10)), 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => env('COOKING_PAGE_ITEM_COUNT', 10)];
+    }
+
+    private function __formatData($data, $set_page = null, $page_item_count = 10)
+    {
+        $page = $set_page ? $set_page : 1;
+
+        # 是否分頁顯示
+        $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * $page_item_count : null;
+        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take($page_item_count)->get() : $data->get();
 
         $list = [];
         foreach ($data as $key => $row) {
@@ -42,7 +60,6 @@ class CookingRepository extends Repository
             $list[$key]['id'] = $row->hash_id;
             $list[$key]['cooking_types_id'] = $row->cooking_types->hash_id ?? '';
             $list[$key]['cooking_types_name'] = $row->cooking_types->name ?? '';
-
             $list[$key]['youtube_url'] = 'https://www.youtube.com/embed/' . $row->youtube_id;
         }
 

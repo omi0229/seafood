@@ -32,11 +32,6 @@ window.app = createApp({
                 return moment(datetime).format('Y-MM-DD HH:mm');
             }
         },
-        targetFormat() {
-            return target => {
-                return target ? '開新視窗' : '直接開啟';
-            }
-        },
         statusFormat() {
             return status => {
                 return status ? '顯示' : '不顯示';
@@ -51,7 +46,7 @@ window.app = createApp({
         getCount() {
             return new Promise(resolve => {
                 let url = !this.search_text ? '/news/count' : '/news/count?keywords=' + this.search_text;
-                axios.get(url).then(res => {
+                axiosGetMethod(url).then(res => {
                     this.all_count = res.data.count;
                     this.page_count = res.data.page_count;
                     resolve();
@@ -66,7 +61,7 @@ window.app = createApp({
                     url += '?keywords=' + this.search_text;
                 }
 
-                axios.get(url).then(res => {
+                axiosGetMethod(url).then(res => {
                     this.list = res.data.data;
                     if (loading && loading.show) {
                         loading.show = false;
@@ -97,6 +92,7 @@ window.app = createApp({
             CKEDITOR.instances["description"].setData(info.description);
             set_info.info.target = info.target;
             set_info.info.keywords = info.keywords ? info.keywords.split(',') : [];
+            set_info.info.carousel = info.carousel;
             set_info.info.status = info.status;
             set_info.info.web_img_name = info.web_img_name || '請選擇檔案';
             set_info.info.web_img = '';
@@ -108,7 +104,7 @@ window.app = createApp({
         delete() {
             if(this.check.length > 0) {
                 loading.show = true;
-                axios.delete('/news/delete', {data: this.check}).then(async res => {
+                axiosDeleteMethod('/news/delete', {data: this.check}).then(async res => {
                     if (res.data.status) {
                         Toast.fire({icon: 'success', title: '刪除成功'});
                         this.searchService('delete');
@@ -155,6 +151,7 @@ let set_info = createApp({
                 href: '',
                 target: '0',
                 keywords: [],
+                carousel: '0',
                 status: '0',
                 web_img_delete: 0,
                 web_img_name: '請選擇檔案',
@@ -193,7 +190,7 @@ let set_info = createApp({
     methods: {
         getNewsTypes() {
             return new Promise(resolve => {
-                axios.get('/news-type/list/all').then(res => {
+                axiosGetMethod('/news-type/list/all').then(res => {
                     resolve(res);
                 });
             });
@@ -242,6 +239,7 @@ let set_info = createApp({
             this.info.href = '';
             this.info.target = '0';
             this.info.keywords = [];
+            this.info.carousel = '0';
             this.info.status = '0';
             this.info.web_img_delete = 0;
             this.info.web_img_name = '請選擇檔案';
@@ -323,6 +321,7 @@ let set_info = createApp({
             formData.append("description", CKEDITOR.instances["description"].getData());
             formData.append("target", this.info.target);
             formData.append("keywords", this.info.keywords);
+            formData.append("carousel", this.info.carousel);
             formData.append("status", this.info.status);
             formData.append("web_img_delete", this.info.web_img_delete);
             formData.append("web_img_name", this.info.web_img_name);
@@ -337,17 +336,13 @@ let set_info = createApp({
                 }
             }
 
-            axios.post(url, formData, config).then(async res => {
-                if (res.data.status) {
-                    $('#set-info').modal('hide');
-                }
+            axiosPostMethod(url, formData, config).then(async res => {
+                res.data.status ? $('#set-info').modal('hide') : null;
 
                 await app.searchService();
 
                 let icon = res.data.status ? 'success' : 'error';
                 Toast.fire({icon: icon, title: res.data.message});
-            }).catch(error => {
-
             });
         },
     },

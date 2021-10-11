@@ -15,8 +15,8 @@ class NewsTypeController extends Controller
         $this->repository = $repository;
     }
 
-    public function list()
+    public function list($page)
     {
-        return response()->json($this->repository->list(1));
+        return response()->json($this->repository->list($page));
     }
 }

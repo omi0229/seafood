@@ -19,6 +19,11 @@ class PutOn extends Model
         'status',
     ];
 
+    public function directory()
+    {
+        return $this->hasOne('App\Models\Directory');
+    }
+
     public function product()
     {
         return $this->belongsTo('App\Models\Products');

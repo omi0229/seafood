@@ -63038,11 +63038,6 @@ window.app = createApp({
         return moment__WEBPACK_IMPORTED_MODULE_1___default()(datetime).format('Y-MM-DD HH:mm');
       };
     },
-    targetFormat: function targetFormat() {
-      return function (target) {
-        return target ? '開新視窗' : '直接開啟';
-      };
-    },
     statusFormat: function statusFormat() {
       return function (status) {
         return status ? '顯示' : '不顯示';
@@ -63078,7 +63073,7 @@ window.app = createApp({
 
       return new Promise(function (resolve) {
         var url = !_this2.search_text ? '/news/count' : '/news/count?keywords=' + _this2.search_text;
-        axios.get(url).then(function (res) {
+        axiosGetMethod(url).then(function (res) {
           _this2.all_count = res.data.count;
           _this2.page_count = res.data.page_count;
           resolve();
@@ -63095,7 +63090,7 @@ window.app = createApp({
           url += '?keywords=' + _this3.search_text;
         }
 
-        axios.get(url).then(function (res) {
+        axiosGetMethod(url).then(function (res) {
           _this3.list = res.data.data;
 
           if (loading && loading.show) {
@@ -63130,6 +63125,7 @@ window.app = createApp({
       CKEDITOR.instances["description"].setData(info.description);
       set_info.info.target = info.target;
       set_info.info.keywords = info.keywords ? info.keywords.split(',') : [];
+      set_info.info.carousel = info.carousel;
       set_info.info.status = info.status;
       set_info.info.web_img_name = info.web_img_name || '請選擇檔案';
       set_info.info.web_img = '';
@@ -63143,7 +63139,7 @@ window.app = createApp({
 
       if (this.check.length > 0) {
         loading.show = true;
-        axios["delete"]('/news/delete', {
+        axiosDeleteMethod('/news/delete', {
           data: this.check
         }).then( /*#__PURE__*/function () {
           var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(res) {
@@ -63250,6 +63246,7 @@ var set_info = createApp({
         href: '',
         target: '0',
         keywords: [],
+        carousel: '0',
         status: '0',
         web_img_delete: 0,
         web_img_name: '請選擇檔案',
@@ -63289,7 +63286,7 @@ var set_info = createApp({
   methods: {
     getNewsTypes: function getNewsTypes() {
       return new Promise(function (resolve) {
-        axios.get('/news-type/list/all').then(function (res) {
+        axiosGetMethod('/news-type/list/all').then(function (res) {
           resolve(res);
         });
       });
@@ -63342,6 +63339,7 @@ var set_info = createApp({
       this.info.href = '';
       this.info.target = '0';
       this.info.keywords = [];
+      this.info.carousel = '0';
       this.info.status = '0';
       this.info.web_img_delete = 0;
       this.info.web_img_name = '請選擇檔案';
@@ -63444,6 +63442,7 @@ var set_info = createApp({
       formData.append("description", CKEDITOR.instances["description"].getData());
       formData.append("target", this.info.target);
       formData.append("keywords", this.info.keywords);
+      formData.append("carousel", this.info.carousel);
       formData.append("status", this.info.status);
       formData.append("web_img_delete", this.info.web_img_delete);
       formData.append("web_img_name", this.info.web_img_name);
@@ -63456,17 +63455,14 @@ var set_info = createApp({
           'Content-Type': 'multipart/form-data'
         }
       };
-      axios.post(url, formData, config).then( /*#__PURE__*/function () {
+      axiosPostMethod(url, formData, config).then( /*#__PURE__*/function () {
         var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(res) {
           var icon;
           return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
             while (1) {
               switch (_context4.prev = _context4.next) {
                 case 0:
-                  if (res.data.status) {
-                    $('#set-info').modal('hide');
-                  }
-
+                  res.data.status ? $('#set-info').modal('hide') : null;
                   _context4.next = 3;
                   return app.searchService();
 
@@ -63488,7 +63484,7 @@ var set_info = createApp({
         return function (_x3) {
           return _ref3.apply(this, arguments);
         };
-      }())["catch"](function (error) {});
+      }());
     }
   }
 }).mount('#set-info');

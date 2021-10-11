@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Repositories\PutOnRepository;
+use App\Repositories\CookingRepository;
 
-class PutOnController extends Controller
+class CookingController extends Controller
 {
     protected $repository;
 
-    public function __construct(PutOnRepository $repository)
+    public function __construct(CookingRepository $repository)
     {
         $this->repository = $repository;
     }
@@ -18,10 +18,5 @@ class PutOnController extends Controller
     public function list($type_id, $page = null)
     {
         return response()->json($this->repository->apiList($type_id, $page));
-    }
-
-    public function info($id)
-    {
-        return response()->json($this->repository->apiInfo($id));
     }
 }

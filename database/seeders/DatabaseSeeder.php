@@ -44,18 +44,37 @@ class DatabaseSeeder extends Seeder
 //            ]);
 //        }
 
-        for ($i = 1; $i <= 20; $i++) {
-            DB::table('news')->insert([
-                'news_types_id' => 2,
-                'title' => '這是測試news這是測試news這是測試news這是測試news這是測試news-' . $i,
-                'start_date' => Carbon::now(),
-                'end_date' => Carbon::now(),
-                'web_img_name' => 'S__111558660.jpg',
-                'web_img' => 'news/y2xXGBBBce9gR0OdaVR8M5eXGU4N3bNuTfcBek2P.jpg',
-                'mobile_img_name' => 'S__111558660.jpg',
-                'mobile_img' => 'news/6kmfHW6Su9598mWjoTYopMq97R5MsCDwQdeYKCCA.jpg',
+//        for ($i = 1; $i <= 20; $i++) {
+//            DB::table('news')->insert([
+//                'news_types_id' => 2,
+//                'title' => '這是測試news這是測試news這是測試news這是測試news這是測試news-' . $i,
+//                'start_date' => Carbon::now(),
+//                'end_date' => Carbon::now(),
+//                'web_img_name' => 'S__111558660.jpg',
+//                'web_img' => 'news/y2xXGBBBce9gR0OdaVR8M5eXGU4N3bNuTfcBek2P.jpg',
+//                'mobile_img_name' => 'S__111558660.jpg',
+//                'mobile_img' => 'news/6kmfHW6Su9598mWjoTYopMq97R5MsCDwQdeYKCCA.jpg',
+//                'created_at' => Carbon::now(),
+//                'updated_at' => Carbon::now(),
+//            ]);
+//        }
+
+//        for ($i = 1; $i <= 10; $i++) {
+//            DB::table('cooking')->insert([
+//                'cooking_types_id' => 1,
+//                'title' => '測試教學其他' . $i,
+//                'start_date' => Carbon::now(),
+//                'end_date' => Carbon::now()->addMinutes(10),
+//                'youtube_id' => 'n0LM1ZnIdPk',
+//                'created_at' => Carbon::now(),
+//                'updated_at' => Carbon::now(),
+//            ]);
+//        }
+
+        for ($i = 12; $i <= 30; $i++) {
+            DB::table('directories')->insert([
+                'name' => 'directory' . $i,
                 'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
             ]);
         }
 

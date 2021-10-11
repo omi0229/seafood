@@ -43,7 +43,7 @@ class PutOnRepository extends Repository
         return $list;
     }
 
-    public function apiData($type_id, $page = null)
+    public function apiList($type_id, $page = null)
     {
         $data = $this->model->where('directories_id', Directory::decodeSlug($type_id))->where('status', 1);
 
@@ -63,10 +63,14 @@ class PutOnRepository extends Repository
         foreach ($data as $key => $row) {
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
+
+            $web_img_path = $row->product->web_img ? asset('storage/' . $row->product->web_img) : null;
+            $mobile_img_path = $row->product->mobile_img ? asset('storage/' . $row->product->mobile_img) : null;
+
             $list[$key]['product'] = $row->product->toArray();
             $list[$key]['product']['id'] = $row->product->hash_id;
-            $list[$key]['product']['web_img_path'] = $row->product->web_img ? asset('storage/' . $row->product->web_img) : null;
-            $list[$key]['product']['mobile_img_path'] = $row->product->mobile_img ? asset('storage/' . $row->product->mobile_img) : null;
+            $list[$key]['web_img_path'] = $list[$key]['product']['web_img_path'] = $web_img_path;
+            $list[$key]['mobile_img_path'] = $list[$key]['product']['mobile_img_path'] = $mobile_img_path;
         }
 
         return ['list' => $list, 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => env('PRODUCT_PAGE_ITEM_COUNT', 10)];

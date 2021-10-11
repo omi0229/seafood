@@ -58,8 +58,8 @@
                                     <th>標題</th>
                                     <th class="text-center">開始日期</th>
                                     <th class="text-center">結束日期</th>
-                                    <th class="text-center">開啟方式</th>
                                     <th class="text-center">跑馬燈顯示</th>
+                                    <th class="text-center">前端顯示</th>
                                     <th class="text-center">功能</th>
                                 </tr>
                                 <tr v-else>
@@ -75,8 +75,12 @@
                                     <td><div class="text-wrap">${item.title}</div></td>
                                     <td class="text-center">${dateFormat(item.start_date)}</td>
                                     <td class="text-center">${dateFormat(item.end_date)}</td>
-                                    <td class="text-center">${targetFormat(item.target)}</td>
-                                    <td class="text-center">${statusFormat(item.status)}</td>
+                                    <td class="text-center">
+                                        <span class="right badge" :class="item.carousel == '1' ? 'badge-success' : 'badge-danger'" >${statusFormat(item.carousel)}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="right badge" :class="item.status == '1' ? 'badge-success' : 'badge-danger'" >${statusFormat(item.status)}</span>
+                                    </td>
                                     <td class="text-center">
                                         <button type="button" class="btn btn-sm btn-info px-2" data-toggle="modal" data-target="#set-info" @click="modify(item.id)">
                                             <i class="fa fa-edit mr-1"></i> 編輯
@@ -115,6 +119,19 @@
                             <div class="form-check">
                                 <input id="enabled" class="form-check-input" type="radio" value="1" v-model="info.status">
                                 <label for="enabled" class="form-check-label">顯示</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>是否首頁跑馬燈顯示</label>
+                        <div class="d-flex align-items-center s-14">
+                            <div class="form-check mr-3">
+                                <input id="carousel-disabled" class="form-check-input" type="radio" value="0" v-model="info.carousel">
+                                <label for="carousel-disabled" class="form-check-label">不顯示</label>
+                            </div>
+                            <div class="form-check">
+                                <input id="carousel-enabled" class="form-check-input" type="radio" value="1" v-model="info.carousel">
+                                <label for="carousel-enabled" class="form-check-label">顯示</label>
                             </div>
                         </div>
                     </div>

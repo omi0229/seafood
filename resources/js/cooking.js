@@ -49,7 +49,7 @@ window.app = createApp({
         getCount() {
             return new Promise(resolve => {
                 let url = !this.search_text ? '/cooking/count' : '/cooking/count?keywords=' + this.search_text;
-                axios.get(url).then(res => {
+                axiosGetMethod(url).then(res => {
                     this.all_count = res.data.count;
                     this.page_count = res.data.page_count;
                     resolve();
@@ -64,7 +64,7 @@ window.app = createApp({
                     url += '?keywords=' + this.search_text;
                 }
 
-                axios.get(url).then(res => {
+                axiosGetMethod(url).then(res => {
                     this.list = res.data.data;
                     if (loading && loading.show) {
                         loading.show = false;
@@ -102,7 +102,7 @@ window.app = createApp({
         delete() {
             if(this.check.length > 0) {
                 loading.show = true;
-                axios.delete('/cooking/delete', {data: this.check}).then(async res => {
+                axiosDeleteMethod('/cooking/delete', {data: this.check}).then(async res => {
                     if (res.data.status) {
                         Toast.fire({icon: 'success', title: '刪除成功'});
                         this.searchService('delete');
@@ -181,7 +181,7 @@ let set_info = createApp({
     methods: {
         getCookingTypes() {
             return new Promise(resolve => {
-                axios.get('/cooking-type/list/all').then(res => {
+                axiosGetMethod('/cooking-type/list/all').then(res => {
                     resolve(res);
                 });
             });
@@ -297,17 +297,13 @@ let set_info = createApp({
                 this.info.youtube_id = youtube_url.pathname.substr(7);
             }
 
-            axios.post(url, this.info).then(async res => {
-                if (res.data.status) {
-                    $('#set-info').modal('hide');
-                }
+            axiosPostMethod(url, this.info).then(async res => {
+                res.data.status ? $('#set-info').modal('hide') : null;
 
                 await app.searchService();
 
                 let icon = res.data.status ? 'success' : 'error';
                 Toast.fire({icon: icon, title: res.data.message});
-            }).catch(error => {
-
             });
         },
     },

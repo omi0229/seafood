@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\NewsTypeController;
 use App\Http\Controllers\Api\NewsController;
+use App\Http\Controllers\Api\CookingTypeController;
+use App\Http\Controllers\Api\CookingController;
 use App\Http\Controllers\Api\DirectoryController;
 use App\Http\Controllers\Api\PutOnController;
 use App\Http\Controllers\Api\BannersController;
@@ -35,10 +37,14 @@ Route::get('banners/list', [BannersController::class, 'list']);
 
 # 最新消息
 Route::get('news-type/list/{page}', [NewsTypeController::class, 'list']);
-Route::get('news/{type_id}/{page?}', [NewsController::class, 'list']);
+Route::get('news/{type_id?}/{page?}', [NewsController::class, 'list']);
 Route::get('news-info/{id}', [NewsController::class, 'info']);
 
-#線上購物
+# 烹飪教學
+Route::get('cooking-type/list/{page}', [CookingTypeController::class, 'list']);
+Route::get('cooking/{type_id?}/{page?}', [CookingController::class, 'list']);
+
+# 線上購物
 Route::get('directory/list/{page}', [DirectoryController::class, 'list']);
 Route::get('product/{type_id}/{page?}', [PutOnController::class, 'list']);
 Route::get('product-info/{id}', [PutOnController::class, 'info']);

@@ -59,7 +59,7 @@
                                     <th class="text-center">開始日期</th>
                                     <th class="text-center">結束日期</th>
                                     <th class="text-center">開啟方式</th>
-                                    <th class="text-center">跑馬燈顯示</th>
+                                    <th class="text-center">是否顯示</th>
                                     <th class="text-center">功能</th>
                                 </tr>
                                 <tr v-else>
@@ -185,7 +185,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="web_img">youtube網址</label>
+                        <label for="web_img">youtube網址 <span class="text-danger">*</span></label>
                         <input type="text" class="form-control form-control-sm s-14" maxlength="200" placeholder="請輸入網址" v-model="info.youtube_url"/>
                     </div>
                 </div>
