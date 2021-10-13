@@ -60,8 +60,8 @@ class DirectoryRepository extends Repository
 
             foreach ($row['put_ons'] as $product_key => $product_row) {
                 $list[$key]['put_ons'][$product_key]['id'] = $product_row->hash_id;
-                $list[$key]['put_ons'][$product_key]['web_img_path'] = $product_row->product->web_img ? asset('storage/' . $product_row->product->web_img) : null;
-                $list[$key]['put_ons'][$product_key]['mobile_img_path'] = $product_row->product->mobile_img ? asset('storage/' . $product_row->product->mobile_img) : null;
+                $list[$key]['put_ons'][$product_key]['web_img_path'] = $product_row->product && $product_row->product->web_img ? asset('storage/' . $product_row->product->web_img) : null;
+                $list[$key]['put_ons'][$product_key]['mobile_img_path'] = $product_row->product && $product_row->product->mobile_img ? asset('storage/' . $product_row->product->mobile_img) : null;
             }
         }
 
