@@ -37,6 +37,6 @@ class Products extends Model
 
     public function put_ons()
     {
-        return $this->hasMany('App\Models\PutOn');
+        return $this->hasMany('App\Models\PutOn', 'product_id');
     }
 }

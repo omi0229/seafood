@@ -123,6 +123,7 @@ Route::middleware(['auth.web'])->group(function () {
     Route::get('product/list/{page}', [ProductController::class, 'list']);
     Route::post('product/insert', [ProductController::class, 'insert']);
     Route::post('product/update', [ProductController::class, 'update']);
+    Route::post('product/check-delete', [ProductController::class, 'checkDelete']);
     Route::delete('product/delete', [ProductController::class, 'delete']);
 
     # 產品規格

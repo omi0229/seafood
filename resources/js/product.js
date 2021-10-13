@@ -92,8 +92,8 @@ window.app = createApp({
                 loading.show = true;
                 axiosDeleteMethod('/product/delete', {data: this.check}).then(async res => {
                     if (res.data.status) {
-                        Toast.fire({icon: 'success', title: '刪除成功'});
                         this.searchService('delete');
+                        Toast.fire({icon: 'success', title: '刪除成功'});
                     }
                 });
             }
@@ -114,9 +114,16 @@ window.app = createApp({
             });
         },
         confirm() {
-            swal2Confirm('確定刪除選取的項目？').then(confirm => {
-                if (confirm) {
-                    this.delete();
+            axiosPostMethod('/product/check-delete', {data: this.check}).then(async res => {
+                if (res.data.count > 0) {
+                    Toast.fire({icon: 'error', title: '以下產品 ' + res.data.message + ' 已於上架管理設定，不得刪除'});
+                    return false;
+                } else {
+                    swal2Confirm('確定刪除選取的項目？').then(confirm => {
+                        if (confirm) {
+                            this.delete();
+                        }
+                    });
                 }
             });
         },

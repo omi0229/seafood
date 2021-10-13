@@ -60,4 +60,9 @@ class ProductController extends Controller
 
         return response()->json(['status' => false, 'message' => '無此消息資料']);
     }
+
+    public function checkDelete(Request $request)
+    {
+        return response()->json($this->services->checkDelete((array)$request->all()['data']));
+    }
 }
