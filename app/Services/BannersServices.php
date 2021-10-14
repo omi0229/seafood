@@ -22,7 +22,7 @@ class BannersServices
         }
 
         $model = app()->make(self::$model);
-        if ($model->count() >= 5) {
+        if ($type === 'create' && $model->count() >= 5) {
             return ['status' => false, 'message' => '最多五張大圖輪播'];
         }
 
