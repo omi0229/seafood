@@ -34,8 +34,6 @@ class BannersRepository extends Repository
         foreach ($data as $key => $row) {
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
-//            $list[$key]['web_img_path'] = $row->web_img ? asset('storage/' . $row->web_img) : null;
-//            $list[$key]['mobile_img_path'] = $row->mobile_img ? asset('storage/' . $row->mobile_img) : null;
             $list[$key]['web_img_path'] = $row->web_img && Storage::disk('s3')->exists($row->web_img) ? Storage::disk('s3')->url($row->web_img) : null;
             $list[$key]['mobile_img_path'] = $row->mobile_img && Storage::disk('s3')->exists($row->mobile_img) ? Storage::disk('s3')->url($row->mobile_img) : null;
         }
@@ -98,7 +96,7 @@ class BannersRepository extends Repository
             } else {
                 $inputs['web_img_name'] = null;
                 $inputs['web_img'] = null;
-                Storage::disk('local')->delete($banners->web_img);
+                Storage::disk('s3')->delete($banners->web_img);
             }
 
             if (!$mobile_img_delete) {
@@ -110,7 +108,7 @@ class BannersRepository extends Repository
             } else {
                 $inputs['mobile_img_name'] = null;
                 $inputs['mobile_img'] = null;
-                Storage::disk('local')->delete($banners->mobile_img);
+                Storage::disk('s3')->delete($banners->mobile_img);
             }
 
             $banners->update($inputs);

@@ -46,9 +46,8 @@ class NewsRepository extends Repository
             $list[$key]['id'] = $row->hash_id;
             $list[$key]['news_types_id'] = $row->news_types->hash_id ?? '';
             $list[$key]['news_types_name'] = $row->news_types->name ?? '';
-
-            $list[$key]['web_img_path'] = $row->web_img ? asset('storage/' . $row->web_img) : null;
-            $list[$key]['mobile_img_path'] = $row->mobile_img ? asset('storage/' . $row->mobile_img) : null;
+            $list[$key]['web_img_path'] = $row->web_img && Storage::disk('s3')->exists($row->web_img) ? Storage::disk('s3')->url($row->web_img) : null;
+            $list[$key]['mobile_img_path'] = $row->mobile_img && Storage::disk('s3')->exists($row->mobile_img) ? Storage::disk('s3')->url($row->mobile_img) : null;
         }
 
         return $list;
@@ -82,9 +81,8 @@ class NewsRepository extends Repository
             $list[$key]['id'] = $row->hash_id;
             $list[$key]['news_types_id'] = $row->news_types->hash_id ?? '';
             $list[$key]['news_types_name'] = $row->news_types->name ?? '';
-
-            $list[$key]['web_img_path'] = $row->web_img ? asset('storage/' . $row->web_img) : null;
-            $list[$key]['mobile_img_path'] = $row->mobile_img ? asset('storage/' . $row->mobile_img) : null;
+            $list[$key]['web_img_path'] = $row->web_img && Storage::disk('s3')->exists($row->web_img) ? Storage::disk('s3')->url($row->web_img) : null;
+            $list[$key]['mobile_img_path'] = $row->mobile_img && Storage::disk('s3')->exists($row->mobile_img) ? Storage::disk('s3')->url($row->mobile_img) : null;
         }
 
         return ['list' => $list, 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => 10];
@@ -94,8 +92,8 @@ class NewsRepository extends Repository
     {
         $info = $this->model->where('id', $this->model::decodeSlug($id))->where('status', 1)->get()->first();
         $item = $info->toArray();
-        $item['web_img_path'] = $info->web_img ? asset('storage/' . $info->web_img) : null;
-        $item['mobile_img_path'] = $info->mobile_img ? asset('storage/' . $info->mobile_img) : null;
+        $item['web_img_path'] = $info->web_img && Storage::disk('s3')->exists($info->web_img) ? Storage::disk('s3')->url($info->web_img) : null;
+        $item['mobile_img_path'] = $info->mobile_img && Storage::disk('s3')->exists($info->mobile_img) ? Storage::disk('s3')->url($info->mobile_img) : null;
         return $item;
     }
 
@@ -154,7 +152,7 @@ class NewsRepository extends Repository
             } else {
                 $inputs['web_img_name'] = null;
                 $inputs['web_img'] = null;
-                Storage::disk('local')->delete($news->web_img);
+                Storage::disk('s3')->delete($news->web_img);
             }
 
             if (!$mobile_img_delete) {
@@ -166,7 +164,7 @@ class NewsRepository extends Repository
             } else {
                 $inputs['mobile_img_name'] = null;
                 $inputs['mobile_img'] = null;
-                Storage::disk('local')->delete($news->mobile_img);
+                Storage::disk('s3')->delete($news->mobile_img);
             }
 
             $news->update($inputs);
