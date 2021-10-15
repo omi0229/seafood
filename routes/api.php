@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\NewsTypeController;
 use App\Http\Controllers\Api\NewsController;
@@ -25,6 +26,9 @@ use App\Http\Controllers\Api\BannersController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+# 登入
+Route::get('auth/get-captcha', [AuthController::class, 'getCaptcha']);
 
 # 購物車
 Route::get('cart/getCartId', [CartController::class, 'getCartId']);
