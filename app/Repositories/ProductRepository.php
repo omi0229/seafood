@@ -48,8 +48,8 @@ class ProductRepository extends Repository
             $list[$key]['id'] = $row->hash_id;
             $list[$key]['product_types_id'] = $row->product_types->hash_id ?? '';
             $list[$key]['product_types_name'] = $row->product_types->name ?? '';
-            $list[$key]['web_img_path'] = $row->web_img && Storage::disk('s3')->exists($row->web_img) ? Storage::disk('s3')->url($row->web_img) : null;
-            $list[$key]['mobile_img_path'] = $row->mobile_img && Storage::disk('s3')->exists($row->mobile_img) ? Storage::disk('s3')->url($row->mobile_img) : null;
+            $list[$key]['web_img_path'] = $row->web_img && Storage::disk('s3')->exists($row->web_img) ? env('CDN_URL') . $row->web_img : null;
+            $list[$key]['mobile_img_path'] = $row->mobile_img && Storage::disk('s3')->exists($row->mobile_img) ? env('CDN_URL') . $row->mobile_img : null;
         }
 
         return $list;
@@ -77,8 +77,8 @@ class ProductRepository extends Repository
             $list[$key]['id'] = $row->hash_id;
             $list[$key]['product_types_id'] = $row->product_types->hash_id ?? '';
             $list[$key]['product_types_name'] = $row->product_types->name ?? '';
-            $list[$key]['web_img_path'] = $row->web_img && Storage::disk('s3')->exists($row->web_img) ? Storage::disk('s3')->url($row->web_img) : null;
-            $list[$key]['mobile_img_path'] = $row->mobile_img && Storage::disk('s3')->exists($row->mobile_img) ? Storage::disk('s3')->url($row->mobile_img) : null;
+            $list[$key]['web_img_path'] = $row->web_img && Storage::disk('s3')->exists($row->web_img) ? env('CDN_URL') . $row->web_img : null;
+            $list[$key]['mobile_img_path'] = $row->mobile_img && Storage::disk('s3')->exists($row->mobile_img) ? env('CDN_URL') . $row->mobile_img : null;
         }
 
         return ['list' => $list, 'all_count' => $all_count, 'page_count' => $page_count];
@@ -88,8 +88,8 @@ class ProductRepository extends Repository
     {
         $info = $this->model->where('id', News::decodeSlug($id))->where('status', 1)->get()->first();
         $item = $info->toArray();
-        $item['web_img_path'] = $info->web_img && Storage::disk('s3')->exists($info->web_img) ? Storage::disk('s3')->url($info->web_img) : null;
-        $item['mobile_img_path'] = $info->mobile_img && Storage::disk('s3')->exists($info->mobile_img) ? Storage::disk('s3')->url($info->mobile_img) : null;
+        $item['web_img_path'] = $info->web_img && Storage::disk('s3')->exists($info->web_img) ? env('CDN_URL') . $info->web_img : null;
+        $item['mobile_img_path'] = $info->mobile_img && Storage::disk('s3')->exists($info->mobile_img) ? env('CDN_URL') . $info->mobile_img : null;
         return $item;
     }
 

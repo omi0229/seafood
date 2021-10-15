@@ -65,8 +65,8 @@ class PutOnRepository extends Repository
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
 
-            $web_img_path = $row->product->web_img && Storage::disk('s3')->exists($row->product->web_img) ? Storage::disk('s3')->url($row->product->web_img) : null;
-            $mobile_img_path = $row->product->mobile_img && Storage::disk('s3')->exists($row->product->mobile_img) ? Storage::disk('s3')->url($row->product->web_img) : null;
+            $web_img_path = $row->product->web_img && Storage::disk('s3')->exists($row->product->web_img) ? env('CDN_URL') . $row->product->web_img : null;
+            $mobile_img_path = $row->product->mobile_img && Storage::disk('s3')->exists($row->product->mobile_img) ? env('CDN_URL') . $row->product->web_img : null;
 
             $list[$key]['product'] = $row->product->toArray();
             $list[$key]['product']['id'] = $row->product->hash_id;
@@ -86,8 +86,8 @@ class PutOnRepository extends Repository
         $item['product']['id'] = $info->product->hash_id;
         $item['product']['description_html'] = nl2br($info->product->description);
         $item['product']['specification'] = $info->product->product_specification;
-        $item['product']['web_img_path'] = $info->product->web_img && Storage::disk('s3')->exists($info->product->web_img) ? Storage::disk('s3')->url($info->product->web_img) : null;
-        $item['product']['mobile_img_path'] = $info->product->mobile_img && Storage::disk('s3')->exists($info->product->mobile_img) ? Storage::disk('s3')->url($info->product->mobile_img) : null;
+        $item['product']['web_img_path'] = $info->product->web_img && Storage::disk('s3')->exists($info->product->web_img) ? env('CDN_URL') . $info->product->web_img : null;
+        $item['product']['mobile_img_path'] = $info->product->mobile_img && Storage::disk('s3')->exists($info->product->mobile_img) ? env('CDN_URL') . $info->product->mobile_img : null;
         return $item;
     }
 
