@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\CookingController;
 use App\Http\Controllers\Api\DirectoryController;
 use App\Http\Controllers\Api\PutOnController;
 use App\Http\Controllers\Api\BannersController;
+use App\Http\Controllers\Api\MemberController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,14 +28,20 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-# 登入
-Route::get('auth/get-captcha', [AuthController::class, 'getCaptcha']);
+### 簡訊驗證碼
+# 發送驗證碼
+Route::post('auth/set-sms-code', [AuthController::class, 'setSmsCode']);
+# 驗證驗證碼
+Route::post('auth/auth-sms-code', [AuthController::class, 'authSmsCode']);
+
+# 新增會員
+Route::post('member/insert', [MemberController::class, 'insert']);
 
 # 購物車
-Route::get('cart/getCartId', [CartController::class, 'getCartId']);
-Route::post('cart/getCartCount', [CartController::class, 'getCartCount']);
-Route::post('cart/showCart', [CartController::class, 'showCart']);
-Route::post('cart/addCart', [CartController::class, 'addCart']);
+Route::get('cart/get-cart-id', [CartController::class, 'getCartId']);
+Route::post('cart/get-cart-count', [CartController::class, 'getCartCount']);
+Route::post('cart/show-cart', [CartController::class, 'showCart']);
+Route::post('cart/add-cart', [CartController::class, 'addCart']);
 
 # 大圖輪播
 Route::get('banners/list', [BannersController::class, 'list']);
