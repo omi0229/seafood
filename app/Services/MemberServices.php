@@ -55,4 +55,33 @@ class MemberServices
 
         return true;
     }
+
+    public function authLogin()
+    {
+        $credentials = $this->request->only('cellphone', 'password');
+
+        $auth = [
+            'cellphone' => 'required|string',
+            'password' => 'required|string',
+        ];
+
+        $tip = [
+            'cellphone.required' => '請輸入帳號 (手機號碼)',
+            'password.required' => '請輸入密碼',
+        ];
+
+        $validator = Validator::make($credentials, $auth, $tip);
+        if ($validator->fails()) {
+            return ['status' => false, 'message' => $validator->errors()->first()];
+        }
+
+        $member = app()->make(self::$model)::where('cellphone', $credentials['cellphone'])->where('active', 1)->first();
+        $validCredentials = \Hash::check($credentials['password'], optional($member)->getAuthPassword());
+
+        if (!$validCredentials) {
+            return ['status' => false, 'message' => '帳號或密碼錯誤'];
+        }
+
+        return ['status' => true, 'message' => '登入成功', 'member' => $member];
+    }
 }

@@ -33,6 +33,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('auth/set-sms-code', [AuthController::class, 'setSmsCode']);
 # 驗證驗證碼
 Route::post('auth/auth-sms-code', [AuthController::class, 'authSmsCode']);
+# 會員登入
+Route::post('auth/login', [AuthController::class, 'login']);
 
 # 新增會員
 Route::post('member/insert', [MemberController::class, 'insert']);

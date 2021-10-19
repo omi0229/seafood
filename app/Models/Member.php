@@ -13,6 +13,8 @@ class Member extends Authenticatable
 {
     use HasApiTokens, HasFactory, SoftDeletes, HashId;
 
+    protected $table = 'members';
+
     protected $guard_name = 'api';
 
     /**
