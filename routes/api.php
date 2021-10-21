@@ -38,6 +38,8 @@ Route::post('auth/login', [AuthController::class, 'login']);
 
 # 新增會員
 Route::post('member/insert', [MemberController::class, 'insert']);
+# 忘記密碼
+Route::post('member/forget', [MemberController::class, 'forget']);
 
 # 購物車
 Route::get('cart/get-cart-id', [CartController::class, 'getCartId']);
