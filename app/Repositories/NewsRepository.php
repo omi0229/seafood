@@ -92,6 +92,9 @@ class NewsRepository extends Repository
     {
         $info = $this->model->where('id', $this->model::decodeSlug($id))->where('status', 1)->get()->first();
         $item = $info->toArray();
+
+        $item['id'] = $info->hash_id;
+        $item['news_types_id'] = $info->news_types->hash_id;
         $item['web_img_path'] = $info->web_img && Storage::disk('s3')->exists($info->web_img) ? env('CDN_URL') . $info->web_img : null;
         $item['mobile_img_path'] = $info->mobile_img && Storage::disk('s3')->exists($info->mobile_img) ? env('CDN_URL') . $info->mobile_img : null;
         return $item;

@@ -304,6 +304,25 @@
                             </li>
                             @endif
 
+                            @php
+                                $member_manage = $permissions
+                                    ->filter(function ($p){
+                                        if($p->name == 'member'){
+                                            return true;
+                                        }
+
+                                        return false;
+                                    });
+                            @endphp
+                            @if($member_manage->count() > 0 && $login_user->can('member'))
+                            <li class="nav-item">
+                                <a href="/member" class="nav-link">
+                                    <i class="nav-icon fas fa-user-tie"></i>
+                                    <p>會員管理</p>
+                                </a>
+                            </li>
+                            @endif
+
                         </ul>
                     </nav>
                     <!-- /.sidebar-menu -->

@@ -19,6 +19,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductSpecificationController;
 use App\Http\Controllers\DirectoryController;
 use App\Http\Controllers\PutOnController;
+use App\Http\Controllers\MemberController;
 
 
 /*
@@ -146,4 +147,7 @@ Route::middleware(['auth.web'])->group(function () {
     Route::get('put-on/list/{page}', [PutOnController::class, 'list']);
     Route::post('put-on/insert', [PutOnController::class, 'insert']);
     Route::post('put-on/update', [PutOnController::class, 'update']);
+
+    # 會員管理
+    Route::get('member', [MemberController::class, 'index']);
 });

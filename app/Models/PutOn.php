@@ -21,7 +21,7 @@ class PutOn extends Model
 
     public function directory()
     {
-        return $this->hasOne('App\Models\Directory');
+        return $this->belongsTo('App\Models\Directory', 'directories_id');
     }
 
     public function product()

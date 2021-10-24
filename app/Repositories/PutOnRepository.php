@@ -79,11 +79,12 @@ class PutOnRepository extends Repository
 
     public function apiInfo($id)
     {
-        $info = $this->model->where('id', $this->model::decodeSlug($id))->where('status', 1)->get()->first();
+        $info = $this->model::with('directory')->where('id', $this->model::decodeSlug($id))->where('status', 1)->get()->first();
         $item = $info->toArray();
         $item['id'] = $info->hash_id;
         $item['product'] = $info->product->toArray();
-        $item['product']['id'] = $info->product->hash_id;
+        $item['directories_id'] = $info->directory->hash_id;
+        $item['directories_name'] = $info->directory->name;
         $item['product']['description_html'] = nl2br($info->product->description);
         $item['product']['specification'] = $info->product->product_specification;
         $item['product']['web_img_path'] = $info->product->web_img && Storage::disk('s3')->exists($info->product->web_img) ? env('CDN_URL') . $info->product->web_img : null;

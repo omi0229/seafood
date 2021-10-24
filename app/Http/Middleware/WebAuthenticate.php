@@ -39,6 +39,7 @@ class WebAuthenticate
             'product-specification' => 'product',
             'directory' => 'directory',
             'put-on' => 'put-on',
+            'member' => 'member',
         ];
 
         $login_user = \Session::get('seafood_user');

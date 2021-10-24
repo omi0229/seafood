@@ -18,21 +18,23 @@ class MemberServices
 
     static $model = 'App\Models\Member';
 
-    static function authInputData($request, $type = 'create')
+    static function authInputData($inputs, $type = 'create')
     {
-        $inputs = $request->all();
-
-        $auth = [
-            'cellphone' => 'required',
-            'password' => 'required',
-            'name' => 'required',
-        ];
-
-        $tip = [
-            'cellphone.required' => '請填寫手機號碼',
-            'password.required' => '請填寫密碼',
-            'name.required' => '請填寫真實名字',
-        ];
+        if ($type === 'create') {
+            $auth = [
+                'cellphone' => 'required',
+                'password' => 'required',
+                'name' => 'required',
+            ];
+            $tip = [
+                'cellphone.required' => '請填寫手機號碼',
+                'password.required' => '請填寫密碼',
+                'name.required' => '請填寫真實名字',
+            ];
+        } else {
+            $auth = [ 'name' => 'required' ];
+            $tip = [ 'name.required' => '請填寫真實名字' ];
+        }
 
         $validator = Validator::make($inputs, $auth, $tip);
         if ($validator->fails()) {
@@ -50,6 +52,20 @@ class MemberServices
     {
         $model = app()->make(self::$model)->where('cellphone', $cellphone);
         if ($model->count() > 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function authPassword($id, $password)
+    {
+        $model = app()->make(self::$model);
+        $member = $model::where('id', $model::decodeSlug($id))->where('active', 1)->first();
+        $validCredentials = \Hash::check($password, optional($member)->getAuthPassword());
+
+        # 密碼錯誤
+        if (!$validCredentials) {
             return false;
         }
 
