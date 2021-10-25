@@ -150,4 +150,9 @@ Route::middleware(['auth.web'])->group(function () {
 
     # 會員管理
     Route::get('member', [MemberController::class, 'index']);
+    Route::get('member/count', [MemberController::class, 'count']);
+    Route::get('member/list/{page}', [MemberController::class, 'list']);
+    Route::post('member/insert', [MemberController::class, 'insert']);
+    Route::post('member/update', [MemberController::class, 'update']);
+    Route::delete('member/delete', [MemberController::class, 'delete']);
 });

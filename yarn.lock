@@ -1368,6 +1368,14 @@
   resolved "https://registry.npmjs.org/@xtuc/long/-/long-4.2.2.tgz"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
+accept-language@^3.0.18:
+  version "3.0.18"
+  resolved "https://registry.yarnpkg.com/accept-language/-/accept-language-3.0.18.tgz#f5025f17bf65a466a845838ccf98cdb877d83384"
+  integrity sha1-9QJfF79lpGaoRYOMz5jNuHfYM4Q=
+  dependencies:
+    bcp47 "^1.1.2"
+    stable "^0.1.6"
+
 accepts@~1.3.4, accepts@~1.3.5, accepts@~1.3.7:
   version "1.3.7"
   resolved "https://registry.npmjs.org/accepts/-/accepts-1.3.7.tgz"
@@ -1580,6 +1588,11 @@ batch@0.6.1:
   version "0.6.1"
   resolved "https://registry.npmjs.org/batch/-/batch-0.6.1.tgz"
   integrity sha1-3DQxT05nkxgJP8dgJyUl+UvyXBY=
+
+bcp47@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/bcp47/-/bcp47-1.1.2.tgz#354be3307ffd08433a78f5e1e2095845f89fc7fe"
+  integrity sha1-NUvjMH/9CEM6ePXh4glYRfifx/4=
 
 big.js@^5.2.2:
   version "5.2.2"
@@ -4946,7 +4959,7 @@ spdy@^4.0.2:
     select-hose "^2.0.0"
     spdy-transport "^3.0.0"
 
-stable@^0.1.8:
+stable@^0.1.6, stable@^0.1.8:
   version "0.1.8"
   resolved "https://registry.npmjs.org/stable/-/stable-0.1.8.tgz"
   integrity sha512-ji9qxRnOVfcuLDySj9qzhGSEFVobyt1kIOSkj1qZzYLzq7Tos/oUUWvotUPQLlrsidqsK6tBH89Bc9kL5zHA6w==
@@ -5174,6 +5187,13 @@ tty-browserify@0.0.0:
   version "0.0.0"
   resolved "https://registry.npmjs.org/tty-browserify/-/tty-browserify-0.0.0.tgz"
   integrity sha1-oVe6QC2iTpv5V/mqadUk7tQpAaY=
+
+twzipcode-data@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/twzipcode-data/-/twzipcode-data-2.0.0.tgz#497e5497baf74b9fc2ee4204dba90f299a58c964"
+  integrity sha512-S1689bl9zVUZdsfB4zt8oAy/wWZf58Yu/FtWyU4xphCslV30O1ZBlTOAqsyimlqp8jB9LpWk2GNPhL3ogm9Wzw==
+  dependencies:
+    accept-language "^3.0.18"
 
 type-fest@^0.21.3:
   version "0.21.3"

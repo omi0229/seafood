@@ -61,6 +61,8 @@ mix.js('resources/js/directory.js', 'public/js')
 // put-on
 mix.js('resources/js/put-on.js', 'public/js')
 mix.sass('resources/scss/put-on.scss', 'public/css')
+// member
+mix.js('resources/js/member.js', 'public/js')
 
 // components search
 mix.sass('resources/scss/components/search.scss', 'public/css/components')
