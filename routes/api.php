@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\DirectoryController;
 use App\Http\Controllers\Api\PutOnController;
 use App\Http\Controllers\Api\BannersController;
 use App\Http\Controllers\Api\MemberController;
+use App\Http\Controllers\Api\SmsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,9 @@ use App\Http\Controllers\Api\MemberController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+# 簡訊寄送測試
+Route::post('sms/send', [SmsController::class, 'send']);
 
 ### 簡訊驗證碼
 # 發送驗證碼

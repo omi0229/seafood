@@ -68,12 +68,15 @@ window.app = createApp({
             set_user.mode = 'modify';
             set_user.user_info.id = id;
             let info = _.find(this.list, {'id': id});
+            set_user.user_info.cellphone = info.cellphone;
             set_user.user_info.name = info.name;
             set_user.user_info.email = info.email;
             set_user.user_info.telephone = info.telephone;
             set_user.user_info.zipcode = info.zipcode;
-            set_user.user_info.country = info.country;
-            set_user.user_info.city = info.city;
+            set_user.user_info.country = info.country || '';
+            set_user.selectCountry();
+            set_user.user_info.city = info.city || '';
+            set_user.user_info.zipcode = info.zipcode || '';
             set_user.user_info.address = info.address;
             set_user.user_info.active = info.active.toString();
         },
@@ -110,6 +113,9 @@ window.app = createApp({
                 }
             });
         },
+        exportMembers() {
+            window.open('/member/export');
+        },
     },
 }).mount('#app');
 
@@ -145,6 +151,7 @@ let set_user = createApp({
     methods: {
         dataInit() {
             this.user_info.id = null;
+            this.user_info.cellphone = '';
             this.user_info.name = '';
             this.user_info.password = '';
             this.user_info.auth_password = '';
@@ -170,6 +177,18 @@ let set_user = createApp({
             }
         },
         auth(data) {
+            if (!data.cellphone) {
+                return {auth: false, message: '手機號碼不得為空！'};
+            }
+
+            if (data.cellphone.length !== 10) {
+              return {'status': false, 'message': '行動電話長度須為10碼'}
+            }
+
+            if (data.cellphone.substr(0, 2) !== '09') {
+              return {'status': false, 'message': '行動電話格式錯誤'}
+            }
+
             if (!data.name) {
                 return {auth: false, message: '姓名不得為空！'};
             }
@@ -179,12 +198,12 @@ let set_user = createApp({
             }
 
             if (this.mode == 'create') {
-                if (!passwordRule(data.password)) {
-                    return {auth: false, message: '密碼規則需為8碼以上數字加英文！'};
-                }
-
                 if (!data.password) {
                     return {auth: false, message: '密碼不得為空！'};
+                }
+
+                if (!passwordRule(data.password)) {
+                    return {auth: false, message: '密碼規則需為8碼以上數字加英文！'};
                 }
 
                 if (data.password !== data.auth_password) {

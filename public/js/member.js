@@ -45764,12 +45764,15 @@ window.app = createApp({
         'id': id
       });
 
+      set_user.user_info.cellphone = info.cellphone;
       set_user.user_info.name = info.name;
       set_user.user_info.email = info.email;
       set_user.user_info.telephone = info.telephone;
       set_user.user_info.zipcode = info.zipcode;
-      set_user.user_info.country = info.country;
-      set_user.user_info.city = info.city;
+      set_user.user_info.country = info.country || '';
+      set_user.selectCountry();
+      set_user.user_info.city = info.city || '';
+      set_user.user_info.zipcode = info.zipcode || '';
       set_user.user_info.address = info.address;
       set_user.user_info.active = info.active.toString();
     },
@@ -45873,6 +45876,9 @@ window.app = createApp({
           _this5["delete"]();
         }
       });
+    },
+    exportMembers: function exportMembers() {
+      window.open('/member/export');
     }
   }
 }).mount('#app');
@@ -45908,6 +45914,7 @@ var set_user = createApp({
   methods: {
     dataInit: function dataInit() {
       this.user_info.id = null;
+      this.user_info.cellphone = '';
       this.user_info.name = '';
       this.user_info.password = '';
       this.user_info.auth_password = '';
@@ -45936,6 +45943,27 @@ var set_user = createApp({
       }
     },
     auth: function auth(data) {
+      if (!data.cellphone) {
+        return {
+          auth: false,
+          message: '手機號碼不得為空！'
+        };
+      }
+
+      if (data.cellphone.length !== 10) {
+        return {
+          'status': false,
+          'message': '行動電話長度須為10碼'
+        };
+      }
+
+      if (data.cellphone.substr(0, 2) !== '09') {
+        return {
+          'status': false,
+          'message': '行動電話格式錯誤'
+        };
+      }
+
       if (!data.name) {
         return {
           auth: false,
@@ -45951,17 +45979,17 @@ var set_user = createApp({
       }
 
       if (this.mode == 'create') {
-        if (!(0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.passwordRule)(data.password)) {
-          return {
-            auth: false,
-            message: '密碼規則需為8碼以上數字加英文！'
-          };
-        }
-
         if (!data.password) {
           return {
             auth: false,
             message: '密碼不得為空！'
+          };
+        }
+
+        if (!(0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.passwordRule)(data.password)) {
+          return {
+            auth: false,
+            message: '密碼規則需為8碼以上數字加英文！'
           };
         }
 

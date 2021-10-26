@@ -55,7 +55,7 @@
                                             <input type="text" maxlength="10" class="form-control form-control-sm" disabled v-model="points">
                                         </div>
                                         <div class="col-12 col-xl-2 mt-2">
-                                            <button type="button" class="btn btn-sm btn-info w-100 sms-point-button">查詢點數</button>
+                                            <button type="button" class="btn btn-sm btn-info w-100 sms-point-button" @click="queryPoints">查詢點數</button>
                                         </div>
                                     </div>
                                 </div>

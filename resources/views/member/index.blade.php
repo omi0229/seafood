@@ -29,9 +29,14 @@
                         <i class="fa fa-minus mr-1"></i> 刪除
                     </button>
                 </div>
-                <div>
+                <div class="mr-2">
                     <button type="button" class="btn btn-sm btn-primary px-2" data-toggle="modal" data-target="#set-user" @click="create">
                         <i class="fa fa-plus mr-1"></i> 新增
+                    </button>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-sm btn-success px-2" @click="exportMembers">
+                        <i class="fas fa-file-export mr-1"></i> 會員資料匯出
                     </button>
                 </div>
             </div>
@@ -118,28 +123,28 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="cellphone">手機號碼</label>
-                        <input type="text" maxlength="20" class="form-control form-control-sm" id="cellphone" placeholder="請輸入帳號" v-model="user_info.cellphone">
+                        <label for="cellphone">手機號碼 <span class="text-danger">*</span></label>
+                        <input type="text" maxlength="10" class="form-control form-control-sm" id="cellphone" placeholder="請輸入手機號碼(帳號)" v-model="user_info.cellphone">
                     </div>
                     <div class="form-group">
-                        <label for="name">姓名</label>
+                        <label for="name">姓名 <span class="text-danger">*</span></label>
                         <input type="text" maxlength="20" class="form-control form-control-sm" id="name" placeholder="請輸入姓名" v-model="user_info.name">
+                    </div>
+                    <div class="form-group">
+                        <label for="password"><template v-if="mode == 'modify'">修改</template>密碼 <span class="text-danger" v-if="mode == 'create'">*</span></label>
+                        <input type="password" maxlength="20" class="form-control form-control-sm" id="password" placeholder="請輸入密碼" v-model="user_info.password">
+                    </div>
+                    <div class="form-group">
+                        <label for="password_auth">密碼確認 <span class="text-danger" v-if="mode == 'create'">*</span></label>
+                        <input type="password" maxlength="20" class="form-control form-control-sm" id="password_auth" placeholder="請再次確認密碼" v-model="user_info.auth_password">
                     </div>
                     <div class="form-group">
                         <label for="email">電子郵件</label>
                         <input type="email" class="form-control form-control-sm" id="email" placeholder="請輸入電子郵件" v-model="user_info.email">
                     </div>
                     <div class="form-group">
-                        <label for="password"><template v-if="mode == 'modify'">修改</template>密碼</label>
-                        <input type="password" maxlength="20" class="form-control form-control-sm" id="password" placeholder="請輸入密碼" v-model="user_info.password">
-                    </div>
-                    <div class="form-group">
-                        <label for="password_auth">密碼確認</label>
-                        <input type="password" maxlength="20" class="form-control form-control-sm" id="password_auth" placeholder="請再次確認密碼" v-model="user_info.auth_password">
-                    </div>
-                    <div class="form-group">
                         <label for="telephone">市內電話</label>
-                        <input type="telephone" class="form-control form-control-sm" id="telephone" placeholder="請輸入電子郵件" v-model="user_info.telephone">
+                        <input type="telephone" class="form-control form-control-sm" id="telephone" placeholder="請輸入市內電話" v-model="user_info.telephone">
                     </div>
                     <div class="form-group">
                         <label for="address">通訊地址</label>
@@ -163,7 +168,7 @@
                             </div>
                         </div>
                         <div class="mt-2">
-                            <input type="address" class="form-control form-control-sm" id="address" placeholder="請輸入電子郵件" v-model="user_info.address">
+                            <input type="address" class="form-control form-control-sm" id="address" placeholder="請輸入通訊地址" v-model="user_info.address">
                         </div>
                     </div>
                 </div>

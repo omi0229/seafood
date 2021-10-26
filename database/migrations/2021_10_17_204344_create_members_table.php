@@ -15,7 +15,7 @@ class CreateMembersTable extends Migration
     {
         Schema::create('members', function (Blueprint $table) {
             $table->id();
-            $table->string('cellphone', 10)->unique()->comment('手機號碼(帳號)');
+            $table->string('cellphone', 10)->comment('手機號碼(帳號)');
             $table->string('password', 255)->comment('密碼');
             $table->string('name', 20)->comment('姓名');
             $table->string('email', 200)->nullable()->comment('email');

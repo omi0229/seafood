@@ -32,8 +32,14 @@ class MemberServices
                 'name.required' => '請填寫真實名字',
             ];
         } else {
-            $auth = [ 'name' => 'required' ];
-            $tip = [ 'name.required' => '請填寫真實名字' ];
+            $auth = [
+                'id' => 'required',
+                'name' => 'required'
+            ];
+            $tip = [
+                'id.required' => 'id驗證失敗',
+                'name.required' => '請填寫真實名字'
+            ];
         }
 
         $validator = Validator::make($inputs, $auth, $tip);
@@ -91,6 +97,10 @@ class MemberServices
             return ['status' => false, 'message' => $validator->errors()->first()];
         }
 
+        if (app()->make(self::$model)::where('cellphone', $credentials['cellphone'])->where('active', 0)->count() > 0) {
+            return ['status' => false, 'message' => '此帳戶已停用'];
+        }
+
         $member = app()->make(self::$model)::where('cellphone', $credentials['cellphone'])->where('active', 1)->first();
         $validCredentials = \Hash::check($credentials['password'], optional($member)->getAuthPassword());
 
@@ -99,5 +109,44 @@ class MemberServices
         }
 
         return ['status' => true, 'message' => '登入成功', 'member' => $member];
+    }
+
+    public function exportMembers()
+    {
+        $model = app()->make(self::$model);
+
+        $xls = '<table>';
+
+        $xls .= '<tr>
+            <th><span>手機號碼(帳號)</span></th>
+            <th><span>姓名</span></th>
+            <th><span>電子郵件</span></th>
+            <th><span>市內電話</span></th>
+            <th><span>郵遞區號</span></th>
+            <th><span>城市</span></th>
+            <th><span>地區</span></th>
+            <th><span>地址</span></th>
+        </tr>';
+
+        foreach ($model->all() as $row) {
+            $xls .= '<tr>
+                <td>' . $row['cellphone'] . '&zwnj;' . '</td>
+                <td>' . $row['name'] . '</td>
+                <td>' . $row['email'] . '</td>
+                <td>' . $row['telephone'] . '&zwnj;' . '</td>
+                <td>' . $row['zipcode'] . '&zwnj;' . '</td>
+                <td>' . $row['country'] . '</td>
+                <td>' . $row['city'] . '</td>
+                <td>' . $row['address'] . '</td>
+            </tr>';
+        }
+
+        $xls .= '</table>';
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="members.xls"');
+        header('Cache-Control: max-age=0');
+
+        return $xls;
     }
 }

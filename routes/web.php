@@ -70,6 +70,8 @@ Route::middleware(['auth.web'])->group(function () {
     Route::get('sms', [SmsController::class, 'index']);
     Route::get('sms/get', [SmsController::class, 'get']);
     Route::post('sms/set', [SmsController::class, 'set']);
+    Route::post('sms/query-points', [SmsController::class, 'QueryPoints']);
+    Route::post('sms/send', [SmsController::class, 'send']);
 
     # 大圖輪播
     Route::get('banners', [BannersController::class, 'index']);
@@ -155,4 +157,5 @@ Route::middleware(['auth.web'])->group(function () {
     Route::post('member/insert', [MemberController::class, 'insert']);
     Route::post('member/update', [MemberController::class, 'update']);
     Route::delete('member/delete', [MemberController::class, 'delete']);
+    Route::get('member/export', [MemberController::class, 'export']);
 });

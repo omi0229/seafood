@@ -41012,53 +41012,120 @@ window.app = createApp({
           sms_password: ''
         }
       },
-      points: 5000
+      points: 0
     };
   },
   delimiters: ["${", "}"],
   mounted: function mounted() {
     var _this = this;
 
-    this.getConfig().then(function (res) {
-      _.forEach(res.data.data, function (v, k) {
-        switch (v.config_name) {
-          case 'sms_account':
-            _this.config.sms.sms_account = v.config_value;
-            break;
+    this.getConfig().then( /*#__PURE__*/function () {
+      var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(res) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _.forEach(res.data.data, function (v, k) {
+                  switch (v.config_name) {
+                    case 'sms_account':
+                      _this.config.sms.sms_account = v.config_value;
+                      break;
 
-          case 'sms_password':
-            _this.config.sms.sms_password = v.config_value;
-            break;
-        }
-      });
+                    case 'sms_password':
+                      _this.config.sms.sms_password = v.config_value;
+                      break;
+                  }
+                });
 
-      loading.show = false;
-    });
+                _context.next = 3;
+                return _this.__queryPoints().then(function (res) {
+                  console.log(res.data);
+
+                  if (res.data.status) {
+                    _this.points = res.data.data.ReturnDouble;
+                  }
+                });
+
+              case 3:
+                loading.show = false;
+
+              case 4:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }));
+
+      return function (_x) {
+        return _ref.apply(this, arguments);
+      };
+    }());
   },
   methods: {
     getConfig: function getConfig() {
       return new Promise(function (resolve) {
-        axios.get('/basic/get').then(function (res) {
+        axiosGetMethod('/basic/get').then(function (res) {
           resolve(res);
         });
       });
     },
-    confirm: function confirm() {
+    __queryPoints: function __queryPoints() {
       var _this2 = this;
+
+      return new Promise(function (resolve) {
+        axiosPostMethod('/sms/query-points', _this2.config.sms).then(function (res) {
+          resolve(res);
+        });
+      });
+    },
+    queryPoints: function queryPoints() {
+      var _this3 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                loading.show = true;
+                _context2.next = 3;
+                return _this3.__queryPoints().then(function (res) {
+                  if (res.data.status) {
+                    _this3.points = res.data.data.ReturnDouble;
+                  }
+
+                  loading.show = false;
+                  var icon = res.data.status ? 'success' : 'error';
+                  Toast.fire({
+                    icon: icon,
+                    title: res.data.message
+                  });
+                });
+
+              case 3:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
+    confirm: function confirm() {
+      var _this4 = this;
 
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_1__.swal2Confirm)('儲存設定？').then(function (confirm) {
         if (confirm) {
-          _this2.save();
+          _this4.save();
         }
       });
     },
     save: function save() {
       loading.show = true;
       axios.post('/sms/set', this.config.sms).then( /*#__PURE__*/function () {
-        var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(res) {
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+        var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(res) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
             while (1) {
-              switch (_context.prev = _context.next) {
+              switch (_context3.prev = _context3.next) {
                 case 0:
                   loading.show = false;
                   Toast.fire({
@@ -41068,14 +41135,14 @@ window.app = createApp({
 
                 case 2:
                 case "end":
-                  return _context.stop();
+                  return _context3.stop();
               }
             }
-          }, _callee);
+          }, _callee3);
         }));
 
-        return function (_x) {
-          return _ref.apply(this, arguments);
+        return function (_x2) {
+          return _ref2.apply(this, arguments);
         };
       }())["catch"](function (error) {
         loading.show = false;
