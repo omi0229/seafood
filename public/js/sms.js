@@ -41039,10 +41039,8 @@ window.app = createApp({
 
                 _context.next = 3;
                 return _this.__queryPoints().then(function (res) {
-                  console.log(res.data);
-
                   if (res.data.status) {
-                    _this.points = res.data.data.ReturnDouble;
+                    _this.points = Number(res.data.data);
                   }
                 });
 
@@ -41091,7 +41089,7 @@ window.app = createApp({
                 _context2.next = 3;
                 return _this3.__queryPoints().then(function (res) {
                   if (res.data.status) {
-                    _this3.points = res.data.data.ReturnDouble;
+                    _this3.points = Number(res.data.data);
                   }
 
                   loading.show = false;

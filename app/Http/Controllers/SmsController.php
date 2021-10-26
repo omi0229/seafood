@@ -28,6 +28,11 @@ class SmsController extends Controller
             return response()->json(['status' => false, 'message' => '查詢點數失敗']);
         }
 
-        return response()->json(['status' => true, 'message' => '查詢點數成功', 'data' => $this->services->queryPoints()]);
+        $info = $this->services->queryPoints();
+        if ($info['status'] == '0') {
+            return response()->json(['status' => true, 'message' => '查詢點數成功', 'data' => $info['ReturnDouble']]);
+        } else {
+            return response()->json(['status' => false, 'message' => '查詢點數失敗']);
+        }
     }
 }

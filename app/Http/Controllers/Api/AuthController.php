@@ -21,10 +21,13 @@ class AuthController extends Controller
     public function setSmsCode(SmsCodeRepository $sms_code_repository)
     {
         if (data_get($this->request->all(), 'cellphone')) {
-            return response()->json(['status' => true, 'message' => $sms_code_repository->createCode()]);
+
+            $info = $sms_code_repository->createCode();
+
+            return response()->json(['status' => $info['status'], 'message' => $info['message'], 'data' => $info['data'] ?? '']);
         }
 
-        return response()->json(['status' => false, 'message' => '產生簡訊驗證碼失敗']);
+        return response()->json(['status' => false, 'message' => '沒有設定手機']);
     }
 
     public function authSmsCode(SmsCodeServices $sms_code_services)

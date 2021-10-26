@@ -2,18 +2,20 @@
 
 namespace App\Repositories;
 
-use App\Repositories\Repository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Repositories\Repository;
+use App\Services\SmsServices;
 
 class SmsCodeRepository extends Repository
 {
-    protected $request;
+    protected $request, $services;
 
-    public function __construct(Request $request)
+    public function __construct(Request $request, SmsServices $services)
     {
         parent::__construct();
         $this->request = $request;
+        $this->services = $services;
     }
 
     public function model()
@@ -25,18 +27,28 @@ class SmsCodeRepository extends Repository
     {
         $code = '';
         $cellphone = data_get($this->request->all(), 'cellphone');
-        $model = $this->model()::where('cellphone', $cellphone);
+        if ($cellphone) {
+            $model = $this->model()::where('cellphone', $cellphone)->orderBy('created_at', 'DESC');
 
-        if ($model->first() && now()->timestamp <= Carbon::parse($model->first()->created_at)->addSeconds(env('SMS_CODE_DELAY', 60))->timestamp) {
-            $code = $model->first()->verification_code;
-        } else {
-            $model->delete();
+            $seconds = Carbon::parse($model->first()->created_at)->addSeconds(env('SMS_CODE_DELAY', 60))->timestamp - now()->timestamp;
+            if ($model->first() && $seconds > 0) {
+                return ['status' => false, 'message' => '發送間隔過短', 'data' => $seconds];
+            }
+
+            (new $this->model())->where('cellphone', $cellphone)->delete();
             for ($n = 1; $n <= 5; $n++) {
                 $code .= rand(0, 9);
             }
-            $this->model->create(['cellphone' => $cellphone, 'verification_code' => $code]);
+
+            # 發送簡訊
+            $result = $this->services->send([$cellphone], $code);
+
+            if ($result['status'] == 0) {
+                $this->model->create(['cellphone' => $cellphone, 'verification_code' => $code]);
+                return ['status' => true, 'message' => $code];
+            }
         }
 
-        return $code;
+        return ['status' => false, 'message' => '發送失敗'];
     }
 }

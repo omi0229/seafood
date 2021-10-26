@@ -29,9 +29,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-# 簡訊寄送測試
-Route::post('sms/send', [SmsController::class, 'send']);
-
 ### 簡訊驗證碼
 # 發送驗證碼
 Route::post('auth/set-sms-code', [AuthController::class, 'setSmsCode']);

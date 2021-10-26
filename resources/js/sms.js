@@ -27,11 +27,8 @@ window.app = createApp({
             });
 
             await this.__queryPoints().then(res => {
-
-                console.log(res.data);
-
                 if (res.data.status) {
-                    this.points = res.data.data.ReturnDouble;
+                    this.points = Number(res.data.data);
                 }
             });
 
@@ -57,7 +54,7 @@ window.app = createApp({
             loading.show = true;
             await this.__queryPoints().then(res => {
                 if (res.data.status) {
-                    this.points = res.data.data.ReturnDouble;
+                    this.points = Number(res.data.data);
                 }
 
                 loading.show = false;
