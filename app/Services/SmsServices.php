@@ -48,7 +48,7 @@ class SmsServices
         return self::xml2array($contents);
     }
 
-    public function send(array $array, $sms_code)
+    public function send(array $array, $code, $type = 'sms_code')
     {
         $account = $this->config::where('config_name', 'sms_account')->first();
         $password = $this->config::where('config_name', 'sms_password')->first();
@@ -57,13 +57,15 @@ class SmsServices
             $ActivateDateTime = str_replace(array('/', '+', ':'), '', date('YmdHi', strtotime('+1 minute')));
             $ActivateDateTime = (strlen($ActivateDateTime) < 14 && $ActivateDateTime) ? $ActivateDateTime . "00" : $ActivateDateTime;
 
+            $message = $type == 'forget_password' ? '您的密碼為' . $code : '海龍王註冊訊息：您的註冊碼為 ' . $code;
+
             $body = '<?xml version="1.0" encoding="UTF-8"?>
                 <sms>
                     <userid>' . $account->config_value . '</userid>
                     <password>' . $password->config_value . '</password>
                     <globalsms>N</globalsms>
                     <longsms>N</longsms>
-                    <content>' . '海龍王註冊訊息：您的註冊碼為 ' . $sms_code . ' </content>
+                    <content>' . $message . ' </content>
                     <receivers>' . $phone . '</receivers>
                     <appointment>' . $ActivateDateTime . '</appointment>
                 </sms>

@@ -3,17 +3,22 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Models\ForgetPasswordLog;
+use App\Services\General;
+use App\Services\SmsServices;
 
 class MemberServices
 {
-    protected $request;
+    protected $request, $sms_services;
 
-    public function __construct(Request $request)
+    public function __construct(Request $request, SmsServices $sms_services)
     {
         $this->request = $request;
+        $this->sms_services = $sms_services;
     }
 
     static $model = 'App\Models\Member';
@@ -109,6 +114,43 @@ class MemberServices
         }
 
         return ['status' => true, 'message' => '登入成功', 'member' => $member];
+    }
+
+    public function forgetPassword()
+    {
+        $inputs = $this->request->all();
+        if (isset($inputs['cellphone']) && isset($inputs['name'])) {
+            $model = app()->make(self::$model)::where('cellphone', $inputs['cellphone'])->where('name', $inputs['name']);
+            if ($model->count() > 0) {
+                $log = ForgetPasswordLog::where('cellphone', $inputs['cellphone'])->orWhere('ip', $this->request->ip())->orderBy('created_at', 'DESC');
+                if ($log->count() > 0) {
+                    $log_delay = clone $log;
+                    $seconds = Carbon::parse($log_delay->first()->created_at)->addSeconds(env('SMS_CODE_DELAY', 60))->timestamp - now()->timestamp;
+                    if ($seconds > 0) {
+                        return ['status' => false, 'message' => '發送間隔過短', 'data' => $seconds];
+                    }
+                }
+
+                $log->delete();
+                ForgetPasswordLog::create(['cellphone' => $inputs['cellphone'], 'ip' => $this->request->ip()]);
+
+                # 取得隨機八碼密碼
+                $new_password = General::randomPassword();
+                # 發送提示密碼簡訊
+                $result = $this->sms_services->send([$inputs['cellphone']], $new_password, 'forget_password');
+                if ($result['status'] == 0) {
+                    # 修改成取得的八碼密碼
+                    $model->first()->update(['password' => $new_password]);
+                    return ['status' => true, 'message' => '已寄發簡訊'];
+                }
+
+                return ['status' => false, 'message' => '簡訊寄發失敗'];
+            }
+
+            return ['status' => false, 'message' => '無此會員資料', 'data' => $this->request->ip()];
+        }
+
+        return ['status' => false, 'message' => '輸入資料錯誤'];
     }
 
     public function exportMembers()
