@@ -30,7 +30,7 @@ class SmsCodeRepository extends Repository
         if ($cellphone) {
             $model = $this->model()::where('cellphone', $cellphone)->orderBy('created_at', 'DESC');
 
-            $seconds = Carbon::parse($model->first()->created_at)->addSeconds(env('SMS_CODE_DELAY', 60))->timestamp - now()->timestamp;
+            $seconds = $model->first() ? Carbon::parse($model->first()->created_at)->addSeconds(env('SMS_CODE_DELAY', 60))->timestamp - now()->timestamp : 0;
             if ($model->first() && $seconds > 0) {
                 return ['status' => false, 'message' => '發送間隔過短', 'data' => $seconds];
             }
