@@ -65,7 +65,7 @@ Route::get('directory/list/{page}', [DirectoryController::class, 'list']);
 Route::get('product/{type_id}/{page?}', [PutOnController::class, 'list']);
 Route::get('product-info/{id}', [PutOnController::class, 'info']);
 
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:member_api'])->group(function () {
     ### 會員中心
     # 編輯會員
     Route::post('member/update', [MemberController::class, 'update']);

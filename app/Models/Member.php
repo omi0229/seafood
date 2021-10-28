@@ -35,6 +35,16 @@ class Member extends Authenticatable
         'active',
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = bcrypt($value);

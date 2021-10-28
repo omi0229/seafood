@@ -38,6 +38,10 @@ class MemberController extends Controller
     {
         $inputs = $this->request->all();
 
+        if (!data_get($inputs, 'id')) {
+            return response()->json(['status' => false, 'message' => '無此會員']);
+        }
+
         # 驗證資料
         $validator = $this->services::authInputData($inputs['form'], 'modify');
         if (!$validator['status']) {

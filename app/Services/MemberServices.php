@@ -38,11 +38,9 @@ class MemberServices
             ];
         } else {
             $auth = [
-                'id' => 'required',
                 'name' => 'required'
             ];
             $tip = [
-                'id.required' => 'id驗證失敗',
                 'name.required' => '請填寫真實名字'
             ];
         }
