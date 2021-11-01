@@ -250,7 +250,41 @@ let set_info = createApp({
             this.info.mobile_img = null;
             this.info.mobile_img_path = '';
         },
+        fileAuth(list, type) {
+            let file_type = ['image/jpeg', 'image/png', 'image/gif'];
+            let file_limit_size = 2097152;
+
+            let type_error_count = 0;
+            let limit_error_count = 0;
+
+            for (let f = 0; f < list.length; f++) {
+                if (!file_type.includes(list[f].type)) {
+                    type_error_count++;
+                }
+                if (list[f].size > file_limit_size) {
+                    limit_error_count++;
+                }
+            }
+
+            if (type_error_count > 0) {
+                type === 'web' ? this.$refs.web_img.value = '' : this.$refs.mobile_img.value = '';
+                return {status: false, message: '請選擇指定的檔案格式'};
+            }
+
+            if (limit_error_count > 0) {
+                type === 'web' ? this.$refs.web_img.value = '' : this.$refs.mobile_img.value = '';
+                return {status: false, message: `檔案大小不得超過${file_limit_size / 1024 / 1024}MB`};
+            }
+
+            return {status: true};
+        },
         file(e, type) {
+            let {status, message} = this.fileAuth(e.target.files, type);
+            if (!status) {
+                Toast.fire({icon: 'error', title: message});
+                return false;
+            }
+
             if (e.target && e.target.files[0]) {
                 if (type == 'web') {
                     this.info.web_img_delete = 0;

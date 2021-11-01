@@ -84,7 +84,7 @@
                             @endphp
                             @if($basic && $login_user->can('set_basic'))
                             <li class="nav-item">
-                                <a href="/basic" class="nav-link">
+                                <a href="/basic" class="nav-link @php if($action_uri === 'basic') echo 'active' @endphp">
                                     <i class="nav-icon fas fa-th"></i>
                                     <p>
                                         {{$basic->display_name}}
@@ -97,8 +97,8 @@
                                 $set_manager = $permissions->where('name', 'set_manager')->first();
                             @endphp
                             @if($set_manager && $login_user->can('set_manager'))
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
+                            <li class="nav-item @php if($action_uri === 'role' || $action_uri === 'user') echo 'menu-open' @endphp">
+                                <a href="#" class="nav-link @php if($action_uri === 'role' || $action_uri === 'user') echo 'active' @endphp">
                                     <i class="nav-icon fas fa-user-cog"></i>
                                     <p>
                                         {{$set_manager->display_name}}
@@ -107,13 +107,13 @@
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a href="/role" class="nav-link">
+                                        <a href="/role" class="nav-link @php if($action_uri === 'role') echo 'active' @endphp">
                                             <i class="nav-icon far fa-circle"></i>
                                             <p>權限設定</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="/user" class="nav-link">
+                                        <a href="/user" class="nav-link @php if($action_uri === 'user') echo 'active' @endphp">
                                             <i class="nav-icon far fa-circle"></i>
                                             <p>管理員設定</p>
                                         </a>
@@ -127,7 +127,7 @@
                             @endphp
                             @if($set_message && $login_user->can('set_message'))
                             <li class="nav-item">
-                                <a href="/sms" class="nav-link">
+                                <a href="/sms" class="nav-link @php if($action_uri === 'sms') echo 'active' @endphp">
                                     <i class="nav-icon fas fa-sms"></i>
                                     <p>
                                         {{$set_message->display_name}}
@@ -147,8 +147,8 @@
                                     });
                             @endphp
                             @if($news_manage->count() > 0 && ($login_user->can('news-type') || $login_user->can('news') || $login_user->can('banners')))
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
+                            <li class="nav-item @php if($action_uri === 'banners' || $action_uri === 'news-type' || $action_uri === 'news') echo 'menu-open' @endphp">
+                                <a href="#" class="nav-link @php if($action_uri === 'banners' || $action_uri === 'news-type' || $action_uri === 'news') echo 'active' @endphp">
                                     <i class="nav-icon far fa-newspaper"></i>
                                     <p>
                                         最新消息
@@ -158,7 +158,7 @@
                                 <ul class="nav nav-treeview">
                                     @if($login_user->can('banners'))
                                     <li class="nav-item">
-                                        <a href="/banners" class="nav-link">
+                                        <a href="/banners" class="nav-link @php if($action_uri === 'banners') echo 'active' @endphp">
                                             <i class="nav-icon far fa-circle"></i>
                                             <p>{{ $news_manage->where('name', 'banners')->first()->display_name  }}</p>
                                         </a>
@@ -166,7 +166,7 @@
                                     @endif
                                     @if($login_user->can('news-type'))
                                     <li class="nav-item">
-                                        <a href="/news-type" class="nav-link">
+                                        <a href="/news-type" class="nav-link @php if($action_uri === 'news-type') echo 'active' @endphp">
                                             <i class="nav-icon far fa-circle"></i>
                                             <p>{{ $news_manage->where('name', 'news-type')->first()->display_name  }}</p>
                                         </a>
@@ -174,7 +174,7 @@
                                     @endif
                                     @if($login_user->can('news'))
                                     <li class="nav-item">
-                                        <a href="/news" class="nav-link">
+                                        <a href="/news" class="nav-link @php if($action_uri === 'news') echo 'active' @endphp">
                                             <i class="nav-icon far fa-circle"></i>
                                             <p>{{ $news_manage->where('name', 'news')->first()->display_name  }}</p>
                                         </a>
@@ -195,8 +195,8 @@
                                     });
                             @endphp
                             @if($cooking_manage->count() > 0 && ($login_user->can('cooking-type') || $login_user->can('cooking')))
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
+                            <li class="nav-item @php if($action_uri === 'cooking-type' || $action_uri === 'cooking') echo 'menu-open' @endphp">
+                                <a href="#" class="nav-link @php if($action_uri === 'cooking-type' || $action_uri === 'cooking') echo 'active' @endphp">
                                     <i class="nav-icon fab fa-youtube"></i>
                                     <p>
                                         烹飪教學
@@ -206,7 +206,7 @@
                                 <ul class="nav nav-treeview">
                                     @if($login_user->can('cooking-type'))
                                     <li class="nav-item">
-                                        <a href="/cooking-type" class="nav-link">
+                                        <a href="/cooking-type" class="nav-link @php if($action_uri === 'cooking-type') echo 'active' @endphp">
                                             <i class="nav-icon far fa-circle"></i>
                                             <p>{{ $cooking_manage->where('name', 'cooking-type')->first()->display_name  }}</p>
                                         </a>
@@ -214,7 +214,7 @@
                                     @endif
                                     @if($login_user->can('cooking'))
                                     <li class="nav-item">
-                                        <a href="/cooking" class="nav-link">
+                                        <a href="/cooking" class="nav-link @php if($action_uri === 'cooking') echo 'active' @endphp">
                                             <i class="nav-icon far fa-circle"></i>
                                             <p>{{ $cooking_manage->where('name', 'cooking')->first()->display_name  }}</p>
                                         </a>
@@ -235,8 +235,8 @@
                                     });
                             @endphp
                             @if($product_manage->count() > 0 && ($login_user->can('product-type') || $login_user->can('product')))
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
+                            <li class="nav-item @php if($action_uri === 'product-type' || $action_uri === 'product') echo 'menu-open' @endphp">
+                                <a href="#" class="nav-link @php if($action_uri === 'product-type' || $action_uri === 'product') echo 'active' @endphp">
                                     <i class="nav-icon fas fa-fish"></i>
                                     <p>
                                         產品設定
@@ -246,7 +246,7 @@
                                 <ul class="nav nav-treeview">
                                     @if($login_user->can('product-type'))
                                     <li class="nav-item">
-                                        <a href="/product-type" class="nav-link">
+                                        <a href="/product-type" class="nav-link @php if($action_uri === 'product-type') echo 'active' @endphp">
                                             <i class="nav-icon far fa-circle"></i>
                                             <p>{{ $product_manage->where('name', 'product-type')->first()->display_name  }}</p>
                                         </a>
@@ -254,7 +254,7 @@
                                     @endif
                                     @if($login_user->can('product'))
                                     <li class="nav-item">
-                                        <a href="/product" class="nav-link">
+                                        <a href="/product" class="nav-link @php if($action_uri === 'product') echo 'active' @endphp">
                                             <i class="nav-icon far fa-circle"></i>
                                             <p>{{ $product_manage->where('name', 'product')->first()->display_name  }}</p>
                                         </a>
@@ -275,8 +275,8 @@
                                     });
                             @endphp
                             @if($put_on_manage->count() > 0 && ($login_user->can('directory') || $login_user->can('put-on')))
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
+                            <li class="nav-item @php if($action_uri === 'directory' || $action_uri === 'put-on') echo 'menu-open' @endphp">
+                                <a href="#" class="nav-link @php if($action_uri === 'directory' || $action_uri === 'put-on') echo 'active' @endphp">
                                     <i class="nav-icon fas fa-sitemap"></i>
                                     <p>
                                         上架設定
@@ -286,7 +286,7 @@
                                 <ul class="nav nav-treeview">
                                     @if($login_user->can('directory'))
                                     <li class="nav-item">
-                                        <a href="/directory" class="nav-link">
+                                        <a href="/directory" class="nav-link @php if($action_uri === 'directory') echo 'active' @endphp">
                                             <i class="nav-icon far fa-circle"></i>
                                             <p>{{ $put_on_manage->where('name', 'directory')->first()->display_name  }}</p>
                                         </a>
@@ -294,7 +294,7 @@
                                     @endif
                                     @if($login_user->can('put-on'))
                                     <li class="nav-item">
-                                        <a href="/put-on" class="nav-link">
+                                        <a href="/put-on" class="nav-link @php if($action_uri === 'put-on') echo 'active' @endphp">
                                             <i class="nav-icon far fa-circle"></i>
                                             <p>{{ $put_on_manage->where('name', 'put-on')->first()->display_name  }}</p>
                                         </a>
@@ -316,7 +316,7 @@
                             @endphp
                             @if($member_manage->count() > 0 && $login_user->can('member'))
                             <li class="nav-item">
-                                <a href="/member" class="nav-link">
+                                <a href="/member" class="nav-link @php if($action_uri === 'member') echo 'active' @endphp">
                                     <i class="nav-icon fas fa-user-tie"></i>
                                     <p>會員管理</p>
                                 </a>

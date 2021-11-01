@@ -7,8 +7,6 @@ import { pagination } from './components/pagination.js';
 import { Fancybox, Carousel, Panzoom } from "@fancyapps/ui";
 import "@fancyapps/ui/dist/fancybox.css";
 
-
-
 window.app = createApp({
     components: {
         'components-search': search,

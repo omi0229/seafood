@@ -61,8 +61,30 @@ class DirectoryRepository extends Repository
 
             foreach ($row['put_ons'] as $product_key => $product_row) {
                 $list[$key]['put_ons'][$product_key]['id'] = $product_row->hash_id;
-                $list[$key]['put_ons'][$product_key]['web_img_path'] = $product_row->product && $product_row->product->web_img && Storage::disk('s3')->exists($product_row->product->web_img) ? env('CDN_URL') . $product_row->product->web_img : null;
-                $list[$key]['put_ons'][$product_key]['mobile_img_path'] = $product_row->product && $product_row->product->mobile_img && Storage::disk('s3')->exists($product_row->product->mobile_img) ? env('CDN_URL') . $product_row->product->mobile_img : null;
+
+                $product_row->product->load('product_images');
+                $list[$key]['put_ons'][$product_key]['web_img_list'] = $list[$key]['put_ons'][$product_key]['mobile_img_list'] = [];
+                $list[$key]['put_ons'][$product_key]['img'] = null;
+                foreach ($product_row->product->product_images as $img_key => $img_row) {
+                    $type = $img_row->type === 'web' ? 'web_img_list' : 'mobile_img_list';
+                    $list[$key]['put_ons'][$product_key][$type][$img_key]['path'] = Storage::disk('s3')->exists($img_row->path) ? env('CDN_URL') . $img_row->path : null;
+
+                    if ($product_row->product->product_front_cover_image_id === $img_row->id) {
+                        $list[$key]['put_ons'][$product_key]['img'] = $list[$key]['put_ons'][$product_key][$type][$img_key]['path'];
+                    }
+                }
+
+                $web_img_list = collect($list[$key]['put_ons'][$product_key]['web_img_list']);
+                $list[$key]['put_ons'][$product_key]['web_img_list'] = $web_img_list->values()->toArray();
+
+                $mobile_img_list = collect($list[$key]['put_ons'][$product_key]['mobile_img_list']);
+                $list[$key]['put_ons'][$product_key]['mobile_img_list'] = $mobile_img_list->values()->toArray();
+
+                if (!$list[$key]['put_ons'][$product_key]['product']['product_front_cover_image_id'] && $web_img_list->count() > 0) {
+                    $list[$key]['put_ons'][$product_key]['img'] = $web_img_list->first()['path'];
+                }
+
+                unset($list[$key]['put_ons'][$product_key]['product']['product_front_cover_image_id']);
             }
         }
 

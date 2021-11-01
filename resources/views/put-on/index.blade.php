@@ -74,6 +74,7 @@
                                         <input type="checkbox" class="checkbox-size" v-model="checkAll">
                                     </th>
                                     <th>產品名稱</th>
+                                    <th class="text-center">縮圖</th>
                                     <th class="text-center">上架時間</th>
                                     <th class="text-center">下架時間</th>
                                     <th class="text-center">上架狀態</th>
@@ -89,10 +90,15 @@
                                         <td class="align-middle">
                                             <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check">
                                         </td>
-                                        <td> ${item.product.title} </td>
-                                        <td class="text-center"> ${item.start_date ? item.start_date : '未設定'} </td>
-                                        <td class="text-center"> ${item.end_date ? item.end_date : '未設定'} </td>
-                                        <td class="text-center">
+                                        <td class="align-middle"> ${item.product.title} </td>
+                                        <td class="align-middle text-center">
+                                            <a data-fancybox :href="item.img">
+                                                <img :src="item.img" />
+                                            </a>
+                                        </td>
+                                        <td class="align-middle text-center"> ${item.start_date ? item.start_date : '未設定'} </td>
+                                        <td class="align-middle text-center"> ${item.end_date ? item.end_date : '未設定'} </td>
+                                        <td class="align-middle text-center">
                                             <!-- v-if -->
                                             <span class="right badge badge-success" v-if="item.status == '1'">已上架</span>
                                             <span class="right badge badge-info" v-else-if="item.status == '2'">已排程</span>

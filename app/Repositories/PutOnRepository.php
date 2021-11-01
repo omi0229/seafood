@@ -39,6 +39,31 @@ class PutOnRepository extends Repository
             $list[$key]['id'] = $row->hash_id;
             $list[$key]['product'] = $row->product->toArray();
             $list[$key]['product']['id'] = $row->product->hash_id;
+
+            $row->product->load('product_images');
+            $list[$key]['web_img_list'] = $list[$key]['mobile_img_list'] = [];
+            $list[$key]['img'] = null;
+            foreach ($row->product->product_images as $img_key => $img_row) {
+                $type = $img_row->type === 'web' ? 'web_img_list' : 'mobile_img_list';
+                $list[$key][$type][$img_key]['path'] = Storage::disk('s3')->exists($img_row->path) ? env('CDN_URL') . $img_row->path : null;
+
+                if ($row->product->product_front_cover_image_id === $img_row->id) {
+                    $list[$key]['img'] = $list[$key][$type][$img_key]['path'];
+                }
+            }
+
+            $web_img_list = collect($list[$key]['web_img_list']);
+            $list[$key]['web_img_list'] = $web_img_list->values()->toArray();
+
+            $mobile_img_list = collect($list[$key]['mobile_img_list']);
+            $list[$key]['mobile_img_list'] = $mobile_img_list->values()->toArray();
+
+            if (!$list[$key]['product']['product_front_cover_image_id'] && $web_img_list->count() > 0) {
+                $list[$key]['img'] = $web_img_list->first()['path'];
+            }
+
+            unset($list[$key]['product']['product_front_cover_image_id']);
+
         }
 
         return $list;
@@ -87,8 +112,31 @@ class PutOnRepository extends Repository
         $item['directories_name'] = $info->directory->name;
         $item['product']['description_html'] = nl2br($info->product->description);
         $item['product']['specification'] = $info->product->product_specification;
-        $item['product']['web_img_path'] = $info->product->web_img && Storage::disk('s3')->exists($info->product->web_img) ? env('CDN_URL') . $info->product->web_img : null;
-        $item['product']['mobile_img_path'] = $info->product->mobile_img && Storage::disk('s3')->exists($info->product->mobile_img) ? env('CDN_URL') . $info->product->mobile_img : null;
+
+        $info->product->load('product_images');
+        $item['web_img_list'] = $item['mobile_img_list'] = [];
+        $item['img'] = null;
+        foreach ($info->product->product_images as $key => $row) {
+            $type = $row->type === 'web' ? 'web_img_list' : 'mobile_img_list';
+            $item[$type][$key]['path'] = Storage::disk('s3')->exists($row->path) ? env('CDN_URL') . $row->path : null;
+
+            if ($info->product->product_front_cover_image_id === $row->id) {
+                $item['img'] = $item[$type][$key]['path'];
+            }
+        }
+
+        $web_img_list = collect($item['web_img_list']);
+        $item['web_img_list'] = $web_img_list->values()->toArray();
+
+        $mobile_img_list = collect($item['mobile_img_list']);
+        $item['mobile_img_list'] = $mobile_img_list->values()->toArray();
+
+        if (!$item['product']['product_front_cover_image_id'] && $web_img_list->count() > 0) {
+            $item['img'] = $web_img_list->first()['path'];
+        }
+
+        unset($item['product']['product_front_cover_image_id']);
+
         return $item;
     }
 

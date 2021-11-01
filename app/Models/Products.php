@@ -17,6 +17,7 @@ class Products extends Model
         'content',
         'keywords',
         'description',
+        'product_front_cover_image_id',
         'web_img_name',
         'web_img',
         'mobile_img_name',
@@ -33,6 +34,11 @@ class Products extends Model
     public function product_specification()
     {
         return $this->hasMany('App\Models\ProductSpecifications', 'product_id');
+    }
+
+    public function product_images()
+    {
+        return $this->hasMany('App\Models\ProductImages', 'product_id');
     }
 
     public function put_ons()

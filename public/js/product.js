@@ -63108,12 +63108,15 @@ window.app = createApp({
       CKEDITOR.instances["content"].setData(info.content);
       set_info.info.keywords = info.keywords ? info.keywords.split(',') : [];
       set_info.info.description = info.description;
-      set_info.info.web_img_name = info.web_img_name || '請選擇檔案';
-      set_info.info.web_img = '';
-      set_info.info.web_img_path = info.web_img_path;
-      set_info.info.mobile_img_name = info.mobile_img_name || '請選擇檔案';
-      set_info.info.mobile_img = '';
-      set_info.info.mobile_img_path = info.mobile_img_path;
+      set_info.info.product_front_cover_image_id = info.product_front_cover_image_id;
+      info.web_img_list.forEach(function (v) {
+        v["delete"] = 0;
+      });
+      set_info.info.web_img_list = info.web_img_list;
+      info.mobile_img_list.forEach(function (v) {
+        v["delete"] = 0;
+      });
+      set_info.info.mobile_img_list = info.mobile_img_list;
       set_info.info.sales_status = info.sales_status;
       set_info.info.show_status = info.show_status;
     },
@@ -63265,14 +63268,11 @@ var set_info = createApp({
         content: '',
         keywords: [],
         description: '',
-        web_img_delete: 0,
-        web_img_name: '請選擇檔案',
-        web_img: '',
-        web_img_path: '',
-        mobile_img_delete: 0,
-        mobile_img_name: '請選擇檔案',
-        mobile_img: '',
-        mobile_img_path: '',
+        product_front_cover_image_id: '',
+        web_img_list: [],
+        web_new_img_list: [],
+        mobile_img_list: [],
+        mobile_new_img_list: [],
         sales_status: '0',
         show_status: '0'
       },
@@ -63285,6 +63285,27 @@ var set_info = createApp({
     };
   },
   delimiters: ["${", "}"],
+  computed: {
+    fileRead: function fileRead() {
+      return function (file) {
+        return URL.createObjectURL(file);
+      };
+    },
+    imageCount: function imageCount() {
+      var list = _.filter(this.info.web_img_list, function (v) {
+        return v["delete"] === 0;
+      });
+
+      return list.length;
+    },
+    imageMobileCount: function imageMobileCount() {
+      var list = _.filter(this.info.mobile_img_list, function (v) {
+        return v["delete"] === 0;
+      });
+
+      return list.length;
+    }
+  },
   mounted: function mounted() {
     var _this7 = this;
 
@@ -63301,17 +63322,15 @@ var set_info = createApp({
         });
       });
     },
-    deletePicture: function deletePicture(type) {
+    deletePicture: function deletePicture(type, key, origin) {
       if (type == 'web') {
-        this.info.web_img_delete = 1;
-        this.info.web_img_name = '請選擇檔案';
-        this.info.web_img = '';
-        this.$refs.web_img.value = '';
+        origin ? this.info.web_img_list[key]["delete"] = 1 : this.info.web_new_img_list = this.info.web_new_img_list.filter(function (v, k) {
+          return k != key;
+        });
       } else if (type == 'mobile') {
-        this.info.mobile_img_delete = 1;
-        this.info.mobile_img_name = '請選擇檔案';
-        this.info.mobile_img = '';
-        this.$refs.mobile_img.value = '';
+        origin ? this.info.mobile_img_list[key]["delete"] = 1 : this.info.mobile_new_img_list = this.info.mobile_new_img_list.filter(function (v, k) {
+          return k != key;
+        });
       }
     },
     addKeyword: function addKeyword() {
@@ -63345,27 +63364,83 @@ var set_info = createApp({
       this.info.content = '';
       this.info.keywords = [];
       this.info.description = '';
-      this.info.web_img_delete = 0;
-      this.info.web_img_name = '請選擇檔案';
-      this.info.web_img = null;
-      this.info.web_img_path = '';
-      this.info.mobile_img_delete = 0;
-      this.info.mobile_img_name = '請選擇檔案';
-      this.info.mobile_img = null;
-      this.info.mobile_img_path = '';
+      this.info.product_front_cover_image_id = '';
+      this.info.web_img_list = [];
+      this.info.web_new_img_list = [];
+      this.info.mobile_img_list = [];
+      this.info.mobile_new_img_list = [];
       this.info.sales_status = '0';
       this.info.show_status = '0';
     },
+    fileAuth: function fileAuth(list, type) {
+      var file_type = ['image/jpeg', 'image/png', 'image/gif'];
+      var file_limit_size = 2097152;
+      var file_limit_count = 5;
+      var img_list = type === 'web' ? _.filter(this.info.web_img_list, function (v) {
+        return v["delete"] === 0;
+      }) : _.filter(this.info.mobile_img_list, function (v) {
+        return v["delete"] === 0;
+      });
+      var length = type === 'web' ? img_list.length + this.info.web_new_img_list.length + list.length : img_list.length + this.info.mobile_new_img_list.length + list.length;
+
+      if (length > file_limit_count) {
+        return {
+          status: false,
+          message: "\u6700\u591A\u53EA\u80FD\u9078\u64C7".concat(file_limit_count, "\u500B\u6A94\u6848")
+        };
+      }
+
+      var type_error_count = 0;
+      var limit_error_count = 0;
+
+      for (var f = 0; f < list.length; f++) {
+        if (!file_type.includes(list[f].type)) {
+          type_error_count++;
+        }
+
+        if (list[f].size > file_limit_size) {
+          limit_error_count++;
+        }
+      }
+
+      if (type_error_count > 0) {
+        return {
+          status: false,
+          message: '請選擇指定的檔案格式'
+        };
+      }
+
+      if (limit_error_count > 0) {
+        return {
+          status: false,
+          message: "\u6A94\u6848\u5927\u5C0F\u4E0D\u5F97\u8D85\u904E".concat(file_limit_size / 1024 / 1024, "MB")
+        };
+      }
+
+      return {
+        status: true
+      };
+    },
     file: function file(e, type) {
-      if (e.target && e.target.files[0]) {
-        if (type == 'web') {
-          this.info.web_img_delete = 0;
-          this.info.web_img_name = e.target.files[0].name;
-          this.info.web_img = e.target.files[0];
-        } else if (type == 'mobile') {
-          this.info.mobile_img_delete = 0;
-          this.info.mobile_img_name = e.target.files[0].name;
-          this.info.mobile_img = e.target.files[0];
+      if (e.target && e.target.files.length > 0) {
+        var _this$fileAuth = this.fileAuth(e.target.files, type),
+            status = _this$fileAuth.status,
+            message = _this$fileAuth.message;
+
+        if (!status) {
+          Toast.fire({
+            icon: 'error',
+            title: message
+          });
+          return false;
+        }
+
+        for (var f = 0; f < e.target.files.length; f++) {
+          if (type === 'web') {
+            this.info.web_new_img_list.push(e.target.files[f]);
+          } else {
+            this.info.mobile_new_img_list.push(e.target.files[f]);
+          }
         }
       }
     },
@@ -63419,12 +63494,31 @@ var set_info = createApp({
       formData.append("content", CKEDITOR.instances["content"].getData());
       formData.append("keywords", this.info.keywords);
       formData.append("description", this.info.description);
-      formData.append("web_img_delete", this.info.web_img_delete);
-      formData.append("web_img_name", this.info.web_img_name);
-      formData.append("web_img", this.info.web_img);
-      formData.append("mobile_img_delete", this.info.mobile_img_delete);
-      formData.append("mobile_img_name", this.info.mobile_img_name);
-      formData.append("mobile_img", this.info.mobile_img);
+      formData.append("product_front_cover_image_id", this.info.product_front_cover_image_id);
+      var delete_list = '';
+      this.info.web_img_list.forEach(function (v, k) {
+        if (v["delete"] === 1) {
+          delete_list += !delete_list ? v.id : ',' + v.id;
+        }
+      });
+      formData.append("web_img_delete_list", delete_list);
+
+      for (var f = 0; f < this.info.web_new_img_list.length; f++) {
+        formData.append("web_new_img_list[".concat(f, "]"), this.info.web_new_img_list[f]);
+      }
+
+      var mobile_delete_list = '';
+      this.info.mobile_img_list.forEach(function (v, k) {
+        if (v["delete"] === 1) {
+          mobile_delete_list += !mobile_delete_list ? v.id : ',' + v.id;
+        }
+      });
+      formData.append("mobile_img_delete_list", mobile_delete_list);
+
+      for (var _f = 0; _f < this.info.mobile_new_img_list.length; _f++) {
+        formData.append("mobile_new_img_list[".concat(_f, "]"), this.info.mobile_new_img_list[_f]);
+      }
+
       formData.append("sales_status", this.info.sales_status);
       formData.append("show_status", this.info.show_status);
       var config = {

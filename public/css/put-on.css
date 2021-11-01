@@ -1,3 +1,10 @@
+.content img {
+  height: 50px;
+  max-width: 200px;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
 .check-list {
   min-height: 88px;
   max-height: 88px;

@@ -176,28 +176,104 @@
                     <div class="form-group">
                         <div class="d-flex align-items-center">
                             <label for="web_img">電腦版圖片</label>
-                            <i class="fas fa-minus-circle text-danger ml-2 mb-2 cursor" title="圖片刪除" @click="deletePicture('web')"></i>
-                            <a data-fancybox class="ml-2 mb-2" :href="info.web_img_path">
-                                <i class="fas fa-image text-info cursor" title="圖片預覽" v-show="mode == 'modify' && info.web_img_path"></i>
-                            </a>
                         </div>
                         <div class="custom-file">
-                            <input ref="web_img" type="file" class="custom-file-input" id="web_img" @change="(e) => file(e, 'web')">
-                            <label class="custom-file-label s-14" for="web_img">${info.web_img_name}</label>
+                            <label for="web_img" class="btn btn-sm btn-primary">選擇檔案</label>
+                            <input ref="web_img" type="file" class="custom-file-input d-none" id="web_img" multiple @change="(e) => file(e, 'web')">
+                        </div>
+                        <div class="table-responsive" v-show="imageCount > 0 || info.web_new_img_list.length > 0">
+                            <!-- v-for -->
+                            <table class="table table-sm table-bordered table-hover text-nowrap">
+                                <thead>
+                                    <tr>
+                                        <th class="width percent-5">指定封面圖</th>
+                                        <th class="width percent-20">縮圖</th>
+                                        <th class="width percent-70">檔案名稱</th>
+                                        <th class="width percent-5" class="text-center">刪除</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template v-for="(item, key) in info.web_img_list">
+                                        <tr class="s-14" v-show="item.delete == 0">
+                                            <td class="text-center align-middle" @click="info.product_front_cover_image_id = item.id">
+                                                <input type="radio" :value="item.id" v-model="info.product_front_cover_image_id">
+                                            </td>
+                                            <td class="text-center align-middle">
+                                                <a data-fancybox :href="item.path">
+                                                    <img :src="item.path" width="120" />
+                                                </a>
+                                            </td>
+                                            <td class="align-middle">${item.name}</td>
+                                            <td class="text-center align-middle">
+                                                <i class="fas fa-minus-circle text-danger cursor" title="圖片刪除" @click="deletePicture('web', key, true)"></i>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                    <!-- v-for -->
+                                    <tr class="s-14" v-for="(item, key) in info.web_new_img_list">
+                                        <td class="text-center align-middle" @click="info.product_front_cover_image_id = 'new.' + key">
+                                            <input type="radio" :value="'new.' + key" v-model="info.product_front_cover_image_id">
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <a data-fancybox :href="fileRead(item)">
+                                                <img :src="fileRead(item)" width="120" />
+                                            </a>
+                                        </td>
+                                        <td class="align-middle">${item.name}</td>
+                                        <td class="text-center align-middle">
+                                            <i class="fas fa-minus-circle text-danger cursor" title="圖片刪除" @click="deletePicture('web', key)"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="d-flex align-items-center">
                             <label for="mobile_img">手機版圖片</label>
-                            <i class="fas fa-minus-circle text-danger ml-2 mb-2 cursor" title="圖片刪除" @click="deletePicture('mobile')"></i>
-                            <a data-fancybox class="ml-2 mb-2" :href="info.mobile_img_path">
-                                <i class="fas fa-image text-info cursor" title="圖片預覽" v-show="mode == 'modify' && info.mobile_img_path"></i>
-                            </a>
                         </div>
                         <div class="custom-file">
-                            <input ref="mobile_img" type="file" class="custom-file-input" id="mobile_img" @change="(e) => file(e, 'mobile')">
-                            <label class="custom-file-label s-14" for="mobile_img">${info.mobile_img_name}</label>
+                            <label for="mobile_img" class="btn btn-sm btn-primary">選擇檔案</label>
+                            <input ref="mobile_img" type="file" class="custom-file-input d-none" id="mobile_img" multiple @change="(e) => file(e, 'mobile')">
                         </div>
+                        <div class="table-responsive" v-show="imageMobileCount > 0 || info.mobile_new_img_list.length > 0">
+                            <!-- v-for -->
+                            <table class="table table-sm table-bordered table-hover text-nowrap">
+                                <thead>
+                                    <tr>
+                                        <th class="width percent-20">縮圖</th>
+                                        <th class="width percent-70">檔案名稱</th>
+                                        <th class="width percent-5" class="text-center">刪除</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template v-for="(item, key) in info.mobile_img_list">
+                                        <tr class="s-14" v-show="item.delete == 0">
+                                            <td class="text-center align-middle">
+                                                <a data-fancybox :href="item.path">
+                                                    <img :src="item.path" width="120" />
+                                                </a>
+                                            </td>
+                                            <td class="align-middle">${item.name}</td>
+                                            <td class="text-center align-middle">
+                                                <i class="fas fa-minus-circle text-danger cursor" title="圖片刪除" @click="deletePicture('mobile', key, true)"></i>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                    <!-- v-for -->
+                                    <tr class="s-14" v-for="(item, key) in info.mobile_new_img_list">
+                                        <td class="text-center align-middle">
+                                            <img :src="fileRead(item)" width="120" />
+                                        </td>
+                                        <td class="align-middle">${item.name}</td>
+                                        <td class="text-center align-middle">
+                                            <i class="fas fa-minus-circle text-danger cursor" title="圖片刪除" @click="deletePicture('mobile', key)"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
                 </div>
                 <div class="modal-footer justify-content-end">

@@ -24,9 +24,9 @@ class ProductServices
         ];
 
         $tip = [
-            'news_types_id.required' => '請選擇分類',
+            'product_types_id.required' => '請選擇分類',
             'title.required' => '請填寫消息名稱',
-            'title.unique' => '已有重複消息名稱',
+            'title.unique' => '已有重複產品名稱',
         ];
 
         return Validator::make($inputs, $auth, $tip);

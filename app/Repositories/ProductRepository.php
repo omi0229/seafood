@@ -4,18 +4,22 @@ namespace App\Repositories;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Repositories\Repository;
 use App\Models\Products;
 use App\Models\ProductTypes;
+use App\Models\ProductImages;
+use App\Repositories\Repository;
+use App\Repositories\ProductImageRepository;
 
 class ProductRepository extends Repository
 {
-    protected $model, $types;
+    protected $model, $types, $images, $image_repository;
 
-    public function __construct(Products $model, ProductTypes $types)
+    public function __construct(Products $model, ProductTypes $types, ProductImages $images, ProductImageRepository $image_repository)
     {
         $this->model = $model;
         $this->types = $types;
+        $this->images = $images;
+        $this->image_repository = $image_repository;
     }
 
     public function model()
@@ -48,8 +52,21 @@ class ProductRepository extends Repository
             $list[$key]['id'] = $row->hash_id;
             $list[$key]['product_types_id'] = $row->product_types->hash_id ?? '';
             $list[$key]['product_types_name'] = $row->product_types->name ?? '';
-            $list[$key]['web_img_path'] = $row->web_img && Storage::disk('s3')->exists($row->web_img) ? env('CDN_URL') . $row->web_img : null;
-            $list[$key]['mobile_img_path'] = $row->mobile_img && Storage::disk('s3')->exists($row->mobile_img) ? env('CDN_URL') . $row->mobile_img : null;
+            $list[$key]['product_front_cover_image_id'] = $row->product_images->where('id', $row->product_front_cover_image_id)->first()->hash_id ?? '';
+
+            $list[$key]['web_img_list'] = $list[$key]['mobile_img_list'] = [];
+            foreach ($row->product_images as $img_key => $img_row) {
+                $type = $img_row->type === 'web' ? 'web_img_list' : 'mobile_img_list';
+                $list[$key][$type][$img_key]['id'] = $img_row->hash_id;
+                $list[$key][$type][$img_key]['name'] = $img_row->name;
+                $list[$key][$type][$img_key]['product_id'] = $img_row->product_id;
+                $list[$key][$type][$img_key]['delete'] = 0;
+                $list[$key][$type][$img_key]['path'] = Storage::disk('s3')->exists($img_row->path) ? env('CDN_URL') . $img_row->path : null;
+                $list[$key][$type][$img_key]['type'] = $img_row->type;
+            }
+
+            $list[$key]['web_img_list'] = collect($list[$key]['web_img_list'])->values()->toArray();
+            $list[$key]['mobile_img_list'] = collect($list[$key]['mobile_img_list'])->values()->toArray();
         }
 
         return $list;
@@ -107,21 +124,20 @@ class ProductRepository extends Repository
         unset($inputs['id']);
         $inputs['product_types_id'] = $this->types::decodeSlug($inputs['product_types_id']);
 
-        if ($request->hasFile('web_img')) {
-            $inputs['web_img'] = $request->file('web_img')->store('product');
-        } else {
-            $inputs['web_img_name'] = null;
-            $inputs['web_img'] = null;
+        $product_front_cover_image_array = explode('.', $inputs['product_front_cover_image_id']);
+        unset($inputs['product_front_cover_image_id']);
+
+        $model = $this->model::create($inputs);
+
+        # 新增產品圖片
+        $new_images_array = $this->image_repository->createImage('web_new_img_list', $model->id, 'web');
+        if (isset($product_front_cover_image_array[0]) && $product_front_cover_image_array[0] === 'new') {
+            $key = (int)$product_front_cover_image_array[1];
+            $model->product_front_cover_image_id = $new_images_array[$key];
+            $model->save();
         }
 
-        if ($request->hasFile('mobile_img')) {
-            $inputs['mobile_img'] = $request->file('mobile_img')->store('product');
-        } else {
-            $inputs['mobile_img_name'] = null;
-            $inputs['mobile_img'] = null;
-        }
-
-        $this->model::create($inputs);
+        $this->image_repository->createImage('mobile_new_img_list', $model->id, 'mobile');
 
         return true;
     }
@@ -130,8 +146,8 @@ class ProductRepository extends Repository
     {
         $product_id = $inputs['id'];
 
-        $web_img_delete = (int)$request->all()['web_img_delete'] ?? 0;
-        $mobile_img_delete = (int)$request->all()['mobile_img_delete'] ?? 0;
+        $web_img_delete_list = data_get($request->all(), 'web_img_delete_list') ? explode(',', data_get($request->all(), 'web_img_delete_list')) : [];
+        $mobile_img_delete_list = data_get($request->all(), 'mobile_img_delete_list') ? explode(',', data_get($request->all(), 'mobile_img_delete_list')) : [];
 
         unset($inputs['id']);
 
@@ -139,31 +155,41 @@ class ProductRepository extends Repository
         if ($product) {
             $inputs['product_types_id'] = $this->types::decodeSlug($inputs['product_types_id']);
 
-            if (!$web_img_delete) {
-                if ($request->hasFile('web_img')) {
-                    $inputs['web_img'] = $request->file('web_img')->store('product');
-                } else {
-                    $inputs['web_img_name'] = !$product['web_img'] ? null : $inputs['web_img_name'];
-                }
-            } else {
-                $inputs['web_img_name'] = null;
-                $inputs['web_img'] = null;
-                Storage::disk('s3')->delete($product->web_img);
-            }
+            $product_front_cover_image_array = explode('.', $inputs['product_front_cover_image_id']);
 
-            if (!$mobile_img_delete) {
-                if ($request->hasFile('mobile_img')) {
-                    $inputs['mobile_img'] = $request->file('mobile_img')->store('product');
-                } else {
-                    $inputs['mobile_img_name'] = !$product['mobile_img'] ? null : $inputs['mobile_img_name'];
-                }
+            if (isset($product_front_cover_image_array[0]) && $product_front_cover_image_array[0] === 'new') {
+                unset($inputs['product_front_cover_image_id']);
             } else {
-                $inputs['mobile_img_name'] = null;
-                $inputs['mobile_img'] = null;
-                Storage::disk('s3')->delete($product->mobile_img);
+                $inputs['product_front_cover_image_id'] = $this->images::decodeSlug($inputs['product_front_cover_image_id']);
             }
 
             $product->update($inputs);
+
+            # 新增產品圖片
+            $new_images_array = $this->image_repository->createImage('web_new_img_list', $product->id, 'web');
+            if (isset($product_front_cover_image_array[0]) && $product_front_cover_image_array[0] === 'new') {
+                $key = (int)$product_front_cover_image_array[1];
+                $product->product_front_cover_image_id = $new_images_array[$key];
+                $product->save();
+            }
+
+            if (count($web_img_delete_list) > 0) {
+                $delete_array = $this->images->whereIn('id', array_map([$this->images, 'decodeSlug'], $web_img_delete_list))->get();
+                foreach ($delete_array as $item) {
+                    Storage::disk('s3')->delete($item->path);
+                    $item->delete();
+                }
+            }
+
+            $this->image_repository->createImage('mobile_new_img_list', $product->id, 'mobile');
+
+            if (count($mobile_img_delete_list) > 0) {
+                $delete_array = $this->images->whereIn('id', array_map([$this->images, 'decodeSlug'], $mobile_img_delete_list))->get();
+                foreach ($delete_array as $item) {
+                    Storage::disk('s3')->delete($item->path);
+                    $item->delete();
+                }
+            }
 
             return true;
         }

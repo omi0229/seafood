@@ -41621,7 +41621,55 @@ var set_info = createApp({
       this.info.mobile_img = null;
       this.info.mobile_img_path = '';
     },
+    fileAuth: function fileAuth(list, type) {
+      var file_type = ['image/jpeg', 'image/png', 'image/gif'];
+      var file_limit_size = 5242880;
+      var type_error_count = 0;
+      var limit_error_count = 0;
+
+      for (var f = 0; f < list.length; f++) {
+        if (!file_type.includes(list[f].type)) {
+          type_error_count++;
+        }
+
+        if (list[f].size > file_limit_size) {
+          limit_error_count++;
+        }
+      }
+
+      if (type_error_count > 0) {
+        type === 'web' ? this.$refs.web_img.value = '' : this.$refs.mobile_img.value = '';
+        return {
+          status: false,
+          message: '請選擇指定的檔案格式'
+        };
+      }
+
+      if (limit_error_count > 0) {
+        type === 'web' ? this.$refs.web_img.value = '' : this.$refs.mobile_img.value = '';
+        return {
+          status: false,
+          message: "\u6A94\u6848\u5927\u5C0F\u4E0D\u5F97\u8D85\u904E".concat(file_limit_size / 1024 / 1024, "MB")
+        };
+      }
+
+      return {
+        status: true
+      };
+    },
     file: function file(e, type) {
+      var _this$fileAuth = this.fileAuth(e.target.files, type),
+          status = _this$fileAuth.status,
+          message = _this$fileAuth.message;
+
+      if (!status) {
+        Toast.fire({
+          icon: 'error',
+          title: message
+        });
+        return false;
+      }
+
       if (e.target && e.target.files[0]) {
         if (type == 'web') {
           this.info.web_img_delete = 0;
