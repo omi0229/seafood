@@ -20,9 +20,13 @@ class PutOnRepository extends Repository
     {
         $keywords = data_get($params, 'keywords');
         $directories_id = data_get($params, 'directories_id');
+        $status = data_get($params, 'status');
 
         # 有 目錄ID
         $data = $directories_id ? $this->model::with('product')->where('directories_id', Directory::decodeSlug($directories_id)) : $this->model::with('product');
+
+        # 商品是否有開放
+        $data = $status === 1 ? $data->where('status', $status) : $data;
 
         # 有 關鍵字
         $data = !$keywords ? $data : $data->whereHas('product', function (Builder $query) use ($keywords) {
@@ -85,21 +89,7 @@ class PutOnRepository extends Repository
         $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * env('PRODUCT_PAGE_ITEM_COUNT', 10) : null;
         $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(env('PRODUCT_PAGE_ITEM_COUNT', 10))->get() : $data->get();
 
-        $list = [];
-        foreach ($data as $key => $row) {
-            array_push($list, json_decode($row, true));
-            $list[$key]['id'] = $row->hash_id;
-
-            $web_img_path = $row->product->web_img && Storage::disk('s3')->exists($row->product->web_img) ? env('CDN_URL') . $row->product->web_img : null;
-            $mobile_img_path = $row->product->mobile_img && Storage::disk('s3')->exists($row->product->mobile_img) ? env('CDN_URL') . $row->product->web_img : null;
-
-            $list[$key]['product'] = $row->product->toArray();
-            $list[$key]['product']['id'] = $row->product->hash_id;
-            $list[$key]['web_img_path'] = $list[$key]['product']['web_img_path'] = $web_img_path;
-            $list[$key]['mobile_img_path'] = $list[$key]['product']['mobile_img_path'] = $mobile_img_path;
-        }
-
-        return ['list' => $list, 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => env('PRODUCT_PAGE_ITEM_COUNT', 10)];
+        return ['list' => $this->list($page, ['directories_id' => $type_id, 'status' => 1]), 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => env('PRODUCT_PAGE_ITEM_COUNT', 10)];
     }
 
     public function apiInfo($id)
