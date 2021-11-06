@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Cart;
+use App\Http\Resources\CartResource;
 
 class CartController extends Controller
 {
@@ -21,7 +22,8 @@ class CartController extends Controller
 
     public function showCart(Request $request)
     {
-        return response()->Json(Cart::where('cart_id', $request->all()['cart_id'])->get()->toArray());
+        $data = data_get($request->all(), 'cart_id') ? Cart::with(['product_specification' => function ($query) { $query->with(['product']); }])->where('cart_id', $request->all()['cart_id'])->get() : [];
+        return CartResource::collection($data)->toResponse(app('request'))->getData(true);
     }
 
     public function addCart(Request $request)

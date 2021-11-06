@@ -17,6 +17,7 @@ class ProductSpecifications extends Model
         'original_price',
         'selling_price',
         'inventory',
+        'unit',
     ];
 
     public function product()

@@ -24,6 +24,7 @@ class ProductSpecificationServices
             'original_price' => 'required',
             'selling_price' => 'required',
             'inventory' => 'required',
+            'unit' => 'required',
         ];
 
         $tip = [
@@ -33,6 +34,7 @@ class ProductSpecificationServices
             'original_price.required' => '請填寫原價',
             'selling_price.required' => '請填寫售價',
             'inventory.required' => '請填寫庫存',
+            'unit.required' => '請填寫單位',
         ];
 
         return Validator::make($inputs, $auth, $tip);

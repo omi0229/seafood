@@ -63564,24 +63564,19 @@ var set_info = createApp({
 }).mount('#set-info');
 var set_specification = createApp({
   data: function data() {
+    var obj = {
+      id: null,
+      product_id: null,
+      name: '',
+      original_price: null,
+      selling_price: null,
+      inventory: null,
+      unit: null
+    };
     return {
-      info: {
-        id: null,
-        product_id: null,
-        name: '',
-        original_price: null,
-        selling_price: null,
-        inventory: null
-      },
+      info: JSON.parse(JSON.stringify(obj)),
       modify_key: null,
-      modify_info: {
-        id: null,
-        product_id: null,
-        name: '',
-        original_price: null,
-        selling_price: null,
-        inventory: null
-      },
+      modify_info: JSON.parse(JSON.stringify(obj)),
       list: [],
       new_specification: false,
       checkAll: false,
@@ -63610,6 +63605,7 @@ var set_specification = createApp({
       this.info.original_price = null;
       this.info.selling_price = null;
       this.info.inventory = null;
+      this.info.unit = null;
     },
     auth: function auth(data) {
       if (!data.name) {
@@ -63651,6 +63647,13 @@ var set_specification = createApp({
         return {
           auth: false,
           message: '庫存欄位請輸入數字！'
+        };
+      }
+
+      if (!data.unit) {
+        return {
+          auth: false,
+          message: '請輸入單位！'
         };
       }
 
@@ -63764,10 +63767,21 @@ var set_specification = createApp({
       this.modify_info.original_price = this.list[key].original_price;
       this.modify_info.selling_price = this.list[key].selling_price;
       this.modify_info.inventory = this.list[key].inventory;
+      this.modify_info.unit = this.list[key].unit;
       this.new_specification = false;
     },
     save: function save() {
       var _this12 = this;
+
+      var auth = this.auth(this.modify_info);
+
+      if (!auth.auth) {
+        Toast.fire({
+          icon: 'error',
+          title: auth.message
+        });
+        return false;
+      }
 
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)("\u78BA\u5B9A\u8B8A\u66F4\u898F\u683C\u8CC7\u6599\uFF1F").then(function (confirm) {
         if (confirm) {

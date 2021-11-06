@@ -15,4 +15,9 @@ class Cart extends Model
         'specifications_id',
         'count',
     ];
+
+    public function product_specification()
+    {
+        return $this->belongsTo('App\Models\ProductSpecifications', 'specifications_id');
+    }
 }

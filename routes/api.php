@@ -45,7 +45,6 @@ Route::post('member/forget', [MemberController::class, 'forget']);
 # 購物車
 Route::get('cart/get-cart-id', [CartController::class, 'getCartId']);
 Route::post('cart/get-cart-count', [CartController::class, 'getCartCount']);
-Route::post('cart/show-cart', [CartController::class, 'showCart']);
 Route::post('cart/add-cart', [CartController::class, 'addCart']);
 
 # 大圖輪播
@@ -66,6 +65,10 @@ Route::get('product/{type_id}/{page?}', [PutOnController::class, 'list']);
 Route::get('product-info/{id}', [PutOnController::class, 'info']);
 
 Route::middleware(['auth:member_api'])->group(function () {
+
+    # 購物車
+    Route::post('cart/show-cart', [CartController::class, 'showCart']);
+
     ### 會員中心
     # 編輯會員
     Route::post('member/update', [MemberController::class, 'update']);

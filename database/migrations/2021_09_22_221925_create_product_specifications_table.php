@@ -20,6 +20,7 @@ class CreateProductSpecificationsTable extends Migration
             $table->integer('original_price')->comment('原價');
             $table->integer('selling_price')->comment('售價');
             $table->integer('inventory')->comment('庫存');
+            $table->string('unit', 5)->comment('單位');
             $table->timestamps();
             $table->softDeletes();
 

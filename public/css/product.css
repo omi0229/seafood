@@ -25,3 +25,7 @@
 .specification-sub-title {
   height: 31px;
 }
+
+#set-specification table .width-12 {
+  width: 12%;
+}

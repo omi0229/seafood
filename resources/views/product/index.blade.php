@@ -318,19 +318,21 @@
                                         <input type="checkbox" class="checkbox-size" v-model="checkAll">
                                     </th>
                                     <th> 規格名稱 </th>
-                                    <th> 原價 </th>
-                                    <th> 售價 </th>
-                                    <th> 庫存 </th>
+                                    <th class="width-12"> 原價 </th>
+                                    <th class="width-12"> 售價 </th>
+                                    <th class="width-12"> 庫存 </th>
+                                    <th class="width-12"> 單位 </th>
                                     <th class="text-center"> 功能 </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td></td>
-                                    <td class="bg-light"> <input name="name" type="text" maxlength="50" class="form-control form-control-sm" placeholder="請輸入名稱" v-model="info.name"> </td>
-                                    <td class="bg-light"> <input name="original_price" type="text" maxlength="20" class="form-control form-control-sm" placeholder="請輸入原價" v-model="info.original_price"> </td>
-                                    <td class="bg-light"> <input name="selling_price" type="text" maxlength="20" class="form-control form-control-sm" placeholder="請輸入售價" v-model="info.selling_price"> </td>
-                                    <td class="bg-light"> <input name="inventory" type="text" maxlength="20" class="form-control form-control-sm" placeholder="請輸入庫存" v-model="info.inventory"> </td>
+                                    <td class="bg-light"> <input type="text" maxlength="50" class="form-control form-control-sm" placeholder="請輸入名稱" v-model="info.name"> </td>
+                                    <td class="bg-light"> <input type="text" maxlength="20" class="form-control form-control-sm" placeholder="請輸入原價" v-model="info.original_price"> </td>
+                                    <td class="bg-light"> <input type="text" maxlength="20" class="form-control form-control-sm" placeholder="請輸入售價" v-model="info.selling_price"> </td>
+                                    <td class="bg-light"> <input type="text" maxlength="20" class="form-control form-control-sm" placeholder="請輸入庫存" v-model="info.inventory"> </td>
+                                    <td class="bg-light"> <input type="text" maxlength="5" class="form-control form-control-sm" placeholder="請輸入單位" v-model="info.unit"> </td>
                                     <td class="bg-light text-center">
                                         <button class="btn btn-sm btn-primary" @click="confirm('create')">
                                             <i class="fa fa-plus mr-1"></i> 新增
@@ -347,13 +349,15 @@
                                         <td> ${item.original_price} </td>
                                         <td> ${item.selling_price} </td>
                                         <td> ${item.inventory} </td>
+                                        <td> ${item.unit} </td>
                                     </template>
                                     <template v-else>
                                         <td></td>
-                                        <td> <input name="name" type="text" maxlength="50" class="form-control form-control-sm" placeholder="請輸入名稱" v-model="modify_info.name"> </td>
-                                        <td> <input name="original_price" type="text" maxlength="20" class="form-control form-control-sm" placeholder="請輸入原價" v-model="modify_info.original_price"> </td>
-                                        <td> <input name="selling_price" type="text" maxlength="20" class="form-control form-control-sm" placeholder="請輸入售價" v-model="modify_info.selling_price"> </td>
-                                        <td> <input name="inventory" type="text" maxlength="20" class="form-control form-control-sm" placeholder="請輸入庫存" v-model="modify_info.inventory"> </td>
+                                        <td> <input type="text" maxlength="50" class="form-control form-control-sm" placeholder="請輸入名稱" v-model="modify_info.name"> </td>
+                                        <td> <input type="text" maxlength="20" class="form-control form-control-sm" placeholder="請輸入原價" v-model="modify_info.original_price"> </td>
+                                        <td> <input type="text" maxlength="20" class="form-control form-control-sm" placeholder="請輸入售價" v-model="modify_info.selling_price"> </td>
+                                        <td> <input type="text" maxlength="20" class="form-control form-control-sm" placeholder="請輸入庫存" v-model="modify_info.inventory"> </td>
+                                        <td> <input type="text" maxlength="5" class="form-control form-control-sm" placeholder="請輸入單位" v-model="modify_info.unit"> </td>
                                     </template>
                                     <td class="text-center">
                                         <!-- v-if -->

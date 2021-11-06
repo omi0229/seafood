@@ -34,7 +34,7 @@ class ProductSpecificationController extends Controller
 
     public function insert(Request $request)
     {
-        $inputs = $request->only('id', 'product_id', 'name', 'original_price', 'selling_price', 'inventory');
+        $inputs = $request->only('id', 'product_id', 'name', 'original_price', 'selling_price', 'inventory', 'unit');
 
         # 驗證資料
         $validator = $this->services::authInputData($inputs);
@@ -54,7 +54,7 @@ class ProductSpecificationController extends Controller
             return response()->json(['status' => false, 'message' => '修改失敗']);
         }
 
-        $inputs = $request->only('id', 'product_id', 'name', 'original_price', 'selling_price', 'inventory');
+        $inputs = $request->only('id', 'product_id', 'name', 'original_price', 'selling_price', 'inventory', 'unit');
 
         # 驗證資料
         $validator = $this->services::authInputData($inputs);

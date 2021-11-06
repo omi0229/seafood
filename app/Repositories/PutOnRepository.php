@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Repositories\Repository;
 use App\Models\Directory;
 use App\Models\Products;
+use App\Http\Resources\ProductSpecificationResource;
 
 class PutOnRepository extends Repository
 {
@@ -43,6 +44,8 @@ class PutOnRepository extends Repository
             $list[$key]['id'] = $row->hash_id;
             $list[$key]['product'] = $row->product->toArray();
             $list[$key]['product']['id'] = $row->product->hash_id;
+
+            $list[$key]['product_specification'] = ProductSpecificationResource::collection($row->product->product_specification)->toResponse(app('request'))->getData(true);
 
             $row->product->load('product_images');
             $list[$key]['web_img_list'] = $list[$key]['mobile_img_list'] = [];

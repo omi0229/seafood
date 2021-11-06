@@ -6,6 +6,7 @@ use App\Repositories\Repository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
+use App\Http\Resources\ProductSpecificationResource;
 
 class DirectoryRepository extends Repository
 {
@@ -61,6 +62,8 @@ class DirectoryRepository extends Repository
 
             foreach ($row['put_ons'] as $product_key => $product_row) {
                 $list[$key]['put_ons'][$product_key]['id'] = $product_row->hash_id;
+
+                $list[$key]['put_ons'][$product_key]['product_specification'] = ProductSpecificationResource::collection($product_row->product->product_specification)->toResponse(app('request'))->getData(true);
 
                 $product_row->product->load('product_images');
                 $list[$key]['put_ons'][$product_key]['web_img_list'] = $list[$key]['put_ons'][$product_key]['mobile_img_list'] = [];
