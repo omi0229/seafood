@@ -63844,21 +63844,22 @@ var set_specification = createApp({
                 switch (_context8.prev = _context8.next) {
                   case 0:
                     if (!res.data.status) {
-                      _context8.next = 5;
+                      _context8.next = 6;
                       break;
                     }
 
-                    _context8.next = 3;
+                    _this13.new_specification = false;
+                    _context8.next = 4;
                     return _this13.getSpecification(_this13.info.product_id);
 
-                  case 3:
+                  case 4:
                     loading.show = false;
                     Toast.fire({
                       icon: 'success',
                       title: '刪除成功'
                     });
 
-                  case 5:
+                  case 6:
                   case "end":
                     return _context8.stop();
                 }

@@ -11,15 +11,18 @@ class ProductSpecificationServices
 {
     static $model = 'App\Models\ProductSpecifications';
 
+    static $product_model = 'App\Models\Products';
+
     static function authInputData(&$inputs)
     {
         $model = app()->make(self::$model);
+        $product_model = app()->make(self::$product_model);
 
         $auth = [
             'product_id' => 'required',
             'name' => [
                 'required',
-                Rule::unique('product_specifications')->ignore($model::find($model::decodeSlug($inputs['id'])))->whereNull('deleted_at')
+                Rule::unique('product_specifications')->ignore($model::find($model::decodeSlug($inputs['id'])))->where('product_id', $product_model::decodeSlug($inputs['product_id']))->whereNull('deleted_at')
             ],
             'original_price' => 'required',
             'selling_price' => 'required',

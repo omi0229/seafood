@@ -545,6 +545,7 @@ let set_specification = createApp({
                 loading.show = true;
                 axiosDeleteMethod('/product-specification/delete', {data: this.check}).then(async res => {
                     if (res.data.status) {
+                        this.new_specification = false;
                         await this.getSpecification(this.info.product_id);
                         loading.show = false;
                         Toast.fire({icon: 'success', title: '刪除成功'});
