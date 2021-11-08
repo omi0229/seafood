@@ -68,6 +68,8 @@ Route::middleware(['auth:member_api'])->group(function () {
 
     # 購物車
     Route::post('cart/show-cart', [CartController::class, 'showCart']);
+    # 購物車
+    Route::delete('cart/remove-cart-product/{id}', [CartController::class, 'RemoveCartProduct']);
 
     ### 會員中心
     # 編輯會員

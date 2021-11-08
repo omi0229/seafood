@@ -33,6 +33,7 @@ class CartResource extends JsonResource
         unset($product_specification['product']['id']);
 
         return [
+            'id' => $this->hash_id,
             'specifications_id' => $this->product_specification->hash_id,
             'count' => $this->count,
             'product_specification' => $product_specification,

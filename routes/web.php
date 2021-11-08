@@ -37,6 +37,10 @@ use App\Http\Controllers\MemberController;
 //    return view('welcome');
 //});
 
+Route::get('testtest', function () {
+    header("Location: http://localhost:3000");
+});
+
 Route::get('login', [LoginController::class, 'login'])->name('login')->middleware('auth.login');
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);

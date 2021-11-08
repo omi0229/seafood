@@ -40,4 +40,10 @@ class CartController extends Controller
 
         return response()->Json(['status' => true, 'message' => '加入購物車成功']);
     }
+
+    public function RemoveCartProduct($id)
+    {
+        Cart::find(Cart::decodeSlug($id))->delete();
+        return response()->Json(['status' => true, 'message' => '移除商品成功']);
+    }
 }
