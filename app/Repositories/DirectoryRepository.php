@@ -52,7 +52,9 @@ class DirectoryRepository extends Repository
                 $query->skip(0)->take(12);
                 $query->orderBy('created_at', 'DESC');
                 $query->with(['product']);
-            }])->loadCount(['put_ons']);
+            }])->loadCount(['put_ons' => function ($query) {
+                $query->where('status', 1);
+            }]);
 
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
