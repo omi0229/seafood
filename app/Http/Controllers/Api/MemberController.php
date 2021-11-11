@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Member;
-use App\Models\ForgetPasswordLog;
 use App\Repositories\MembersRepository;
 use App\Services\MemberServices;
 
@@ -71,5 +70,25 @@ class MemberController extends Controller
     {
         $info = $this->services->forgetPassword();
         return response()->json(['status' => $info['status'], 'message' => $info['message'], 'data' => $info['data'] ?? 0]);
+    }
+
+    public function notification($member_id)
+    {
+        $member = $this->repository->find(Member::decodeSlug($member_id));
+        if ($member) {
+            $member->load(['notification' => function ($query) {
+                $query->where('type', 'order_success');
+//                $query->where('is_load', 0);
+            }]);
+
+//            $notification = $member->notification;
+//            if ($member->notification->count() > 0) {
+//                $member->notification->first()->update(['is_load' => 1]);
+//            }
+
+            return response()->json(['status' => true, 'message' => '取得訊息成功', 'data' => $member]);
+        } else {
+            return response()->json(['status' => false, 'message' => '取得訊息失敗']);
+        }
     }
 }

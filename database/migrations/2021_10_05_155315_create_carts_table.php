@@ -16,14 +16,14 @@ class CreateCartsTable extends Migration
         Schema::create('carts', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->uuid('cart_id');
-            $table->integer('user_id')->nullable();
+            $table->integer('member_id')->nullable();
             $table->integer('specifications_id')->unsigned();
             $table->integer('count')->unsigned();
             $table->timestamps();
             $table->softDeletes();
 
             $table->index('cart_id');
-            $table->index('user_id');
+            $table->index('member_id');
             $table->index('specifications_id');
         });
     }

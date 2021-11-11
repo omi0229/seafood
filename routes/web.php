@@ -20,6 +20,7 @@ use App\Http\Controllers\ProductSpecificationController;
 use App\Http\Controllers\DirectoryController;
 use App\Http\Controllers\PutOnController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\OrderController;
 
 
 /*
@@ -44,6 +45,9 @@ Route::get('testtest', function () {
 Route::get('login', [LoginController::class, 'login'])->name('login')->middleware('auth.login');
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
+
+Route::post('ecpay-return', [OrderController::class, 'ecpayReturn']);
+Route::post('ecpay-result', [OrderController::class, 'ecpayResult']);
 
 Route::middleware(['auth.web'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);

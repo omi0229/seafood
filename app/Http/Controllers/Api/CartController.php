@@ -46,4 +46,10 @@ class CartController extends Controller
         Cart::find(Cart::decodeSlug($id))->delete();
         return response()->Json(['status' => true, 'message' => '移除商品成功']);
     }
+
+    public function RemoveCartAllProduct($uu_id)
+    {
+        Cart::where('cart_id', $uu_id)->delete();
+        return response()->Json(['status' => true, 'message' => '已清空購物車']);
+    }
 }

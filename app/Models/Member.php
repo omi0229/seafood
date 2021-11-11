@@ -49,4 +49,9 @@ class Member extends Authenticatable
     {
         $this->attributes['password'] = bcrypt($value);
     }
+
+    public function notification()
+    {
+        return $this->hasMany('App\Models\Notification', 'member_id');
+    }
 }

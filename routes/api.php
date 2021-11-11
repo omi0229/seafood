@@ -12,7 +12,7 @@ use App\Http\Controllers\Api\DirectoryController;
 use App\Http\Controllers\Api\PutOnController;
 use App\Http\Controllers\Api\BannersController;
 use App\Http\Controllers\Api\MemberController;
-use App\Http\Controllers\Api\SmsController;
+use App\Http\Controllers\Api\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,14 +66,22 @@ Route::get('product-info/{id}', [PutOnController::class, 'info']);
 
 Route::middleware(['auth:member_api'])->group(function () {
 
-    # 購物車
+    ### 購物車
+    # 取得購物車資料
     Route::post('cart/show-cart', [CartController::class, 'showCart']);
-    # 購物車
+    # 刪除購物車單筆資料
     Route::delete('cart/remove-cart-product/{id}', [CartController::class, 'RemoveCartProduct']);
+    # 刪除購物車所有資料
+    Route::delete('cart/remove-cart-all-product/{uu_id}', [CartController::class, 'RemoveCartAllProduct']);
+
+    # 建立訂單
+    Route::post('order/create', [OrderController::class, 'create']);
 
     ### 會員中心
     # 編輯會員
     Route::post('member/update', [MemberController::class, 'update']);
     # 變更密碼
     Route::post('member/change-password', [MemberController::class, 'changePassword']);
+    # 取得會員通知
+    Route::get('member/notification/{member_id}', [MemberController::class, 'notification']);
 });
