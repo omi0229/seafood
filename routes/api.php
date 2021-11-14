@@ -74,8 +74,15 @@ Route::middleware(['auth:member_api'])->group(function () {
     # 刪除購物車所有資料
     Route::delete('cart/remove-cart-all-product/{uu_id}', [CartController::class, 'RemoveCartAllProduct']);
 
+    ### 訂單
     # 建立訂單
     Route::post('order/create', [OrderController::class, 'create']);
+    # 查詢所有訂單
+    Route::get('order/list/{member_id}/{page}', [OrderController::class, 'list']);
+    # 查詢單筆訂單
+    Route::get('order/info/{order_id}', [OrderController::class, 'info']);
+    # 付款
+    Route::post('order/payment', [OrderController::class, 'payment']);
 
     ### 會員中心
     # 編輯會員

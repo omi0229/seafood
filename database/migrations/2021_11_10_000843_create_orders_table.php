@@ -24,6 +24,7 @@ class CreateOrdersTable extends Migration
             $table->string('country', 20)->comment('城市');
             $table->string('city', 20)->comment('地區');
             $table->string('address', 200)->comment('地址');
+            $table->integer('freight')->unsigned()->default(0)->comment('運費');
             $table->tinyInteger('delivery_method')->comment('配送方式(1 => 宅配到府)')->default(1)->unsigned();
             $table->tinyInteger('payment_method')->comment('付款方式(1 => 信用卡)')->default(1)->unsigned();
             $table->tinyInteger('invoice_method')->comment('發票資訊(1 => 個人發票, 2 => 公司用三聯式發票)')->default(1)->unsigned();

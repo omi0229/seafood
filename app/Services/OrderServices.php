@@ -6,22 +6,23 @@ namespace App\Services;
 use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Models\ProductSpecifications;
 use Ecpay\Sdk\Services\CheckMacValueService;
 
 class OrderServices
 {
     static $model = 'App\Models\Orders';
 
-    static function ecpayForm($order_no, $time, $list, $order_id)
+    static function ecpayForm($order_no, $time, $list, $order_id, $mode = null)
     {
         $array = [
             'MerchantID' => env('ECPAY.MerchantID', '2000132'),
             'MerchantTradeNo' => $order_no,
             'MerchantTradeDate' => $time->format('Y/m/d H:i:s'),
             'PaymentType' => 'aio',
-            'TotalAmount' => self::listTotalAmount($list),
+            'TotalAmount' => self::listTotalAmount($list, $mode),
             'TradeDesc' => '海龍王商城購物',
-            'ItemName' => self::listItemName($list),
+            'ItemName' => self::listItemName($list, $mode),
             'ReturnURL' => env('APP_URL') . '/ecpay-return',
             'ChoosePayment' => 'Credit',
             'OrderResultURL' => env('APP_URL') . '/ecpay-result',
@@ -78,23 +79,30 @@ class OrderServices
         return $sMacValue;
     }
 
-    static function listTotalAmount($list)
+    static function listTotalAmount($list, $mode = null)
     {
         $total = 0;
         foreach ($list as $row) {
-            $total += $row['count'] * $row['product_specification']['selling_price'];
+            if($mode === 'make_up') {
+                $total += $row['count'] * $row['price'];
+            } else {
+                $total += $row['count'] * $row['product_specification']['selling_price'];
+            }
         }
 
         return $total;
     }
 
-    static function listItemName($list)
+    static function listItemName($list, $mode = null)
     {
-        $model = new \App\Models\ProductSpecifications;
         $item_name = '';
         foreach ($list as $row) {
-            $data = $model->find(\App\Models\ProductSpecifications::decodeSlug($row['specifications_id']));
-            $item = $data->name . ' ' .$row['product_specification']['selling_price'] . '元 x ' . $row['count'] . $data->unit;
+            if($mode === 'make_up') {
+                $item = $row['product_specifications']['name'] . ' ' .$row['price'] . '元 x ' . $row['count'] . $row['product_specifications']['unit'];
+            } else {
+                $data = ProductSpecifications::find(ProductSpecifications::decodeSlug($row['specifications_id']));
+                $item = $data->name . ' ' .$row['product_specification']['selling_price'] . '元 x ' . $row['count'] . $data->unit;
+            }
             $item_name .= $item_name ? '#' . $item : $item;
         }
 

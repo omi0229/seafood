@@ -30,4 +30,9 @@ class Orders extends Model
         'order_status',
         'payment_status',
     ];
+
+    public function order_products()
+    {
+        return $this->hasMany('App\Models\OrderProducts');
+    }
 }

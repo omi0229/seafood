@@ -18,4 +18,14 @@ class OrderProducts extends Model
         'count',
         'price',
     ];
+
+    public function product()
+    {
+        return $this->belongsTo('App\Models\Products');
+    }
+
+    public function product_specifications()
+    {
+        return $this->belongsTo('App\Models\ProductSpecifications');
+    }
 }

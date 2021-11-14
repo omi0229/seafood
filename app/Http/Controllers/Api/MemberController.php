@@ -78,15 +78,15 @@ class MemberController extends Controller
         if ($member) {
             $member->load(['notification' => function ($query) {
                 $query->where('type', 'order_success');
-//                $query->where('is_load', 0);
+                $query->where('is_load', 0);
             }]);
 
-//            $notification = $member->notification;
-//            if ($member->notification->count() > 0) {
-//                $member->notification->first()->update(['is_load' => 1]);
-//            }
+            $notification = $member->notification;
+            if ($member->notification->count() > 0) {
+                $member->notification->first()->update(['is_load' => 1]);
+            }
 
-            return response()->json(['status' => true, 'message' => '取得訊息成功', 'data' => $member]);
+            return response()->json(['status' => true, 'message' => '取得訊息成功', 'data' => $notification]);
         } else {
             return response()->json(['status' => false, 'message' => '取得訊息失敗']);
         }
