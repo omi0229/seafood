@@ -41,5 +41,6 @@ class OrderController extends Controller
         }
 
         header("Location: " . env('FRONT_PAGE_URL') . 'account/record');
+        exit;
     }
 }
