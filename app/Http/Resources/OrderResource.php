@@ -46,6 +46,7 @@ class OrderResource extends JsonResource
             'city' => $this->city,
             'address' => $this->address,
             'freight' => $this->freight,
+            'freight_name' => $this->freight_name,
             'delivery_method' => $this->delivery_method,
             'payment_method' => $this->payment_method,
             'invoice_method' => $this->invoice_method,

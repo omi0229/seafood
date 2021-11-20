@@ -33,6 +33,11 @@ class CartController extends Controller
         if ($items->count() > 0) {
             $data = $items->first();
             $data->count += $inputs['count'];
+
+            if ($data->count > 9999) {
+                $data->count = 9999;
+            }
+
             $data->save();
         } else {
             Cart::create($inputs);

@@ -75,6 +75,8 @@ Route::middleware(['auth:member_api'])->group(function () {
     Route::delete('cart/remove-cart-all-product/{uu_id}', [CartController::class, 'RemoveCartAllProduct']);
 
     ### 訂單
+    # 取得運費列表
+    Route::get('order/freight', [OrderController::class, 'freight']);
     # 建立訂單
     Route::post('order/create', [OrderController::class, 'create']);
     # 查詢所有訂單

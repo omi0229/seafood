@@ -47,7 +47,7 @@ class OrderRepository extends Repository
 
     public function info($order_id)
     {
-        $data = $this->model::with(['order_products', 'order_products'])->find($this->model::decodeSlug($order_id));
+        $data = $this->model::with(['order_products'])->find($this->model::decodeSlug($order_id));
         if ($data) {
             return new OrderResource($data);
         }

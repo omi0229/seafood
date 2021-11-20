@@ -327,7 +327,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td></td>
+                                    <td class="bg-light"></td>
                                     <td class="bg-light"> <input type="text" maxlength="50" class="form-control form-control-sm" placeholder="請輸入名稱" v-model="info.name"> </td>
                                     <td class="bg-light"> <input type="text" maxlength="20" class="form-control form-control-sm" placeholder="請輸入原價" v-model="info.original_price"> </td>
                                     <td class="bg-light"> <input type="text" maxlength="20" class="form-control form-control-sm" placeholder="請輸入售價" v-model="info.selling_price"> </td>

@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\models\Member;
 use App\models\Orders;
+use App\models\Freight;
 use App\Repositories\OrderRepository;
 use App\Repositories\OrderProductRepository;
 use App\Repositories\MembersRepository;
 use App\Services\OrderServices;
+use App\Services\FreightServices;
 
 class OrderController extends Controller
 {
@@ -35,6 +37,7 @@ class OrderController extends Controller
         $receiver = data_get($this->request->all(), 'receiver');
         if ($receiver && $member_id) {
             $receiver['member_id'] = Member::decodeSlug($member_id);
+            $receiver['freight_id'] = Freight::decodeSlug($receiver['freight_id']);
             $order = $this->repository->create($receiver);
             $list = data_get($this->request->all(), 'list');
             if($list) {
@@ -45,7 +48,7 @@ class OrderController extends Controller
             $order_no = 'o' . substr($time->format('YmdHis'), 2) . str_pad($order->id,6,"0",STR_PAD_LEFT);
             $this->repository->update($order->id, ['merchant_trade_no' => $order_no]);
 
-            return response()->Json(['status' => true, 'message' => '訂單新增成功', 'ecpay' => OrderServices::ecpayForm($order_no, $time, $list, $order->hash_id)]);
+            return response()->Json(['status' => true, 'message' => '訂單新增成功', 'ecpay' => OrderServices::ecpayForm($order_no, $time, $list, $order->hash_id, $receiver['freight'])]);
         }
         return response()->Json(['status' => false, 'message' => '訂單新增失敗']);
     }
@@ -54,14 +57,13 @@ class OrderController extends Controller
     {
         $order_id = data_get($this->request->all(), 'order_id');
         $list = data_get($this->request->all(), 'list');
-
         if ($order_id && $list && is_array($list)) {
             $time = now();
-            $decode_id = Orders::decodeSlug($order_id);
-            $order_no = 'o' . substr($time->format('YmdHis'), 2) . str_pad($decode_id, 6, "0", STR_PAD_LEFT);
-            $this->repository->update($decode_id, ['merchant_trade_no' => $order_no]);
+            $order = Orders::find(Orders::decodeSlug($order_id));
+            $order_no = 'o' . substr($time->format('YmdHis'), 2) . str_pad($order->id, 6, "0", STR_PAD_LEFT);
+            $this->repository->update($order->id, ['merchant_trade_no' => $order_no]);
 
-            return response()->Json(['status' => true, 'message' => '付款資料建構成功', 'ecpay' => OrderServices::ecpayForm($order_no, $time, $list, $order_id, 'make_up')]);
+            return response()->Json(['status' => true, 'message' => '付款資料建構成功', 'ecpay' => OrderServices::ecpayForm($order_no, $time, $list, $order_id, $order->freight, 'make_up')]);
         }
 
         return response()->Json(['status' => false, 'message' => '付款資料建構失敗']);
@@ -81,5 +83,10 @@ class OrderController extends Controller
 
     public function info($order_id) {
         return response()->Json(['status' => true, 'message' => '訂單查詢成功', 'data' => $this->repository->info($order_id)]);
+    }
+
+    public function freight(FreightServices $services)
+    {
+        return response()->Json(['status' => true, 'message' => '取得運費列表成功', 'data' => $services->getFeightList()]);
     }
 }

@@ -46,8 +46,7 @@ trait General
 
     public function delete(Request $request)
     {
-        $this->model::whereIn('id', array_map([$this->model, 'decodeSlug'], (array)$request->all()))
-            ->delete();
+        $this->model::whereIn('id', array_map([$this->model, 'decodeSlug'], (array)$request->all()))->delete();
 
         return response()->json(['status' => true, 'message' => '刪除成功']);
     }

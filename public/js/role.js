@@ -19472,11 +19472,11 @@ var search = {
               case 0:
                 loading.show = true;
                 _context.next = 3;
-                return emit('get-data', 1);
+                return emit('get-data', 1, 1);
 
               case 3:
                 _context.next = 5;
-                return emit('get-count');
+                return emit('get-count', 1);
 
               case 5:
               case "end":

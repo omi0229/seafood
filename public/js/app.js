@@ -36652,6 +36652,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/scss/freight.scss":
+/*!*************************************!*\
+  !*** ./resources/scss/freight.scss ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "./resources/scss/components/search.scss":
 /*!***********************************************!*\
   !*** ./resources/scss/components/search.scss ***!
@@ -41187,6 +41200,7 @@ function compileToFunction(template, options) {
 /******/ 			"css/login": 0,
 /******/ 			"css/app": 0,
 /******/ 			"css/components/search": 0,
+/******/ 			"css/freight": 0,
 /******/ 			"css/put-on": 0,
 /******/ 			"css/product": 0,
 /******/ 			"css/cooking": 0,
@@ -41241,18 +41255,19 @@ function compileToFunction(template, options) {
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/js/app.js")))
-/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/app.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/login.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/basic.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/role.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/sms.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/banners.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/news.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/cooking.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/product.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/put-on.scss")))
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/components/search.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/freight","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/js/app.js")))
+/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/freight","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/app.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/freight","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/login.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/freight","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/basic.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/freight","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/role.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/freight","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/sms.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/freight","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/banners.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/freight","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/news.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/freight","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/cooking.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/freight","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/product.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/freight","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/put-on.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/freight","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/freight.scss")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/sms","css/role","css/basic","css/login","css/app","css/components/search","css/freight","css/put-on","css/product","css/cooking","css/news","css/banners"], () => (__webpack_require__("./resources/scss/components/search.scss")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

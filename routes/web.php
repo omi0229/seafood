@@ -21,6 +21,7 @@ use App\Http\Controllers\DirectoryController;
 use App\Http\Controllers\PutOnController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\FreightController;
 
 
 /*
@@ -37,10 +38,6 @@ use App\Http\Controllers\OrderController;
 //Route::get('/', function () {
 //    return view('welcome');
 //});
-
-Route::get('testtest', function () {
-    header("Location: http://localhost:3000");
-});
 
 Route::get('login', [LoginController::class, 'login'])->name('login')->middleware('auth.login');
 Route::post('login', [AuthController::class, 'login']);
@@ -166,4 +163,13 @@ Route::middleware(['auth.web'])->group(function () {
     Route::post('member/update', [MemberController::class, 'update']);
     Route::delete('member/delete', [MemberController::class, 'delete']);
     Route::get('member/export', [MemberController::class, 'export']);
+
+    # 運費
+    Route::get('freight', [FreightController::class, 'index']);
+    Route::get('freight/count', [FreightController::class, 'count']);
+    Route::get('freight/list/{page}', [FreightController::class, 'list']);
+    Route::post('freight/insert', [FreightController::class, 'insert']);
+    Route::post('freight/update', [FreightController::class, 'update']);
+    Route::delete('freight/delete', [FreightController::class, 'delete']);
+    Route::get('freight/list/parents/{parents_id}', [FreightController::class, 'parents']);
 });

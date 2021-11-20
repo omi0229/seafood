@@ -13,14 +13,14 @@ class OrderServices
 {
     static $model = 'App\Models\Orders';
 
-    static function ecpayForm($order_no, $time, $list, $order_id, $mode = null)
+    static function ecpayForm($order_no, $time, $list, $order_id, $freight, $mode = null)
     {
         $array = [
             'MerchantID' => env('ECPAY.MerchantID', '2000132'),
             'MerchantTradeNo' => $order_no,
             'MerchantTradeDate' => $time->format('Y/m/d H:i:s'),
             'PaymentType' => 'aio',
-            'TotalAmount' => self::listTotalAmount($list, $mode),
+            'TotalAmount' => self::listTotalAmount($list, $freight, $mode),
             'TradeDesc' => '海龍王商城購物',
             'ItemName' => self::listItemName($list, $mode),
             'ReturnURL' => env('APP_URL') . '/ecpay-return',
@@ -79,7 +79,7 @@ class OrderServices
         return $sMacValue;
     }
 
-    static function listTotalAmount($list, $mode = null)
+    static function listTotalAmount($list, $freight = 0, $mode = null)
     {
         $total = 0;
         foreach ($list as $row) {
@@ -89,6 +89,8 @@ class OrderServices
                 $total += $row['count'] * $row['product_specification']['selling_price'];
             }
         }
+
+        $total += $freight;
 
         return $total;
     }

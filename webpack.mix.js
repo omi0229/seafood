@@ -63,6 +63,9 @@ mix.js('resources/js/put-on.js', 'public/js')
 mix.sass('resources/scss/put-on.scss', 'public/css')
 // member
 mix.js('resources/js/member.js', 'public/js')
+// freight
+mix.js('resources/js/freight.js', 'public/js')
+mix.sass('resources/scss/freight.scss', 'public/css')
 
 // components search
 mix.sass('resources/scss/components/search.scss', 'public/css/components')

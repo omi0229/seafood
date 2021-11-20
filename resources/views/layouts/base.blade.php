@@ -323,6 +323,38 @@
                             </li>
                             @endif
 
+                            @php
+                                $order_manage = $permissions
+                                    ->filter(function ($p){
+                                        if($p->name == 'freight'){
+                                            return true;
+                                        }
+
+                                        return false;
+                                    });
+                            @endphp
+                            @if($order_manage->count() > 0 && ($login_user->can('freight')))
+                            <li class="nav-item @php if($action_uri === 'freight') echo 'menu-open' @endphp">
+                                <a href="#" class="nav-link @php if($action_uri === 'freight') echo 'active' @endphp">
+                                    <i class="nav-icon fas fa-scroll"></i>
+                                    <p>
+                                        訂單管理
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @if($login_user->can('directory'))
+                                    <li class="nav-item">
+                                        <a href="/freight" class="nav-link @php if($action_uri === 'freight') echo 'active' @endphp">
+                                            <i class="nav-icon fas fa-truck-moving"></i>
+                                            <p>{{ $order_manage->where('name', 'freight')->first()->display_name  }}</p>
+                                        </a>
+                                    </li>
+                                    @endif
+                                </ul>
+                            </li>
+                            @endif
+
                         </ul>
                     </nav>
                     <!-- /.sidebar-menu -->
