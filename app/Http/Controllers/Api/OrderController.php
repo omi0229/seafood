@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\models\Member;
-use App\models\Orders;
-use App\models\Freight;
+use App\Models\Member;
+use App\Models\Orders;
+use App\Models\Freight;
 use App\Repositories\OrderRepository;
 use App\Repositories\OrderProductRepository;
 use App\Repositories\MembersRepository;
