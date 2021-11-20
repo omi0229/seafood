@@ -22,7 +22,7 @@ class OrderServices
             'PaymentType' => 'aio',
             'TotalAmount' => self::listTotalAmount($list, $freight, $mode),
             'TradeDesc' => '海龍王商城購物',
-            'ItemName' => self::listItemName($list, $mode),
+            'ItemName' => self::listItemName($list, $freight, $mode),
             'ReturnURL' => env('APP_URL') . '/ecpay-return',
             'ChoosePayment' => 'Credit',
             'OrderResultURL' => env('APP_URL') . '/ecpay-result',
@@ -95,7 +95,7 @@ class OrderServices
         return $total;
     }
 
-    static function listItemName($list, $mode = null)
+    static function listItemName($list, $freight = 0, $mode = null)
     {
         $item_name = '';
         foreach ($list as $row) {
@@ -107,6 +107,8 @@ class OrderServices
             }
             $item_name .= $item_name ? '#' . $item : $item;
         }
+
+        $item_name .= '#運費 ' . $freight . '元';
 
         return $item_name;
     }
