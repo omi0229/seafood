@@ -19,7 +19,7 @@ class OrderRepository extends Repository
     {
         $keywords = data_get($params, 'keywords');
 
-        $data = !$keywords ? $this->model::with('order_products') : $this->model::with('order_products')->where('title', 'LIKE', '%' . $keywords . '%');
+        $data = !$keywords ? $this->model::with(['order_products','member']) : $this->model::with(['order_products','member'])->where('merchant_trade_no', 'LIKE', '%' . $keywords . '%')->orWhere('name', 'LIKE', '%' . $keywords . '%');
 
         $member_id  = data_get($params, 'member_id');
         $data = !$member_id ? $data : $data->where('member_id', Member::decodeSlug($member_id));
@@ -38,8 +38,7 @@ class OrderRepository extends Repository
 
         $list = [];
         foreach ($data as $key => $row) {
-            array_push($list, json_decode($row, true));
-            $list[$key]['id'] = $row->hash_id;
+            array_push($list, new OrderResource($row));
         }
 
         return $list;
@@ -53,5 +52,14 @@ class OrderRepository extends Repository
         }
 
         return null;
+    }
+
+    public function count(array $params = [])
+    {
+        $keywords = data_get($params, 'keywords');
+
+        $data = !$keywords ? $this->model : $this->model->where('merchant_trade_no', 'LIKE', '%' . $keywords . '%')->orWhere('name', 'LIKE', '%' . $keywords . '%');
+
+        return $data->count();
     }
 }

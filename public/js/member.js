@@ -45879,6 +45879,11 @@ window.app = createApp({
     },
     exportMembers: function exportMembers() {
       window.open('/member/export');
+    },
+    orders: function orders(member_name) {
+      loading.show = true;
+      sessionStorage.setItem('keywords', member_name);
+      location.href = '/orders';
     }
   }
 }).mount('#app');

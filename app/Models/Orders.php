@@ -30,9 +30,16 @@ class Orders extends Model
         'invoice_tax_id_number',
         'invoice_name',
         'bookmark',
+        'shipment_at',
+        'admin_bookmark',
         'order_status',
         'payment_status',
     ];
+
+    public function member()
+    {
+        return $this->belongsTo('App\Models\Member');
+    }
 
     public function order_products()
     {

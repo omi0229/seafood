@@ -164,7 +164,13 @@ Route::middleware(['auth.web'])->group(function () {
     Route::delete('member/delete', [MemberController::class, 'delete']);
     Route::get('member/export', [MemberController::class, 'export']);
 
-    # 運費
+    # 訂單管理
+    Route::get('orders', [OrderController::class, 'index']);
+    Route::get('orders/count', [OrderController::class, 'count']);
+    Route::get('orders/list/{page}', [OrderController::class, 'list']);
+    Route::post('orders/update', [OrderController::class, 'update']);
+
+    # 運費設定
     Route::get('freight', [FreightController::class, 'index']);
     Route::get('freight/count', [FreightController::class, 'count']);
     Route::get('freight/list/{page}', [FreightController::class, 'list']);

@@ -326,16 +326,16 @@
                             @php
                                 $order_manage = $permissions
                                     ->filter(function ($p){
-                                        if($p->name == 'freight'){
+                                        if($p->name == 'freight' || $p->name == 'orders') {
                                             return true;
                                         }
 
                                         return false;
                                     });
                             @endphp
-                            @if($order_manage->count() > 0 && ($login_user->can('freight')))
-                            <li class="nav-item @php if($action_uri === 'freight') echo 'menu-open' @endphp">
-                                <a href="#" class="nav-link @php if($action_uri === 'freight') echo 'active' @endphp">
+                            @if($order_manage->count() > 0 && ($login_user->can('freight') || $login_user->can('orders')))
+                            <li class="nav-item @php if($action_uri === 'freight' || $action_uri === 'orders') echo 'menu-open' @endphp">
+                                <a href="#" class="nav-link @php if($action_uri === 'freight' || $action_uri === 'orders') echo 'active' @endphp">
                                     <i class="nav-icon fas fa-scroll"></i>
                                     <p>
                                         訂單管理
@@ -343,11 +343,21 @@
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview">
-                                    @if($login_user->can('directory'))
+                                    @if($login_user->can('freight'))
                                     <li class="nav-item">
                                         <a href="/freight" class="nav-link @php if($action_uri === 'freight') echo 'active' @endphp">
                                             <i class="nav-icon fas fa-truck-moving"></i>
                                             <p>{{ $order_manage->where('name', 'freight')->first()->display_name  }}</p>
+                                        </a>
+                                    </li>
+                                    @endif
+                                </ul>
+                                <ul class="nav nav-treeview">
+                                    @if($login_user->can('orders'))
+                                    <li class="nav-item">
+                                        <a href="/orders" class="nav-link @php if($action_uri === 'orders') echo 'active' @endphp">
+                                            <i class="nav-icon fas fa-clipboard-list"></i>
+                                            <p>{{ $order_manage->where('name', 'orders')->first()->display_name  }}</p>
                                         </a>
                                     </li>
                                     @endif

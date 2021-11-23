@@ -116,6 +116,11 @@ window.app = createApp({
         exportMembers() {
             window.open('/member/export');
         },
+        orders(member_name) {
+            loading.show = true;
+            sessionStorage.setItem('keywords', member_name);
+            location.href = '/orders';
+        },
     },
 }).mount('#app');
 

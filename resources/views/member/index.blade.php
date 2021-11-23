@@ -85,6 +85,9 @@
                                         <button type="button" class="btn btn-sm btn-info px-2" data-toggle="modal" data-target="#set-user" @click="modify(item.id)">
                                             <i class="fa fa-edit mr-1"></i> 編輯
                                         </button>
+                                        <button type="button" class="btn btn-sm btn-default px-2 ml-2" @click="orders(item.name)">
+                                            <i class="fa fa-list mr-1"></i> 會員訂單
+                                        </button>
                                     </td>
                                 </tr>
                                 </tbody>

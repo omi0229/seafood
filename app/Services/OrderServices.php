@@ -13,6 +13,31 @@ class OrderServices
 {
     static $model = 'App\Models\Orders';
 
+    static function authInputData($inputs)
+    {
+        $auth = [
+            'name' => 'required',
+            'cellphone' => 'required',
+            'email' => 'email',
+            'zipcode' => 'required',
+            'country' => 'required',
+            'city' => 'required',
+            'address' => 'required',
+        ];
+
+        $tip = [
+            'name.required' => '收件人姓名不得為空',
+            'cellphone.required' => '收件人手機號碼不得為空',
+            'email.email' => '電子郵件格式錯誤',
+            'zipcode.required' => '收件人地址格式錯誤',
+            'country.required' => '收件人地址格式錯誤',
+            'city.required' => '收件人地址格式錯誤',
+            'address.required' => '收件人地址格式錯誤',
+        ];
+
+        return Validator::make($inputs, $auth, $tip);
+    }
+
     static function ecpayForm($order_no, $time, $list, $order_id, $freight, $mode = null)
     {
         $array = [

@@ -33,7 +33,7 @@ class CreateOrdersTable extends Migration
             $table->string('invoice_tax_id_number', 20)->nullable()->comment('統一編號');
             $table->string('invoice_name', 100)->nullable()->comment('發票抬頭');
             $table->text('bookmark')->nullable()->comment('備註');
-            $table->tinyInteger('order_status')->comment('訂單狀態(0 => 待確認, 1 => 已確認, 2 => 已出貨)')->default(0)->unsigned();
+            $table->tinyInteger('order_status')->comment('訂單狀態(0 => 新單, 1 => 收款, 2 => 出貨, -1 => 取消, -2 => 退貨, 3 => 完成)')->default(0);
             $table->tinyInteger('payment_status')->comment('付款狀態(0 => 未付款, 1 => 已付款)')->default(0)->unsigned();
             $table->timestamps();
             $table->softDeletes();

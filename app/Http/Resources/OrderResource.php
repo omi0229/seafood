@@ -52,9 +52,13 @@ class OrderResource extends JsonResource
             'invoice_method' => $this->invoice_method,
             'invoice_tax_id_number' => $this->invoice_tax_id_number,
             'invoice_name' => $this->invoice_name,
+            'shipment_at' => $this->shipment_at,
             'bookmark' => $this->bookmark,
+            'admin_bookmark' => $this->admin_bookmark,
             'order_status' => $this->order_status,
             'payment_status' => $this->payment_status,
+            'created_at' => $this->created_at,
+            'member' => $this->member,
             'order_products' => $order_products,
         ];
     }

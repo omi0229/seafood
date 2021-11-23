@@ -54,4 +54,9 @@ class Member extends Authenticatable
     {
         return $this->hasMany('App\Models\Notification', 'member_id');
     }
+
+    public function orders()
+    {
+        return $this->hasMany('App\Models\Orders', 'member_id');
+    }
 }
