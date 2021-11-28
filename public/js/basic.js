@@ -41016,7 +41016,11 @@ window.app = createApp({
           basic_facebook: '',
           basic_line: ''
         },
-        goldflow: {},
+        goldflow: {
+          goldflow_MerchantID: '',
+          goldflow_HashKey: '',
+          goldflow_HashIV: ''
+        },
         seo: {
           seo_keyword: '',
           seo_description: ''
@@ -41053,6 +41057,18 @@ window.app = createApp({
 
           case 'basic_line':
             _this.config.basic.basic_line = v.config_value;
+            break;
+
+          case 'goldflow_MerchantID':
+            _this.config.goldflow.goldflow_MerchantID = v.config_value;
+            break;
+
+          case 'goldflow_HashKey':
+            _this.config.goldflow.goldflow_HashKey = v.config_value;
+            break;
+
+          case 'goldflow_HashIV':
+            _this.config.goldflow.goldflow_HashIV = v.config_value;
             break;
 
           case 'seo_keyword':

@@ -84,8 +84,26 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="custom-tabs-goldflow" role="tabpanel" aria-labelledby="custom-tabs-four-profile-tab">
-                                <div class="basic-tab-pane-height">
-                                    串接金流時補上
+                                <div class="text-bold text-danger">
+                                    ※注意！此處設定錯誤可能導致前台顧客無法付款！請謹慎設定！
+                                </div>
+                                <div class="form-group row mt-3">
+                                    <div class="col-12 col-sm-6">
+                                        <label for="MerchantID">MerchantID</label>
+                                        <input type="text" maxlength="50" class="form-control form-control-sm" id="MerchantID" placeholder="請輸入網站標題" v-model="config.goldflow.goldflow_MerchantID">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-12 col-sm-6">
+                                        <label for="HashKey">HashKey</label>
+                                        <input type="text" maxlength="50" class="form-control form-control-sm" id="HashKey" placeholder="請輸入網站標題" v-model="config.goldflow.goldflow_HashKey">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-12 col-sm-6">
+                                        <label for="HashIV">HashIV</label>
+                                        <input type="text" maxlength="50" class="form-control form-control-sm" id="HashIV" placeholder="請輸入網站標題" v-model="config.goldflow.goldflow_HashIV">
+                                    </div>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="custom-tabs-seo" role="tabpanel" aria-labelledby="custom-tabs-four-messages-tab">

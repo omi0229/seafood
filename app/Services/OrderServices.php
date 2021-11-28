@@ -41,6 +41,11 @@ class OrderServices
 
     static function ecpayForm($order_no, $time, $payment_method, $list, $order_id, $freight, $mode = null)
     {
+        $model = \App\Models\Config::where('config_name', 'goldflow_MerchantID')->orWhere('config_name', 'goldflow_HashKey')->orWhere('config_name', 'goldflow_HashIV')->get();
+        $MerchantID = $model->find('goldflow_MerchantID') ? $model->find('goldflow_MerchantID')->config_value : null;
+        $HashKey = $model->find('goldflow_HashKey') ? $model->find('goldflow_HashKey')->config_value : null;
+        $HashIV = $model->find('goldflow_HashIV') ? $model->find('goldflow_HashIV')->config_value : null;
+
         switch ($payment_method) {
             case 2:
                 $ChoosePayment = 'ATM';
@@ -50,7 +55,7 @@ class OrderServices
         }
 
         $array = [
-            'MerchantID' => env('ECPAY.MerchantID', '2000132'),
+            'MerchantID' => $MerchantID,
             'MerchantTradeNo' => $order_no,
             'MerchantTradeDate' => $time->format('Y/m/d H:i:s'),
             'PaymentType' => 'aio',
@@ -73,7 +78,7 @@ class OrderServices
 
         }
 
-        $CheckMacValueService = new CheckMacValueService(env('ECPAY.HashKey'), env('ECPAY.HashIV'), 'sha256');
+        $CheckMacValueService = new CheckMacValueService($HashKey, $HashIV, 'sha256');
         $CheckMacValue = $CheckMacValueService->generate($array);
 
         $array['CheckMacValue'] = $CheckMacValue;
