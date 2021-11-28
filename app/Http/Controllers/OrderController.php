@@ -70,13 +70,19 @@ class OrderController extends Controller
         if (data_get($inputs, 'PaymentType') && $inputs['PaymentType'] !== 'Credit_CreditCard') {
             $order_id = Orders::decodeSlug($inputs['CustomField1']);
             $order = $this->repository->find($order_id);
-            $this->repository->update($order_id, ['payment_status' => 1]);
+            if ((int)$inputs['RtnCode'] === 1) {
+                $this->repository->update($order_id, ['payment_status' => 1]);
+            } else {
+                $this->repository->update($order_id, ['payment_status' => -2]);
+            }
 
             \AppLog::record([
                 'type' => 'payment',
                 'user_id' => $order->member_id,
                 'data_id' => $order_id,
                 'content' => json_encode([
+                    'RtnCode' => $inputs['RtnCode'],
+                    'RtnMsg' => $inputs['RtnMsg'],
                     'PaymentType' => $inputs['PaymentType'],
                     'TradeAmt' => $inputs['TradeAmt'],
                     'PaymentDate' => $inputs['PaymentDate'],
@@ -84,7 +90,7 @@ class OrderController extends Controller
             ]);
         }
 
-        return 1;
+        return "1|OK";
     }
 
     public function ecpayResult()
