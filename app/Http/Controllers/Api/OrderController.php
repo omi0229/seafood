@@ -12,6 +12,7 @@ use App\Repositories\OrderProductRepository;
 use App\Repositories\MembersRepository;
 use App\Services\OrderServices;
 use App\Services\FreightServices;
+use App\Services\ProductSpecificationServices;
 
 class OrderController extends Controller
 {
@@ -47,6 +48,10 @@ class OrderController extends Controller
             $time = now();
             $order_no = 'o' . substr($time->format('YmdHis'), 2) . str_pad($order->id,6,"0",STR_PAD_LEFT);
             $this->repository->update($order->id, ['merchant_trade_no' => $order_no]);
+
+            #扣掉庫存
+            ProductSpecificationServices::inventoryCalculation($list);
+            \AppLog::record(['type' => 'inventory-reduction', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => json_encode($list)]);
 
             return response()->Json(['status' => true, 'message' => '訂單新增成功', 'ecpay' => OrderServices::ecpayForm($order_no, $time, $order->payment_method, $list, $order->hash_id, $receiver['freight'])]);
         }

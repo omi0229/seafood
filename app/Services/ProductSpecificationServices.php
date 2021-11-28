@@ -42,4 +42,21 @@ class ProductSpecificationServices
 
         return Validator::make($inputs, $auth, $tip);
     }
+
+    # 計算顧客訂單加減後的的庫存
+    static function inventoryCalculation($list)
+    {
+        if (is_array($list)) {
+            $model = app()->make(self::$model);
+            foreach ($list as $row) {
+                $item = $model::find($model::decodeSlug($row['specifications_id']));
+                if ($item) {
+                    $item->inventory -= $row['count'];
+                    $item->save();
+                }
+            }
+        }
+
+        return true;
+    }
 }
