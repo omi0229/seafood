@@ -26,6 +26,10 @@ class Orders extends Model
         'freight',
         'delivery_method',
         'payment_method',
+        'TradeNo',
+        'BankCode',
+        'vAccount',
+        'ExpireDate',
         'invoice_method',
         'invoice_tax_id_number',
         'invoice_name',
@@ -44,5 +48,10 @@ class Orders extends Model
     public function order_products()
     {
         return $this->hasMany('App\Models\OrderProducts');
+    }
+
+    public function payment_data()
+    {
+        return $this->hasOne('App\Models\Log', 'data_id')->where('type', 'payment');
     }
 }

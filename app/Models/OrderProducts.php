@@ -19,6 +19,11 @@ class OrderProducts extends Model
         'price',
     ];
 
+    public function order()
+    {
+        return $this->belongsTo('App\Models\Orders', 'orders_id');
+    }
+
     public function product()
     {
         return $this->belongsTo('App\Models\Products');

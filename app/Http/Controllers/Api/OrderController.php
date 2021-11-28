@@ -48,7 +48,7 @@ class OrderController extends Controller
             $order_no = 'o' . substr($time->format('YmdHis'), 2) . str_pad($order->id,6,"0",STR_PAD_LEFT);
             $this->repository->update($order->id, ['merchant_trade_no' => $order_no]);
 
-            return response()->Json(['status' => true, 'message' => '訂單新增成功', 'ecpay' => OrderServices::ecpayForm($order_no, $time, $list, $order->hash_id, $receiver['freight'])]);
+            return response()->Json(['status' => true, 'message' => '訂單新增成功', 'ecpay' => OrderServices::ecpayForm($order_no, $time, $order->payment_method, $list, $order->hash_id, $receiver['freight'])]);
         }
         return response()->Json(['status' => false, 'message' => '訂單新增失敗']);
     }
@@ -57,13 +57,14 @@ class OrderController extends Controller
     {
         $order_id = data_get($this->request->all(), 'order_id');
         $list = data_get($this->request->all(), 'list');
-        if ($order_id && $list && is_array($list)) {
+        $payment_method = data_get($this->request->all(), 'payment_method');
+        if ($order_id && $list && is_array($list) && $payment_method) {
             $time = now();
             $order = Orders::find(Orders::decodeSlug($order_id));
             $order_no = 'o' . substr($time->format('YmdHis'), 2) . str_pad($order->id, 6, "0", STR_PAD_LEFT);
             $this->repository->update($order->id, ['merchant_trade_no' => $order_no]);
 
-            return response()->Json(['status' => true, 'message' => '付款資料建構成功', 'ecpay' => OrderServices::ecpayForm($order_no, $time, $list, $order_id, $order->freight, 'make_up')]);
+            return response()->Json(['status' => true, 'message' => '付款資料建構成功', 'ecpay' => OrderServices::ecpayForm($order_no, $time, $payment_method, $list, $order_id, $order->freight, 'make_up')]);
         }
 
         return response()->Json(['status' => false, 'message' => '付款資料建構失敗']);

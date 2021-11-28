@@ -67159,10 +67159,16 @@ window.app = createApp({
       return function (status) {
         switch (status) {
           case 0:
-            return '未付款';
+            return '尚未付款';
 
           case 1:
-            return '已付款';
+            return '付款成功';
+
+          case -1:
+            return '付款金額錯誤';
+
+          case -2:
+            return '付款失敗';
 
           default:
             return '';
@@ -67433,6 +67439,21 @@ window.app = createApp({
           _this6["delete"]();
         }
       });
+    },
+    exportData: function exportData(type) {
+      switch (type) {
+        case 'orders':
+          window.open('/orders/export/orders');
+          break;
+
+        case 'all':
+          window.open('/orders/export/all');
+          break;
+
+        case 'products':
+          window.open('/orders/export/products');
+          break;
+      }
     }
   }
 }).mount('#app');
@@ -67497,6 +67518,9 @@ var detailed_content = createApp({
         switch (payment) {
           case 1:
             return '信用卡';
+
+          case 2:
+            return 'ATM';
 
           default:
             return '';

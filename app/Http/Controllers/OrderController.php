@@ -59,22 +59,93 @@ class OrderController extends Controller
         return response()->json(['status' => true, 'message' => '編輯成功']);
     }
 
+    public function export($type) {
+        return $this->services->exportOrders($type);
+    }
+
     public function ecpayReturn()
     {
+        $inputs = $this->request->all();
+        # 用ATM付款
+        if (data_get($inputs, 'PaymentType') && $inputs['PaymentType'] !== 'Credit_CreditCard') {
+            $order_id = Orders::decodeSlug($inputs['CustomField1']);
+            $order = $this->repository->find($order_id);
+            $this->repository->update($order_id, ['payment_status' => 1]);
+
+            \AppLog::record([
+                'type' => 'payment',
+                'user_id' => $order->member_id,
+                'data_id' => $order_id,
+                'content' => json_encode([
+                    'PaymentType' => $inputs['PaymentType'],
+                    'TradeAmt' => $inputs['TradeAmt'],
+                    'PaymentDate' => $inputs['PaymentDate'],
+                ]),
+            ]);
+        }
+
         return 1;
     }
 
-    public function ecpayResult(NotificationRepository $notification_repository)
+    public function ecpayResult()
     {
         $inputs = $this->request->all();
         if (data_get($inputs, 'CustomField1')) {
             $order_id = Orders::decodeSlug($inputs['CustomField1']);
             $order = $this->repository->find($order_id);
-            $this->repository->update($order_id, ['payment_status' => 1]);
-//            $notification_repository->create(['member_id' => $order->member_id, 'type' => 'order_success', 'text' => json_encode(['order_id' => $order_id])]);
+            $this->repository->update($order_id, [
+                'payment_method' => 1,
+                'payment_status' => 1,
+                'TradeNo' => null,
+                'BankCode' => null,
+                'vAccount' => null,
+                'ExpireDate' => null,
+            ]);
+
+            \AppLog::record([
+                'type' => 'payment',
+                'user_id' => $order->member_id,
+                'data_id' => $order_id,
+                'content' => json_encode([
+                    'PaymentType' => $inputs['PaymentType'],
+                    'TradeAmt' => $inputs['TradeAmt'],
+                    'PaymentDate' => $inputs['PaymentDate'],
+                ]),
+            ]);
         }
 
         header("Location: " . env('FRONT_PAGE_URL') . 'account/record');
+        exit;
+    }
+
+    public function ecpayRedirect()
+    {
+        $inputs = $this->request->all();
+        if (data_get($inputs, 'CustomField1')) {
+            $order_id = Orders::decodeSlug($inputs['CustomField1']);
+            $order = $this->repository->find($order_id);
+            $this->repository->update($order_id, [
+                'payment_method' => 2,
+                'TradeNo' => $inputs['TradeNo'],
+                'BankCode' => $inputs['BankCode'],
+                'vAccount' => $inputs['vAccount'],
+                'ExpireDate' => $inputs['ExpireDate'],
+            ]);
+
+            \AppLog::record([
+                'type' => 'payment_get_vAccount',
+                'user_id' => $order->member_id,
+                'data_id' => $order_id,
+                'content' => json_encode([
+                    'TradeNo' => $inputs['TradeNo'],
+                    'BankCode' => $inputs['BankCode'],
+                    'vAccount' => $inputs['vAccount'],
+                    'ExpireDate' => $inputs['ExpireDate'],
+                ]),
+            ]);
+        }
+
+        header("Location: " . env('FRONT_PAGE_URL') . 'account/order/' . $inputs['CustomField1']);
         exit;
     }
 }

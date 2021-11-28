@@ -44,7 +44,10 @@ Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
 
 Route::post('ecpay-return', [OrderController::class, 'ecpayReturn']);
+# 信用卡 訂單繳費
 Route::post('ecpay-result', [OrderController::class, 'ecpayResult']);
+# ATM 訂單取號
+Route::post('ecpay-redirect', [OrderController::class, 'ecpayRedirect']);
 
 Route::middleware(['auth.web'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
@@ -169,6 +172,7 @@ Route::middleware(['auth.web'])->group(function () {
     Route::get('orders/count', [OrderController::class, 'count']);
     Route::get('orders/list/{page}', [OrderController::class, 'list']);
     Route::post('orders/update', [OrderController::class, 'update']);
+    Route::get('orders/export/{type}', [OrderController::class, 'export']);
 
     # 運費設定
     Route::get('freight', [FreightController::class, 'index']);

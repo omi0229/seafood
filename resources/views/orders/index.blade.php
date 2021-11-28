@@ -25,7 +25,18 @@
             <div class="mb-3 col-12 col-md-6">
                 <components-search v-model:search_text="search_text" name="訂單編號或" @get-count="getCount" @get-data="getData"></components-search>
             </div>
-{{--            <div class="mb-3 col-12 col-md-6 d-flex justify-content-end">--}}
+            <div class="mb-3 col-12 col-md-6 d-flex justify-content-end">
+                <div>
+                    <button type="button" class="btn btn-sm btn-success px-2 mr-2" @click="exportData('products')">
+                        <i class="fa fa-file-export mr-1"></i> 匯出揀貨單
+                    </button>
+                    <button type="button" class="btn btn-sm btn-success px-2 mr-2" @click="exportData('all')">
+                        <i class="fa fa-file-export mr-1"></i> 匯出全部
+                    </button>
+                    <button type="button" class="btn btn-sm btn-success px-2" @click="exportData('orders')">
+                        <i class="fa fa-file-export mr-1"></i> 匯出訂單
+                    </button>
+                </div>
 {{--                <!-- v-show -->--}}
 {{--                <div class="mr-2" v-show="check.length > 0">--}}
 {{--                    <button type="button" class="btn btn-sm btn-danger px-2" @click="confirm('delete')">--}}
@@ -37,7 +48,7 @@
 {{--                        <i class="fa fa-plus mr-1"></i> 新增--}}
 {{--                    </button>--}}
 {{--                </div>--}}
-{{--            </div>--}}
+            </div>
         </div>
 
         <div class="content px-4">
