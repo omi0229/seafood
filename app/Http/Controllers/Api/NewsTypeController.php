@@ -19,7 +19,7 @@ class NewsTypeController extends Controller
 
     public function list($page)
     {
-        return response()->json( Cache::remember('list', Carbon::now()->addMinutes(10), function () use ($page) {
+        return response()->json( Cache::remember('news_type_list', Carbon::now()->addMinutes(10), function () use ($page) {
             return $this->repository->list($page);
         }));
     }
