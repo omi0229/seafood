@@ -24,6 +24,22 @@ class DirectoryRepository extends Repository
         return $this->__formatData($data, $page);
     }
 
+    public function apiMenu()
+    {
+        $data = $this->model->whereHas('put_ons', function (Builder $query) {
+            $query->where('status', 1);
+        })->get();
+
+        $list = [];
+        foreach ($data as $key => $row) {
+            array_push($list, json_decode($row, true));
+            $list[$key]['id'] = $row->hash_id;
+            $list[$key]['name'] = $row->name;
+        }
+
+        return $list;
+    }
+
     public function apiList($page, array $params = [])
     {
         $data = $this->model->whereHas('put_ons', function (Builder $query) {

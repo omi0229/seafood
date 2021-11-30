@@ -20,4 +20,9 @@ class DirectoryController extends Controller
     {
         return response()->json($this->repository->apiList($page));
     }
+
+    public function menu()
+    {
+        return response()->json($this->repository->apiMenu());
+    }
 }
