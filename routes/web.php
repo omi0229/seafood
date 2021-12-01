@@ -22,6 +22,7 @@ use App\Http\Controllers\PutOnController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\FreightController;
+use App\Http\Controllers\PagesController;
 
 
 /*
@@ -56,6 +57,11 @@ Route::middleware(['auth.web'])->group(function () {
     Route::get('basic', [BasicController::class, 'index']);
     Route::get('basic/get', [BasicController::class, 'get']);
     Route::post('basic/set', [BasicController::class, 'set']);
+
+    # 頁面管理
+    Route::get('pages', [PagesController::class, 'index']);
+    Route::get('pages/list', [PagesController::class, 'list']);
+    Route::post('pages/update', [PagesController::class, 'update']);
 
     # 權限管理
     Route::get('role', [RoleController::class, 'index']);

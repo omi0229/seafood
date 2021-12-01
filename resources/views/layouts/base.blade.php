@@ -94,6 +94,20 @@
                             @endif
 
                             @php
+                                $basic = $permissions->where('name', 'pages')->first();
+                            @endphp
+                            @if($basic && $login_user->can('pages'))
+                            <li class="nav-item">
+                                <a href="/pages" class="nav-link @php if($action_uri === 'pages') echo 'active' @endphp">
+                                    <i class="nav-icon fas fa-solar-panel"></i>
+                                    <p>
+                                        {{$basic->display_name}}
+                                    </p>
+                                </a>
+                            </li>
+                            @endif
+
+                            @php
                                 $set_manager = $permissions->where('name', 'set_manager')->first();
                             @endphp
                             @if($set_manager && $login_user->can('set_manager'))

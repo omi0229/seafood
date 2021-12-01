@@ -69,6 +69,8 @@ mix.sass('resources/scss/freight.scss', 'public/css')
 // orders
 mix.js('resources/js/orders.js', 'public/js')
 mix.sass('resources/scss/orders.scss', 'public/css')
+// pages
+mix.js('resources/js/pages.js', 'public/js')
 
 // components search
 mix.sass('resources/scss/components/search.scss', 'public/css/components')

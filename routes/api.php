@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\PutOnController;
 use App\Http\Controllers\Api\BannersController;
 use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\PagesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +50,9 @@ Route::post('cart/add-cart', [CartController::class, 'addCart']);
 
 # 大圖輪播
 Route::get('banners/list', [BannersController::class, 'list']);
+
+# 關於海龍王, 購物說明
+Route::get('pages/{type}', [PagesController::class, 'info']);
 
 # 最新消息
 Route::get('news-type/list/{page}', [NewsTypeController::class, 'list']);
