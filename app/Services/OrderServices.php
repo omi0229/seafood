@@ -103,7 +103,7 @@ class OrderServices
                 'MerchantTradeDate' => Carbon::parse($order->created_at)->format('Y/m/d H:i:s'),
                 'LogisticsType' => 'HOME',
                 'LogisticsSubType' => 'TCAT',
-                'GoodsAmount' => $inputs['order_total'],
+                'GoodsAmount' => (int)str_replace(',', '', $inputs['order_total']),
                 'SenderName' => $order->member->name,
                 'SenderCellPhone' => $order->member->cellphone,
                 'SenderZipCode' => $order->member->zipcode,
