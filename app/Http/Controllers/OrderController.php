@@ -205,8 +205,6 @@ class OrderController extends Controller
 
     public function ecpayServerReply()
     {
-        sleep(5);
-
         $inputs = $this->request->all();
 
         if (data_get($inputs, 'AllPayLogisticsID') && data_get($inputs, 'BookingNote')) {

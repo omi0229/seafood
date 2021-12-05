@@ -172,6 +172,8 @@ class OrderServices
                         'MerchantTradeNo' => $content_array['MerchantTradeNo'],
                         'AllPayLogisticsID' => $content_array['AllPayLogisticsID'],
                         'BookingNote' => $content_array['BookingNote'],
+                        'RtnCode' => $content_array['RtnCode'],
+                        'RtnMsg' => $content_array['RtnMsg'],
                     ]);
                     return ['status' => true, 'message' => '訂單資料建構成功'];
                 } else {
