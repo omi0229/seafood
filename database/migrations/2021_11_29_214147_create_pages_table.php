@@ -21,8 +21,8 @@ class CreatePagesTable extends Migration
             $table->timestamps();
         });
 
-        DB::table('pages')->insert([ 'type' => 'about', 'name' => '關於海龍王' ]);
-        DB::table('pages')->insert([ 'type' => 'shopping_explanation', 'name' => '購物說明' ]);
+        DB::table('pages')->insert([ 'type' => 'about', 'name' => '關於海龍王', 'created_at' => now(), 'updated_at' => now() ]);
+        DB::table('pages')->insert([ 'type' => 'shopping_explanation', 'name' => '購物說明', 'created_at' => now(), 'updated_at' => now() ]);
     }
 
     /**

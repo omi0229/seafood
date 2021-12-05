@@ -36,6 +36,14 @@ textarea::-ms-placeholder {
   width: 100%;
 }
 
+#specification img {
+  width: 100%;
+}
+#specification .order_products_list {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
 th.width-10 {
   width: 10%;
 }

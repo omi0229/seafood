@@ -27,6 +27,12 @@
             </div>
             <div class="mb-3 col-12 col-md-6 d-flex justify-content-end">
                 <div>
+                    <button type="button" class="btn btn-sm btn-primary px-2 mr-2" @click="print">
+                        <i class="fas fa-print mr-1"></i> 列印託運單
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary px-2 mr-2" @click="specification">
+                        <i class="fas fa-truck mr-1"></i> 物流訂單產生
+                    </button>
                     <button type="button" class="btn btn-sm btn-success px-2 mr-2" @click="exportData('products')">
                         <i class="fa fa-file-export mr-1"></i> 匯出揀貨單
                     </button>
@@ -63,15 +69,16 @@
                                 <thead>
                                 <!-- v-if -->
                                 <tr v-if="list.length > 0">
-{{--                                    <th class="align-middle">--}}
-{{--                                        <input type="checkbox" class="checkbox-size" v-model="checkAll">--}}
-{{--                                    </th>--}}
+                                    <th class="align-middle">
+                                        <input type="checkbox" class="checkbox-size-for-print" v-model="checkAll">
+                                    </th>
                                     <th>訂單編號</th>
                                     <th class="text-center">訂購人姓名</th>
                                     <th class="text-center">訂購時間</th>
                                     <th class="text-center">付款狀態</th>
                                     <th class="text-center">訂單狀態</th>
                                     <th class="text-center">訂單金額</th>
+                                    <th class="text-center">物流取號狀態</th>
                                     <th class="text-center">功能</th>
                                 </tr>
                                 <tr v-else>
@@ -81,15 +88,19 @@
                                 <tbody>
                                 <!-- v-for -->
                                 <tr v-for="item in list">
-{{--                                    <td class="align-middle">--}}
-{{--                                        <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check">--}}
-{{--                                    </td>--}}
+                                    <td class="align-middle">
+                                        <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check" v-if="item.payment_status === 1 && !item.AllPayLogisticsID">
+                                        <input type="checkbox" class="checkbox-size-for-print" style="border: 1px solid #28a745" :value="item.AllPayLogisticsID" v-model="check_print" v-if="item.AllPayLogisticsID">
+                                    </td>
                                     <td>${item.merchant_trade_no}</td>
                                     <td class="text-center">${item.member.name}</td>
                                     <td class="text-center">${dateFormat(item.created_at)}</td>
                                     <td class="text-center" :class="item.payment_status === 0 ? 'text-danger' : ''">${paymentStatusFormat(item.payment_status)}</td>
                                     <td class="text-center" :class="orderStatusColor(item.order_status)">${orderStatusFormat(item.order_status)}</td>
-                                    <td class="text-center text-danger">${order_total(item.freight, item.order_products)}</td>
+                                    <td class="text-center text-danger">${orderTotal(item.freight, item.order_products)}</td>
+                                    <td class="text-center" :class="item.AllPayLogisticsID ? 'text-success text-bold' : ''">
+                                        ${item.AllPayLogisticsID ? '已取號' : '未取號'}
+                                    </td>
                                     <td class="text-center">
                                         <button type="button" class="btn btn-sm btn-info px-2" data-toggle="modal" data-target="#detail" @click="detail(item.id)">
                                             <i class="fa fa-edit mr-1"></i> 明細
@@ -104,6 +115,72 @@
                 <components-pagination ref="pagination" :all_count="all_count" :page_count="page_count" @get-data="getData"></components-pagination>
             </div>
         </div>
+
+        <div class="modal fade" id="specification" data-backdrop="static">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">
+                            請選擇寄送規格
+                        </h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h6>規格選擇</h6>
+                        <template v-for="(item, key) in radio.specification">
+                            <label :for="'send-specification' + key" class="mr-3">
+                                <input type="radio" :id="'send-specification' + key" :value="item.value" v-model="value.specification" />
+                                ${ item.name }
+                            </label>
+                        </template>
+                        <hr />
+                        <h6>此訂單商品明細</h6>
+                        <div class="order_products_list">
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center width-20">圖片</th>
+                                        <th class="width-20">商品</th>
+                                        <th class="width-30">規格</th>
+                                        <th class="text-center width-10">數量</th>
+                                        <th class="text-center width-10">價格</th>
+                                        <th class="text-center width-10">小計</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <!-- v-for -->
+                                    <tr v-for="item in order_products">
+                                        <td class="text-center"><img :src="item.img"/></td>
+                                        <td class="align-middle">${ item.product.title }</td>
+                                        <td class="align-middle">${ item.product_specifications.name }</td>
+                                        <td class="text-center align-middle">${ item.count }</td>
+                                        <td class="text-center align-middle">${ item.price.toLocaleString() }</td>
+                                        <td class="text-center align-middle">${ (item.count *
+                                            item.price).toLocaleString() }
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-end">
+                        <button type="button" class="btn btn-sm btn-danger px-3 mr-1" data-dismiss="modal" aria-label="Close">取消</button>
+                        <button type="button" class="btn btn-sm btn-primary px-3" @click="confirm">儲存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-none">
+            <form id="form" type="post" :action="url.print" method="post" target="_blank">
+                <input type="hidden" :name="item.key" :value="item.value" v-for="item in ECPay" />
+            </form>
+        </div>
+
     </div>
 
     <div class="modal fade" id="detail" data-backdrop="static">
@@ -235,6 +312,14 @@
                                         </div>
                                         <div class="col-9 text-bold">
                                             ${info.invoice_name}
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-3">
+                                            物流取號狀態
+                                        </div>
+                                        <div class="col-9 text-bold" :class="info.AllPayLogisticsID ? 'text-success' : ''">
+                                            ${info.AllPayLogisticsID ? '已取號' : '未取號'}
                                         </div>
                                     </div>
                                     <div class="row mt-3">

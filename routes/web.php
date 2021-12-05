@@ -49,6 +49,8 @@ Route::post('ecpay-return', [OrderController::class, 'ecpayReturn']);
 Route::post('ecpay-result', [OrderController::class, 'ecpayResult']);
 # ATM 訂單取號
 Route::post('ecpay-redirect', [OrderController::class, 'ecpayRedirect']);
+# 物流訂單產生 II(宅配)
+Route::post('ecpay-server-reply', [OrderController::class, 'ecpayServerReply']);
 
 Route::middleware(['auth.web'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
@@ -179,6 +181,13 @@ Route::middleware(['auth.web'])->group(function () {
     Route::get('orders/list/{page}', [OrderController::class, 'list']);
     Route::post('orders/update', [OrderController::class, 'update']);
     Route::get('orders/export/{type}', [OrderController::class, 'export']);
+
+    # 物流訂單產生 II(宅配) form data 產生
+    Route::post('orders/form-data/logistics', [OrderController::class, 'logisticsForm']);
+    # 取得 列印託運單 網址
+    Route::get('orders/get/logistics-print-url', [OrderController::class, 'logisticsPrintUrl']);
+    # 列印託運單
+    Route::post('orders/print/logistics', [OrderController::class, 'logisticsPrint']);
 
     # 運費設定
     Route::get('freight', [FreightController::class, 'index']);

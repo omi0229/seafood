@@ -15,14 +15,46 @@ window.app = createApp({
             page_count: 10,
             checkAll: false,
             check: [],
+            check_print: [],
             list: [],
             search_text: '',
+            order_products: [],
+            ECPay: [],
+            url: {
+                print: '',
+            },
+            value: {
+                specification: '0001',
+            },
+            radio: {
+                specification: [
+                    {
+                        value: '0001',
+                        name: '60cm',
+                    },
+                    {
+                        value: '0002',
+                        name: '90cm',
+                    },
+                    {
+                        value: '0003',
+                        name: '120cm',
+                    },
+                ],
+            },
         }
     },
     delimiters: ["${", "}"],
     watch: {
         'checkAll'(newData, oldData) {
-            this.check = newData ? _.map(this.list, 'id') : [];
+            this.check_print = [];
+            if(newData) {
+                this.list.forEach(v => {
+                    if (v.AllPayLogisticsID) {
+                        this.check_print.push(v.AllPayLogisticsID);
+                    }
+                })
+            }
         },
     },
     computed: {
@@ -87,21 +119,24 @@ window.app = createApp({
                 }
             }
         },
-        order_total() {
+        orderTotal() {
               return (freight, list) => {
                   let price = 0;
                   list.forEach(v => { price += v.price * v.count });
                   price += freight;
                   return price.toLocaleString();
               }
-        }
+        },
     },
     async mounted() {
-
         if (sessionStorage.getItem('keywords')) {
             this.search_text = sessionStorage.getItem('keywords');
             sessionStorage.removeItem('keywords')
         }
+
+        await axiosGetMethod('/orders/get/logistics-print-url').then(res => {
+            this.url.print = res.data.data;
+        });
 
         await this.getCount();
         await this.getData(1);
@@ -130,14 +165,17 @@ window.app = createApp({
                     if (loading && loading.show) {
                         loading.show = false;
                     }
+
+                    this.check = [];
+
                     resolve();
                 });
             });
         },
-        create() {
-            detailed_content.dataInit();
-            detailed_content.mode = 'create';
-        },
+        // create() {
+        //     detailed_content.dataInit();
+        //     detailed_content.mode = 'create';
+        // },
         detail(id) {
 
             detailed_content.dataInit();
@@ -160,6 +198,7 @@ window.app = createApp({
                 $('input[data-target="#shipment_date"]').val(info.shipment_at.substr(0, 10));
             }
 
+            detailed_content.info.AllPayLogisticsID = info.AllPayLogisticsID;
             detailed_content.info.bookmark = info.bookmark;
             detailed_content.info.admin_bookmark = info.admin_bookmark;
             detailed_content.info.created_at = info.created_at;
@@ -207,9 +246,9 @@ window.app = createApp({
             });
         },
         confirm() {
-            swal2Confirm('確定刪除選取的項目？').then(confirm => {
+            swal2Confirm('確定送出？').then(confirm => {
                 if (confirm) {
-                    this.delete();
+                    this.logistics();
                 }
             });
         },
@@ -226,6 +265,70 @@ window.app = createApp({
                     break;
             }
         },
+        specification() {
+            if (this.check.length !== 1) {
+                Toast.fire({icon: 'error', title: '請選擇一項訂單！'});
+                return false;
+            }
+
+            this.value.specification = '0001';
+
+            let info = _.find(this.list, ['id', this.check[0]]);
+            this.order_products = info.order_products;
+
+            $('#specification').modal('show');
+        },
+        logistics() {
+            if (this.check.length !== 1) {
+                Toast.fire({icon: 'error', title: '請選擇一項訂單！'});
+                return false;
+            }
+
+            loading.show = true;
+            this.ECPay = [];
+            if (this.check.length === 1) {
+
+                let info = _.find(this.list, ['id', this.check[0]]);
+                if (info) {
+                    let obj = {
+                        order_id: this.check[0],
+                        order_total: this.orderTotal(info.freight, info.order_products),
+                        Specification: this.value.specification,
+                    };
+
+                    axiosPostMethod('/orders/form-data/logistics', obj).then(res => {
+                        this.searchService().then(() => {
+                            loading.show = false;
+                            $('#specification').modal('hide');
+
+                            let icon = res.data.status ? 'success' : 'error';
+                            Toast.fire({icon: icon, title: res.data.message});
+                        });
+                    });
+                }
+            }
+        },
+        print() {
+            if (this.check_print.length < 1) {
+                Toast.fire({icon: 'error', title: '請至少選擇一項「已取號」訂單'});
+                return false
+            }
+
+            loading.show = true;
+            axiosPostMethod('/orders/print/logistics', this.check_print).then(res => {
+                for (const [key, value] of Object.entries(res.data.ecpay)) {
+                    this.ECPay.push({
+                        key: key,
+                        value: value,
+                    })
+                }
+
+                setTimeout(() => {
+                    document.getElementById('form').submit();
+                    loading.show = false;
+                }, 1000)
+            });
+        },
     },
 }).mount('#app');
 
@@ -241,6 +344,7 @@ let detailed_content = createApp({
                 freight: 0,
                 freight_name: '',
                 shipment_at: '',
+                AllPayLogisticsID: '',
                 admin_bookmark: '',
                 member: {
                     name: '',

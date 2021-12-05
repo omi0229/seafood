@@ -7,7 +7,6 @@ use App\Traits\General;
 use App\Models\Orders;
 use App\Repositories\OrderRepository;
 use App\Services\OrderServices;
-use App\Repositories\NotificationRepository;
 
 class OrderController extends Controller
 {
@@ -118,10 +117,59 @@ class OrderController extends Controller
                     'PaymentDate' => $inputs['PaymentDate'],
                 ]),
             ]);
+
+//            $this->mxp_line_notify('testtest');
         }
 
         header("Location: " . env('FRONT_PAGE_URL') . 'account/record');
         exit;
+    }
+
+    public function mxp_line_notify($msg)
+    {
+        if ($msg == "") {
+            return;
+        }
+
+        $token = 'O5lWvABYgyYCU7TXI5B1iZ';
+
+        $body = array(
+            'message' => PHP_EOL . $msg, //先斷行，避免跟 Bot 稱呼黏在一起
+        );
+        // 授權方式
+        $headers = array(
+            'Content-Type: application/x-www-form-urlencoded',
+            'Authorization: Bearer ' . $token,
+        );
+        $url = 'https://notify-api.line.me/api/notify';
+
+        $ch = curl_init();
+
+        $params = array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => TRUE,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_SSL_VERIFYPEER => TRUE,
+            CURLOPT_CONNECTTIMEOUT => 3,
+            CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13',
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => http_build_query($body),
+        );
+
+        curl_setopt_array($ch, $params);
+
+        if (!$result = curl_exec($ch)) {
+            if ($errno = curl_errno($ch)) {
+                $error_message = curl_strerror($errno);
+
+                // echo "cURL error ({$errno}):\n {$error_message}";
+                curl_close($ch);
+                return FALSE;
+            }
+        } else {
+            curl_close($ch);
+            return TRUE;
+        }
     }
 
     public function ecpayRedirect()
@@ -153,5 +201,32 @@ class OrderController extends Controller
 
         header("Location: " . env('FRONT_PAGE_URL') . 'account/order/' . $inputs['CustomField1']);
         exit;
+    }
+
+    public function ecpayServerReply()
+    {
+        $inputs = $this->request->all();
+
+        \AppLog::record([
+            'type' => 'logistics',
+            'content' => json_encode($inputs),
+        ]);
+
+        return '1|OK';
+    }
+
+    public function logisticsForm()
+    {
+        return response()->Json(OrderServices::ecpayLogisticsForm($this->request->all()));
+    }
+
+    public function logisticsPrintUrl()
+    {
+        return response()->json(['status' => true, 'message' => '取得列印貨運單網址成功', 'data' => env('ECPAY.PRINT_URL')]);
+    }
+
+    public function logisticsPrint()
+    {
+        return response()->json(['status' => true, 'message' => 'form data 建立成功', 'ecpay' => OrderServices::ecpayLogisticsPrint($this->request->all())]);
     }
 }

@@ -57,6 +57,7 @@ class OrderResource extends JsonResource
             'invoice_tax_id_number' => $this->invoice_tax_id_number,
             'invoice_name' => $this->invoice_name,
             'shipment_at' => $this->shipment_at,
+            'AllPayLogisticsID' => $this->AllPayLogisticsID,
             'bookmark' => $this->bookmark,
             'admin_bookmark' => $this->admin_bookmark,
             'order_status' => $this->order_status,

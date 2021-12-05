@@ -3,6 +3,7 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -79,6 +80,123 @@ class OrderServices
         }
 
         $CheckMacValueService = new CheckMacValueService($HashKey, $HashIV, 'sha256');
+        $CheckMacValue = $CheckMacValueService->generate($array);
+
+        $array['CheckMacValue'] = $CheckMacValue;
+
+        return $array;
+    }
+
+    # 建立 物流訂單產生的 form data
+    static function ecpayLogisticsForm($inputs)
+    {
+        $model = \App\Models\Config::where('config_name', 'goldflow_MerchantID')->orWhere('config_name', 'goldflow_HashKey')->orWhere('config_name', 'goldflow_HashIV')->get();
+        $MerchantID = $model->find('goldflow_MerchantID') ? $model->find('goldflow_MerchantID')->config_value : null;
+        $HashKey = $model->find('goldflow_HashKey') ? $model->find('goldflow_HashKey')->config_value : null;
+        $HashIV = $model->find('goldflow_HashIV') ? $model->find('goldflow_HashIV')->config_value : null;
+
+        $order_model = app()->make(self::$model);
+        $order = $order_model->with('member')->find($order_model::decodeSlug($inputs['order_id']));
+        if ($order) {
+            $array = [
+                'MerchantID' => $MerchantID,
+                'MerchantTradeDate' => Carbon::parse($order->created_at)->format('Y/m/d H:i:s'),
+                'LogisticsType' => 'HOME',
+                'LogisticsSubType' => 'TCAT',
+                'GoodsAmount' => $inputs['order_total'],
+                'SenderName' => $order->member->name,
+                'SenderCellPhone' => $order->member->cellphone,
+                'SenderZipCode' => $order->member->zipcode,
+                'SenderAddress' => $order->member->country . $order->member->city . $order->member->address,
+                'ReceiverName' => $order->name,
+                'ReceiverCellPhone' => $order->cellphone,
+                'ReceiverZipCode' => $order->zipcode,
+                'ReceiverAddress' => $order->country . $order->city . $order->address,
+                'Temperature' => '0003',
+                'Distance' => '00',
+                'Specification' => $inputs['Specification'],
+                'ServerReplyURL' => env('APP_URL') . '/ecpay-server-reply',
+            ];
+
+            $CheckMacValueService = new CheckMacValueService($HashKey, $HashIV, 'md5');
+            $CheckMacValue = $CheckMacValueService->generate($array);
+
+            $array['CheckMacValue'] = $CheckMacValue;
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => env('ECPAY.LOGISTICS_URL'),
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => http_build_query($array),
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/x-www-form-urlencoded'
+                ),
+            ));
+
+            # 1|message or other|error_message
+            $response = curl_exec($curl);
+            curl_close($curl);
+
+            ### 產生物流訂單LOG
+            #目前的後台使用操作者
+            $user = session()->get('seafood_user');
+            \AppLog::record([
+                'type' => 'create_logistics',
+                'user_id' => $user->id,
+                'data_id' => $order->id,
+                'content' => $response,
+            ]);
+
+            $return_message = explode('|', $response);
+
+            if (is_array($return_message) && count($return_message) === 2) {
+                $status = (int)$return_message[0];
+                $message = $return_message[1];
+                if ($status === 1) {
+                    $response_array = explode('&', substr($response, 2));
+                    $content_array = [];
+                    foreach ($response_array as $res) {
+                        $info = explode('=', $res);
+                        if (is_array($info) && count($info) === 2) {
+                            $content_array[$info[0]] = $info[1];
+                        }
+                    }
+                    $order->update([
+                        'MerchantTradeNo' => $content_array['MerchantTradeNo'],
+                        'AllPayLogisticsID' => $content_array['AllPayLogisticsID'],
+                        'BookingNote' => $content_array['BookingNote'],
+                    ]);
+                    return ['status' => true, 'message' => '訂單資料建構成功'];
+                } else {
+                    return ['status' => false, 'message' => $message];
+                }
+            }
+            return ['status' => false, 'message' => '綠界回傳錯誤'];
+        }
+
+        return ['status' => false, 'message' => '無此訂單資料'];
+    }
+
+    # 列印託運單
+    static function ecpayLogisticsPrint($AllPayLogisticsID) {
+        $model = \App\Models\Config::where('config_name', 'goldflow_MerchantID')->orWhere('config_name', 'goldflow_HashKey')->orWhere('config_name', 'goldflow_HashIV')->get();
+        $MerchantID = $model->find('goldflow_MerchantID') ? $model->find('goldflow_MerchantID')->config_value : null;
+        $HashKey = $model->find('goldflow_HashKey') ? $model->find('goldflow_HashKey')->config_value : null;
+        $HashIV = $model->find('goldflow_HashIV') ? $model->find('goldflow_HashIV')->config_value : null;
+
+        $array = [
+            'MerchantID' => $MerchantID,
+            'AllPayLogisticsID' => implode(',', $AllPayLogisticsID),
+        ];
+
+        $CheckMacValueService = new CheckMacValueService($HashKey, $HashIV, 'md5');
         $CheckMacValue = $CheckMacValueService->generate($array);
 
         $array['CheckMacValue'] = $CheckMacValue;

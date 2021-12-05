@@ -67117,6 +67117,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_search_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/search.js */ "./resources/js/components/search.js");
 /* harmony import */ var _components_pagination_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/pagination.js */ "./resources/js/components/pagination.js");
 /* harmony import */ var twzipcode_data__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! twzipcode-data */ "./node_modules/twzipcode-data/dist/index.js");
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -67139,14 +67151,45 @@ window.app = createApp({
       page_count: 10,
       checkAll: false,
       check: [],
+      check_print: [],
       list: [],
-      search_text: ''
+      search_text: '',
+      order_products: [],
+      ECPay: [],
+      url: {
+        print: ''
+      },
+      value: {
+        specification: '0001'
+      },
+      radio: {
+        specification: [{
+          value: '0001',
+          name: '60cm'
+        }, {
+          value: '0002',
+          name: '90cm'
+        }, {
+          value: '0003',
+          name: '120cm'
+        }]
+      }
     };
   },
   delimiters: ["${", "}"],
   watch: {
     'checkAll': function checkAll(newData, oldData) {
-      this.check = newData ? _.map(this.list, 'id') : [];
+      var _this = this;
+
+      this.check_print = [];
+
+      if (newData) {
+        this.list.forEach(function (v) {
+          if (v.AllPayLogisticsID) {
+            _this.check_print.push(v.AllPayLogisticsID);
+          }
+        });
+      }
     }
   },
   computed: {
@@ -67227,7 +67270,7 @@ window.app = createApp({
         }
       };
     },
-    order_total: function order_total() {
+    orderTotal: function orderTotal() {
       return function (freight, list) {
         var price = 0;
         list.forEach(function (v) {
@@ -67239,7 +67282,7 @@ window.app = createApp({
     }
   },
   mounted: function mounted() {
-    var _this = this;
+    var _this2 = this;
 
     return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
@@ -67247,18 +67290,24 @@ window.app = createApp({
           switch (_context.prev = _context.next) {
             case 0:
               if (sessionStorage.getItem('keywords')) {
-                _this.search_text = sessionStorage.getItem('keywords');
+                _this2.search_text = sessionStorage.getItem('keywords');
                 sessionStorage.removeItem('keywords');
               }
 
               _context.next = 3;
-              return _this.getCount();
+              return axiosGetMethod('/orders/get/logistics-print-url').then(function (res) {
+                _this2.url.print = res.data.data;
+              });
 
             case 3:
               _context.next = 5;
-              return _this.getData(1);
+              return _this2.getCount();
 
             case 5:
+              _context.next = 7;
+              return _this2.getData(1);
+
+            case 7:
             case "end":
               return _context.stop();
           }
@@ -67268,42 +67317,43 @@ window.app = createApp({
   },
   methods: {
     getCount: function getCount() {
-      var _this2 = this;
+      var _this3 = this;
 
       return new Promise(function (resolve) {
-        var url = !_this2.search_text ? '/orders/count' : '/orders/count?keywords=' + _this2.search_text;
+        var url = !_this3.search_text ? '/orders/count' : '/orders/count?keywords=' + _this3.search_text;
         axiosGetMethod(url).then(function (res) {
-          _this2.all_count = res.data.count;
-          _this2.page_count = res.data.page_count;
+          _this3.all_count = res.data.count;
+          _this3.page_count = res.data.page_count;
           resolve();
         });
       });
     },
     getData: function getData(page) {
-      var _this3 = this;
+      var _this4 = this;
 
       return new Promise(function (resolve) {
         var url = '/orders/list/' + page;
 
-        if (_this3.search_text) {
-          url += '?keywords=' + _this3.search_text;
+        if (_this4.search_text) {
+          url += '?keywords=' + _this4.search_text;
         }
 
         axiosGetMethod(url).then(function (res) {
-          _this3.list = res.data.data;
+          _this4.list = res.data.data;
 
           if (loading && loading.show) {
             loading.show = false;
           }
 
+          _this4.check = [];
           resolve();
         });
       });
     },
-    create: function create() {
-      detailed_content.dataInit();
-      detailed_content.mode = 'create';
-    },
+    // create() {
+    //     detailed_content.dataInit();
+    //     detailed_content.mode = 'create';
+    // },
     detail: function detail(id) {
       detailed_content.dataInit();
       detailed_content.mode = 'modify';
@@ -67327,6 +67377,7 @@ window.app = createApp({
         $('input[data-target="#shipment_date"]').val(info.shipment_at.substr(0, 10));
       }
 
+      detailed_content.info.AllPayLogisticsID = info.AllPayLogisticsID;
       detailed_content.info.bookmark = info.bookmark;
       detailed_content.info.admin_bookmark = info.admin_bookmark;
       detailed_content.info.created_at = info.created_at;
@@ -67345,7 +67396,7 @@ window.app = createApp({
       detailed_content.info.order_products = info.order_products;
     },
     "delete": function _delete() {
-      var _this4 = this;
+      var _this5 = this;
 
       if (this.check.length > 0) {
         loading.show = true;
@@ -67363,7 +67414,7 @@ window.app = createApp({
                         title: '刪除成功'
                       });
 
-                      _this4.searchService('delete');
+                      _this5.searchService('delete');
                     }
 
                   case 1:
@@ -67381,7 +67432,7 @@ window.app = createApp({
       }
     },
     searchService: function searchService() {
-      var _this5 = this;
+      var _this6 = this;
 
       var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       return new Promise( /*#__PURE__*/function () {
@@ -67391,29 +67442,29 @@ window.app = createApp({
               switch (_context3.prev = _context3.next) {
                 case 0:
                   _context3.next = 2;
-                  return _this5.getCount();
+                  return _this6.getCount();
 
                 case 2:
                   _context3.next = 4;
-                  return _this5.getData(_this5.$refs.pagination.page);
+                  return _this6.getData(_this6.$refs.pagination.page);
 
                 case 4:
-                  if (!(_this5.$refs.pagination.page > 1 && _this5.list.length === 0)) {
+                  if (!(_this6.$refs.pagination.page > 1 && _this6.list.length === 0)) {
                     _context3.next = 10;
                     break;
                   }
 
-                  if (!(type === 'delete' || _this5.search_text)) {
+                  if (!(type === 'delete' || _this6.search_text)) {
                     _context3.next = 10;
                     break;
                   }
 
                   loading.show = true;
                   _context3.next = 9;
-                  return _this5.getData(1);
+                  return _this6.getData(1);
 
                 case 9:
-                  _this5.$refs.pagination.setPage(1);
+                  _this6.$refs.pagination.setPage(1);
 
                 case 10:
                   resolve();
@@ -67432,11 +67483,11 @@ window.app = createApp({
       }());
     },
     confirm: function confirm() {
-      var _this6 = this;
+      var _this7 = this;
 
-      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)('確定刪除選取的項目？').then(function (confirm) {
+      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)('確定送出？').then(function (confirm) {
         if (confirm) {
-          _this6["delete"]();
+          _this7.logistics();
         }
       });
     },
@@ -67454,6 +67505,89 @@ window.app = createApp({
           window.open('/orders/export/products');
           break;
       }
+    },
+    specification: function specification() {
+      if (this.check.length !== 1) {
+        Toast.fire({
+          icon: 'error',
+          title: '請選擇一項訂單！'
+        });
+        return false;
+      }
+
+      this.value.specification = '0001';
+
+      var info = _.find(this.list, ['id', this.check[0]]);
+
+      this.order_products = info.order_products;
+      $('#specification').modal('show');
+    },
+    logistics: function logistics() {
+      var _this8 = this;
+
+      if (this.check.length !== 1) {
+        Toast.fire({
+          icon: 'error',
+          title: '請選擇一項訂單！'
+        });
+        return false;
+      }
+
+      loading.show = true;
+      this.ECPay = [];
+
+      if (this.check.length === 1) {
+        var info = _.find(this.list, ['id', this.check[0]]);
+
+        if (info) {
+          var obj = {
+            order_id: this.check[0],
+            order_total: this.orderTotal(info.freight, info.order_products),
+            Specification: this.value.specification
+          };
+          axiosPostMethod('/orders/form-data/logistics', obj).then(function (res) {
+            _this8.searchService().then(function () {
+              loading.show = false;
+              $('#specification').modal('hide');
+              var icon = res.data.status ? 'success' : 'error';
+              Toast.fire({
+                icon: icon,
+                title: res.data.message
+              });
+            });
+          });
+        }
+      }
+    },
+    print: function print() {
+      var _this9 = this;
+
+      if (this.check_print.length < 1) {
+        Toast.fire({
+          icon: 'error',
+          title: '請至少選擇一項「已取號」訂單'
+        });
+        return false;
+      }
+
+      loading.show = true;
+      axiosPostMethod('/orders/print/logistics', this.check_print).then(function (res) {
+        for (var _i = 0, _Object$entries = Object.entries(res.data.ecpay); _i < _Object$entries.length; _i++) {
+          var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
+              key = _Object$entries$_i[0],
+              value = _Object$entries$_i[1];
+
+          _this9.ECPay.push({
+            key: key,
+            value: value
+          });
+        }
+
+        setTimeout(function () {
+          document.getElementById('form').submit();
+          loading.show = false;
+        }, 1000);
+      });
     }
   }
 }).mount('#app');
@@ -67469,6 +67603,7 @@ var detailed_content = createApp({
         freight: 0,
         freight_name: '',
         shipment_at: '',
+        AllPayLogisticsID: '',
         admin_bookmark: '',
         member: {
           name: '',
@@ -67554,7 +67689,7 @@ var detailed_content = createApp({
   },
   methods: {
     selectCountry: function selectCountry() {
-      var _this7 = this;
+      var _this10 = this;
 
       var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
@@ -67562,13 +67697,13 @@ var detailed_content = createApp({
         this.info.receiver.city = '';
         this.info.receiver.zipcode = '';
         this.select.main_island_cities = _.filter(this.origin_zipcode.zipcodes, function (v) {
-          return v.county === _this7.info.receiver.country && v.city !== '釣魚臺列嶼' && v.city !== '東沙群島' && v.city !== '南沙群島' && v.city !== '琉球鄉' && v.city !== '綠島鄉' && v.city !== '蘭嶼鄉';
+          return v.county === _this10.info.receiver.country && v.city !== '釣魚臺列嶼' && v.city !== '東沙群島' && v.city !== '南沙群島' && v.city !== '琉球鄉' && v.city !== '綠島鄉' && v.city !== '蘭嶼鄉';
         });
       } else {
         this.form.city = '';
         this.form.zipcode = '';
         this.select.cities = _.filter(this.origin_zipcode.zipcodes, function (v) {
-          return v.county === _this7.form.country;
+          return v.county === _this10.form.country;
         });
       }
     },
@@ -67660,7 +67795,7 @@ var detailed_content = createApp({
       };
     },
     confirm: function confirm() {
-      var _this8 = this;
+      var _this11 = this;
 
       var auth = this.auth(this.info);
 
@@ -67675,7 +67810,7 @@ var detailed_content = createApp({
       var text = this.mode === 'create' ? '新增' : '編輯';
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)("\u78BA\u5B9A".concat(text, "\u6B64\u8CC7\u6599\uFF1F")).then(function (confirm) {
         if (confirm) {
-          _this8.save();
+          _this11.save();
         }
       });
     },
