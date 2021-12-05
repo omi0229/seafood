@@ -79,7 +79,7 @@ class OrderServices
 
         }
 
-        $CheckMacValueService = new CheckMacValueService($HashKey, $HashIV, 'sha256');
+        $CheckMacValueService = new CheckMacValueService($HashKey, $HashIV, env('ECPAY.PAYMENT_METHOD', 'sha256'));
         $CheckMacValue = $CheckMacValueService->generate($array);
 
         $array['CheckMacValue'] = $CheckMacValue;
