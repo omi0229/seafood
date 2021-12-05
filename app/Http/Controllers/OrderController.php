@@ -205,14 +205,31 @@ class OrderController extends Controller
 
     public function ecpayServerReply()
     {
+        sleep(5);
+
         $inputs = $this->request->all();
 
-        \AppLog::record([
-            'type' => 'logistics',
-            'content' => json_encode($inputs),
-        ]);
+        if (data_get($inputs, 'AllPayLogisticsID') && data_get($inputs, 'BookingNote')) {
 
-        return '1|OK';
+            $order = $this->model->where('AllPayLogisticsID', $inputs['AllPayLogisticsID'])
+                ->where('BookingNote', $inputs['BookingNote'])
+                ->get()
+                ->first();
+
+            if ($order) {
+                $order->RtnCode = $inputs['RtnCode'];
+                $order->RtnMsg = $inputs['RtnMsg'];
+                $order->save();
+
+                \AppLog::record([
+                    'type' => 'logistics',
+                    'data_id' => $order->id,
+                    'content' => json_encode($inputs),
+                ]);
+
+                return '1|OK';
+            }
+        }
     }
 
     public function logisticsForm()
