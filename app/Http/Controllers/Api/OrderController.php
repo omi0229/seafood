@@ -84,7 +84,7 @@ class OrderController extends Controller
             $params['start_date'] = $inputs['start_date'];
             $params['end_date'] = $inputs['end_date'];
         }
-        return response()->Json(['status' => true, 'message' => '訂單查詢成功', 'data' => $this->repository->list($page, $params)]);
+        return response()->Json(['status' => true, 'message' => '訂單查詢成功', 'data' => $this->repository->recordList($page, $params)]);
     }
 
     public function info($order_id) {
