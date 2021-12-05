@@ -322,6 +322,15 @@
                                             ${info.AllPayLogisticsID ? '已取號' : '未取號'}
                                         </div>
                                     </div>
+                                    <!-- v-if -->
+                                    <div class="row mt-3" v-if="info.AllPayLogisticsID">
+                                        <div class="col-3">
+                                            物流狀態
+                                        </div>
+                                        <div class="col-9 text-bold">
+                                            ${info.RtnCode} ${info.RtnMsg}
+                                        </div>
+                                    </div>
                                     <div class="row mt-3">
                                         <div class="col-3">
                                             備註

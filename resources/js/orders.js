@@ -199,6 +199,8 @@ window.app = createApp({
             }
 
             detailed_content.info.AllPayLogisticsID = info.AllPayLogisticsID;
+            detailed_content.info.RtnCode = info.RtnCode;
+            detailed_content.info.RtnMsg = info.RtnMsg;
             detailed_content.info.bookmark = info.bookmark;
             detailed_content.info.admin_bookmark = info.admin_bookmark;
             detailed_content.info.created_at = info.created_at;
@@ -345,6 +347,8 @@ let detailed_content = createApp({
                 freight_name: '',
                 shipment_at: '',
                 AllPayLogisticsID: '',
+                RtnCode: '',
+                RtnMsg: '',
                 admin_bookmark: '',
                 member: {
                     name: '',

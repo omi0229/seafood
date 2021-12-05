@@ -90,6 +90,10 @@ Route::middleware(['auth:member_api'])->group(function () {
     Route::get('order/info/{order_id}', [OrderController::class, 'info']);
     # 付款
     Route::post('order/payment', [OrderController::class, 'payment']);
+    # 取得 金流串接URL
+    Route::get('order/get/payment_url', function () {
+        return env('ECPAY.PAYMENT_URL');
+    });
 
     ### 會員中心
     # 編輯會員
