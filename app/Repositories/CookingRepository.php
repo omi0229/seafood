@@ -9,14 +9,6 @@ use App\Models\CookingTypes;
 
 class CookingRepository extends Repository
 {
-    protected $model, $types;
-
-    public function __construct(Cooking $model, CookingTypes $types)
-    {
-        $this->model = $model;
-        $this->types = $types;
-    }
-
     public function model()
     {
         return 'App\Models\Cooking';
@@ -44,6 +36,24 @@ class CookingRepository extends Repository
         $page_count = ceil($all_count / env('COOKING_PAGE_ITEM_COUNT', 10));
 
         return ['list' => $this->__formatData($data, $page, env('COOKING_PAGE_ITEM_COUNT', 10)), 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => env('COOKING_PAGE_ITEM_COUNT', 10)];
+    }
+
+    public function searchList($page, $keywords = null)
+    {
+        $data = $this->model->where('status', 1);
+
+        # 有 關鍵字
+        $data = !$keywords ? $data : $data->where('title', 'LIKE', '%' . $keywords . '%');
+
+        # 此搜尋結果全部數量
+        $all_count = $data->count();
+
+        # 此搜尋結果共有幾頁
+        $page_count = ceil($all_count / env('COOKING_PAGE_ITEM_COUNT', 10));
+
+        $page = $page ? $page : 1;
+
+        return ['list' => $this->__formatData($data, $page, env('COOKING_PAGE_ITEM_COUNT', 10)), 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => (int)env('COOKING_PAGE_ITEM_COUNT', 10)];
     }
 
     private function __formatData($data, $set_page = null, $page_item_count = 10)
@@ -78,7 +88,7 @@ class CookingRepository extends Repository
     public function insertData($inputs, Request $request)
     {
         unset($inputs['id']);
-        $inputs['cooking_types_id'] = $this->types::decodeSlug($inputs['cooking_types_id']);
+        $inputs['cooking_types_id'] = CookingTypes::decodeSlug($inputs['cooking_types_id']);
         $inputs['keywords'] = implode(',', $inputs['keywords']);
         $this->model::create($inputs);
 
@@ -92,7 +102,7 @@ class CookingRepository extends Repository
 
         $news = $this->model::find($this->model::decodeSlug($id));
         if ($news) {
-            $inputs['cooking_types_id'] = $this->types::decodeSlug($inputs['cooking_types_id']);
+            $inputs['cooking_types_id'] = CookingTypes::decodeSlug($inputs['cooking_types_id']);
             $inputs['keywords'] = implode(',', $inputs['keywords']);
             $news->update($inputs);
 

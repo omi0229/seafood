@@ -48,6 +48,22 @@ Route::get('cart/get-cart-id', [CartController::class, 'getCartId']);
 Route::post('cart/get-cart-count', [CartController::class, 'getCartCount']);
 Route::post('cart/add-cart', [CartController::class, 'addCart']);
 
+# 線上購物、烹飪教學 搜尋
+Route::get('search/all/{keyword}', function ($keywords) {
+    return response()->JSON([
+        'cooking' => (new \App\Repositories\CookingRepository)->searchList(1, $keywords),
+        'product' => (new \App\Repositories\PutOnRepository)->searchList(1, $keywords),
+    ]);
+});
+# 烹飪教學 搜尋
+Route::get('search/cooking/{keyword}/{page}', function ($keywords, $page) {
+    return response()->JSON((new \App\Repositories\CookingRepository)->searchList($page, $keywords));
+});
+# 線上購物 搜尋
+Route::get('search/product/{keyword}/{page}', function ($keywords, $page) {
+    return response()->JSON((new \App\Repositories\PutOnRepository)->searchList($page, $keywords));
+});
+
 # 大圖輪播
 Route::get('banners/list', [BannersController::class, 'list']);
 

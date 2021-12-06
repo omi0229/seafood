@@ -35,8 +35,8 @@ class PutOnRepository extends Repository
         });
 
         # 是否分頁顯示
-        $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;
-        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(10)->get() : $data->get();
+        $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * env('PRODUCT_PAGE_ITEM_COUNT', 10) : null;
+        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(env('PRODUCT_PAGE_ITEM_COUNT', 10))->get() : $data->get();
 
         $list = [];
         foreach ($data as $key => $row) {
@@ -135,6 +135,31 @@ class PutOnRepository extends Repository
         }
 
         return false;
+    }
+
+    public function searchList($page, $keywords = null)
+    {
+        $data = $this->model->where('status', 1);
+
+        # 有 關鍵字
+        $data = !$keywords ? $data : $data->whereHas('product', function (Builder $query) use ($keywords) {
+            $query->where('title', 'LIKE', '%' . $keywords . '%');
+        });
+
+        # 此搜尋結果全部數量
+        $all_count = $data->count();
+
+        # 此搜尋結果共有幾頁
+        $page_count = ceil($all_count / env('PRODUCT_PAGE_ITEM_COUNT', 10));
+
+        $page = $page ? $page : 1;
+
+        $params = ['status' => 1];
+        if ($keywords) {
+            $params['keywords'] = $keywords;
+        }
+
+        return ['list' => $this->list($page, $params), 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => (int)env('PRODUCT_PAGE_ITEM_COUNT', 10)];
     }
 
     public function count(array $params = [])
