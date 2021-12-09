@@ -28,4 +28,9 @@ class PutOn extends Model
     {
         return $this->belongsTo('App\Models\Products');
     }
+
+    public function order_products()
+    {
+        return $this->hasMany('App\Models\OrderProducts', 'product_id');
+    }
 }

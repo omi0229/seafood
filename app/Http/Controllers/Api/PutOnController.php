@@ -15,9 +15,9 @@ class PutOnController extends Controller
         $this->repository = $repository;
     }
 
-    public function list($type_id, $page = null)
+    public function list($type_id, $page = null, Request $request)
     {
-        return response()->json($this->repository->apiList($type_id, $page));
+        return response()->json($this->repository->apiList($type_id, $page, $request->all()));
     }
 
     public function info($id)

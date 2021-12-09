@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Repositories\Repository;
 use App\Models\Directory;
 use App\Models\Products;
+use App\Models\ProductSpecifications;
+use App\Models\OrderProducts;
 use App\Http\Resources\ProductSpecificationResource;
 
 class PutOnRepository extends Repository
@@ -22,21 +24,50 @@ class PutOnRepository extends Repository
         $keywords = data_get($params, 'keywords');
         $directories_id = data_get($params, 'directories_id');
         $status = data_get($params, 'status');
+        $sort = data_get($params, 'sort');
+        $product_page_item_count = data_get($params, 'product_page_item_count');
 
         # 有 目錄ID
-        $data = $directories_id ? $this->model::with('product')->where('directories_id', Directory::decodeSlug($directories_id)) : $this->model::with('product');
+        $data = $directories_id ? $this->model::with(['product.product_specification', 'product.product_images'])->where('directories_id', Directory::decodeSlug($directories_id)) : $this->model::with(['product.product_specification', 'product.product_images']);
 
         # 商品是否有開放
-        $data = $status === 1 ? $data->where('status', $status) : $data;
+        $data = $status === 1 ? $data->where('status', 1)->orWhere('status', 2) : $data;
 
         # 有 關鍵字
         $data = !$keywords ? $data : $data->whereHas('product', function (Builder $query) use ($keywords) {
             $query->where('title', 'LIKE', '%' . $keywords . '%');
         });
 
+        # 有 指定每頁筆數
+        $page_item_count = env('USER_PAGE_COUNT', 10);
+        if ($product_page_item_count) {
+            $page_item_count = $product_page_item_count;
+        }
+
+        # 有 設定排序方式
+        if ($sort) {
+            switch ($sort) {
+                case 'put_on_new':
+                    $data = $data->orderByDesc('updated_at');
+                    break;
+                case 'put_on_old':
+                    $data = $data->orderBy('updated_at');
+                    break;
+                case 'price_high':
+                    $data = $data->orderByDesc(ProductSpecifications::select('selling_price')->whereColumn('product_id', 'put_ons.product_id')->orderBy('created_at')->limit(1));
+                    break;
+                case 'price_low':
+                    $data = $data->orderBy(ProductSpecifications::select('selling_price')->whereColumn('product_id', 'put_ons.product_id')->orderBy('created_at')->limit(1));
+                    break;
+                case 'sales_high':
+                    $data = $data->orderByDesc(OrderProducts::selectRaw('sum(count)')->whereColumn('product_id', 'put_ons.product_id'));
+                    break;
+            }
+        }
+
         # 是否分頁顯示
-        $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * env('PRODUCT_PAGE_ITEM_COUNT', 10) : null;
-        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(env('PRODUCT_PAGE_ITEM_COUNT', 10))->get() : $data->get();
+        $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * $page_item_count : null;
+        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take($page_item_count)->cursor() : $data->cursor();
 
         $list = [];
         foreach ($data as $key => $row) {
@@ -47,7 +78,6 @@ class PutOnRepository extends Repository
 
             $list[$key]['product_specification'] = ProductSpecificationResource::collection($row->product->product_specification)->toResponse(app('request'))->getData(true);
 
-            $row->product->load('product_images');
             $list[$key]['web_img_list'] = $list[$key]['mobile_img_list'] = [];
             $list[$key]['img'] = null;
             foreach ($row->product->product_images as $img_key => $img_row) {
@@ -76,23 +106,25 @@ class PutOnRepository extends Repository
         return $list;
     }
 
-    public function apiList($type_id, $page = null)
+    public function apiList($type_id, $page = null, $params = [])
     {
         $data = $this->model->where('directories_id', Directory::decodeSlug($type_id))->where('status', 1);
 
         # 此分類的全部數量
         $all_count = $data->count();
 
+        # 排序方式
+        $sort = data_get($params, 'sort');
+
+        # 每頁顯示幾筆
+        $product_page_item_count = data_get($params, 'page_item_count') ? (int)data_get($params, 'page_item_count') : (int)env('PRODUCT_PAGE_ITEM_COUNT', 10);
+
         # 此分類共有幾頁
-        $page_count = ceil($all_count / env('PRODUCT_PAGE_ITEM_COUNT', 10));
+        $page_count = ceil($all_count / $product_page_item_count);
 
         $page = $page ? $page : 1;
 
-        # 是否分頁顯示
-        $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * env('PRODUCT_PAGE_ITEM_COUNT', 10) : null;
-        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(env('PRODUCT_PAGE_ITEM_COUNT', 10))->get() : $data->get();
-
-        return ['list' => $this->list($page, ['directories_id' => $type_id, 'status' => 1]), 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => env('PRODUCT_PAGE_ITEM_COUNT', 10)];
+        return ['list' => $this->list($page, ['directories_id' => $type_id, 'status' => 1, 'sort' => $sort, 'product_page_item_count' => $product_page_item_count]), 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => $product_page_item_count];
     }
 
     public function apiInfo($id)

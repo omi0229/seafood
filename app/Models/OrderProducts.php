@@ -33,4 +33,9 @@ class OrderProducts extends Model
     {
         return $this->belongsTo('App\Models\ProductSpecifications');
     }
+
+    public function put_on()
+    {
+        return $this->belongsTo('App\Models\PutOn');
+    }
 }
