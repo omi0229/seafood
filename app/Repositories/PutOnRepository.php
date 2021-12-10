@@ -129,7 +129,7 @@ class PutOnRepository extends Repository
 
     public function apiInfo($id)
     {
-        $info = $this->model::with('directory')->where('id', $this->model::decodeSlug($id))->where('status', 1)->get()->first();
+        $info = $this->model::with(['product', 'product.product_specification', 'product.product_images', 'directory'])->where('id', $this->model::decodeSlug($id))->where('status', 1)->get()->first();
         if ($info) {
             $item = $info->toArray();
             $item['id'] = $info->hash_id;

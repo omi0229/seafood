@@ -55,7 +55,7 @@ class NewsRepository extends Repository
 
     public function apiData($type_id = null, $page = null)
     {
-        $data = $type_id ? $this->model->where('news_types_id', NewsTypes::decodeSlug($type_id)) : $this->model->where('carousel', 1);
+        $data = $type_id ? $this->model::with(['news_types'])->where('news_types_id', NewsTypes::decodeSlug($type_id)) : $this->model::with(['news_types'])->where('carousel', 1);
 
         $data = $data->where('status', 1);
 
@@ -70,13 +70,11 @@ class NewsRepository extends Repository
 
             # 是否分頁顯示
             $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;
-            $data = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(10)->get() : $data->get();
-        } else {
-            $data = $data->get();
+            $data = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(10) : $data;
         }
 
         $list = [];
-        foreach ($data as $key => $row) {
+        foreach ($data->get() as $key => $row) {
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
             $list[$key]['news_types_id'] = $row->news_types->hash_id ?? '';

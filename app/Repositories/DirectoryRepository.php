@@ -42,9 +42,16 @@ class DirectoryRepository extends Repository
 
     public function apiList($page, array $params = [])
     {
-        $data = $this->model->whereHas('put_ons', function (Builder $query) {
+        $data = $this->model::with(['put_ons' => function ($query) {
             $query->where('status', 1);
-        });
+            $query->skip(0)->take(12);
+            $query->orderBy('created_at', 'DESC');
+            $query->with(['product']);
+        }, 'put_ons.product', 'put_ons.product.product_specification', 'put_ons.product.product_images'])->whereHas('put_ons', function (Builder $query) {
+            $query->where('status', 1);
+        })->withCount(['put_ons' => function ($query) {
+            $query->where('status', 1);
+        }]);
 
         # 是否有關鍵字
         $keywords = data_get($params, 'keywords');
@@ -63,15 +70,6 @@ class DirectoryRepository extends Repository
 
         $list = [];
         foreach ($data as $key => $row) {
-            $row->load(['put_ons' => function ($query) {
-                $query->where('status', 1);
-                $query->skip(0)->take(12);
-                $query->orderBy('created_at', 'DESC');
-                $query->with(['product']);
-            }])->loadCount(['put_ons' => function ($query) {
-                $query->where('status', 1);
-            }]);
-
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
             $list[$key]['all_count'] = $row->put_ons_count;
@@ -83,7 +81,6 @@ class DirectoryRepository extends Repository
 
                 $list[$key]['put_ons'][$product_key]['product_specification'] = ProductSpecificationResource::collection($product_row->product->product_specification)->toResponse(app('request'))->getData(true);
 
-                $product_row->product->load('product_images');
                 $list[$key]['put_ons'][$product_key]['web_img_list'] = $list[$key]['put_ons'][$product_key]['mobile_img_list'] = [];
                 $list[$key]['put_ons'][$product_key]['img'] = null;
                 foreach ($product_row->product->product_images as $img_key => $img_row) {
