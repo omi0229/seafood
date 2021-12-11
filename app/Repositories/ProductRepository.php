@@ -34,7 +34,7 @@ class ProductRepository extends Repository
         $show_status = data_get($params, 'show_status');
 
         # 有 產品分類
-        $data = $product_types_id ? $this->model->where('product_types_id', ProductTypes::decodeSlug($product_types_id)) : $this->model;
+        $data = $product_types_id ? $this->model::with(['product_types', 'product_images'])->where('product_types_id', ProductTypes::decodeSlug($product_types_id)) : $this->model::with(['product_types', 'product_images']);
 
         # 有 是否於上架管理顯示
         $data = $show_status !== null ? $data->where('show_status', $show_status) : $data;
@@ -53,6 +53,7 @@ class ProductRepository extends Repository
             $list[$key]['product_types_id'] = $row->product_types->hash_id ?? '';
             $list[$key]['product_types_name'] = $row->product_types->name ?? '';
             $list[$key]['product_front_cover_image_id'] = $row->product_images->where('id', $row->product_front_cover_image_id)->first()->hash_id ?? '';
+            $list[$key]['product_mobile_front_cover_image_id'] = $row->product_images->where('id', $row->product_mobile_front_cover_image_id)->first()->hash_id ?? '';
 
             $list[$key]['web_img_list'] = $list[$key]['mobile_img_list'] = [];
             foreach ($row->product_images as $img_key => $img_row) {
@@ -119,25 +120,43 @@ class ProductRepository extends Repository
         return $data->count();
     }
 
+    private function __setFrontPageCoverImage(Products $model, $product_front_cover_image_array, $product_mobile_front_cover_image_array)
+    {
+        ### 新增產品圖片
+        # web
+        $array = $this->image_repository->createImage('web_new_img_list', $model->id, 'web');
+        if (isset($product_front_cover_image_array[0]) && $product_front_cover_image_array[0] === 'new') {
+            $key = (int)$product_front_cover_image_array[1];
+            $model->product_front_cover_image_id = $array[$key];
+            $model->save();
+        }
+
+        # mobile
+        $array = $this->image_repository->createImage('mobile_new_img_list', $model->id, 'mobile');
+        if (isset($product_mobile_front_cover_image_array[0]) && $product_mobile_front_cover_image_array[0] === 'new') {
+            $key = (int)$product_mobile_front_cover_image_array[1];
+            $model->product_mobile_front_cover_image_id = $array[$key];
+            $model->save();
+        }
+    }
+
     public function insertData($inputs, Request $request)
     {
         unset($inputs['id']);
         $inputs['product_types_id'] = $this->types::decodeSlug($inputs['product_types_id']);
 
+        # web
         $product_front_cover_image_array = explode('.', $inputs['product_front_cover_image_id']);
         unset($inputs['product_front_cover_image_id']);
 
+        # mobile
+        $product_mobile_front_cover_image_array = explode('.', $inputs['product_mobile_front_cover_image_id']);
+        unset($inputs['product_mobile_front_cover_image_id']);
+
         $model = $this->model::create($inputs);
 
-        # 新增產品圖片
-        $new_images_array = $this->image_repository->createImage('web_new_img_list', $model->id, 'web');
-        if (isset($product_front_cover_image_array[0]) && $product_front_cover_image_array[0] === 'new') {
-            $key = (int)$product_front_cover_image_array[1];
-            $model->product_front_cover_image_id = $new_images_array[$key];
-            $model->save();
-        }
-
-        $this->image_repository->createImage('mobile_new_img_list', $model->id, 'mobile');
+        # 設定前台封面圖
+        $this->__setFrontPageCoverImage($model, $product_front_cover_image_array, $product_mobile_front_cover_image_array);
 
         return true;
     }
@@ -155,6 +174,7 @@ class ProductRepository extends Repository
         if ($product) {
             $inputs['product_types_id'] = $this->types::decodeSlug($inputs['product_types_id']);
 
+            # web
             $product_front_cover_image_array = explode('.', $inputs['product_front_cover_image_id']);
 
             if (isset($product_front_cover_image_array[0]) && $product_front_cover_image_array[0] === 'new') {
@@ -163,15 +183,19 @@ class ProductRepository extends Repository
                 $inputs['product_front_cover_image_id'] = $this->images::decodeSlug($inputs['product_front_cover_image_id']);
             }
 
+            # mobile
+            $product_mobile_front_cover_image_array = explode('.', $inputs['product_mobile_front_cover_image_id']);
+
+            if (isset($product_mobile_front_cover_image_array[0]) && $product_mobile_front_cover_image_array[0] === 'new') {
+                unset($inputs['product_mobile_front_cover_image_id']);
+            } else {
+                $inputs['product_mobile_front_cover_image_id'] = $this->images::decodeSlug($inputs['product_mobile_front_cover_image_id']);
+            }
+
             $product->update($inputs);
 
-            # 新增產品圖片
-            $new_images_array = $this->image_repository->createImage('web_new_img_list', $product->id, 'web');
-            if (isset($product_front_cover_image_array[0]) && $product_front_cover_image_array[0] === 'new') {
-                $key = (int)$product_front_cover_image_array[1];
-                $product->product_front_cover_image_id = $new_images_array[$key];
-                $product->save();
-            }
+            # 設定前台封面圖
+            $this->__setFrontPageCoverImage($product, $product_front_cover_image_array, $product_mobile_front_cover_image_array);
 
             if (count($web_img_delete_list) > 0) {
                 $delete_array = $this->images->whereIn('id', array_map([$this->images, 'decodeSlug'], $web_img_delete_list))->get();
@@ -180,8 +204,6 @@ class ProductRepository extends Repository
                     $item->delete();
                 }
             }
-
-            $this->image_repository->createImage('mobile_new_img_list', $product->id, 'mobile');
 
             if (count($mobile_img_delete_list) > 0) {
                 $delete_array = $this->images->whereIn('id', array_map([$this->images, 'decodeSlug'], $mobile_img_delete_list))->get();

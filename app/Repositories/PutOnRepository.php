@@ -87,6 +87,10 @@ class PutOnRepository extends Repository
                 if ($row->product->product_front_cover_image_id === $img_row->id) {
                     $list[$key]['img'] = $list[$key][$type][$img_key]['path'];
                 }
+
+                if ($row->product->product_mobile_front_cover_image_id === $img_row->id) {
+                    $list[$key]['mobile_img'] = $list[$key][$type][$img_key]['path'];
+                }
             }
 
             $web_img_list = collect($list[$key]['web_img_list']);
@@ -99,8 +103,12 @@ class PutOnRepository extends Repository
                 $list[$key]['img'] = $web_img_list->first()['path'];
             }
 
-            unset($list[$key]['product']['product_front_cover_image_id']);
+            if (!$list[$key]['product']['product_mobile_front_cover_image_id'] && $mobile_img_list->count() > 0) {
+                $list[$key]['mobile_img'] = $web_img_list->first()['path'];
+            }
 
+            unset($list[$key]['product']['product_front_cover_image_id']);
+            unset($list[$key]['product']['product_mobile_front_cover_image_id']);
         }
 
         return $list;

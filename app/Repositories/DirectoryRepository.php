@@ -26,7 +26,7 @@ class DirectoryRepository extends Repository
 
     public function apiMenu()
     {
-        $data = $this->model->whereHas('put_ons', function (Builder $query) {
+        $data = $this->model->select(['id', 'name'])->whereHas('put_ons', function (Builder $query) {
             $query->where('status', 1);
         })->get();
 
@@ -34,7 +34,6 @@ class DirectoryRepository extends Repository
         foreach ($data as $key => $row) {
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
-            $list[$key]['name'] = $row->name;
         }
 
         return $list;
@@ -98,11 +97,9 @@ class DirectoryRepository extends Repository
                 $mobile_img_list = collect($list[$key]['put_ons'][$product_key]['mobile_img_list']);
                 $list[$key]['put_ons'][$product_key]['mobile_img_list'] = $mobile_img_list->values()->toArray();
 
-                if (!$list[$key]['put_ons'][$product_key]['product']['product_front_cover_image_id'] && $web_img_list->count() > 0) {
+                if (!$product_row->product->product_front_cover_image_id && $web_img_list->count() > 0) {
                     $list[$key]['put_ons'][$product_key]['img'] = $web_img_list->first()['path'];
                 }
-
-                unset($list[$key]['put_ons'][$product_key]['product']['product_front_cover_image_id']);
             }
         }
 

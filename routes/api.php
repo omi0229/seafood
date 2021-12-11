@@ -64,6 +64,17 @@ Route::get('search/product/{keyword}/{page}', function ($keywords, $page) {
     return response()->JSON((new \App\Repositories\PutOnRepository)->searchList($page, $keywords));
 });
 
+# RWD 滑出式選單內容
+Route::get('menu', function () {
+    $array = [
+        'news_types_list' => (new \App\Repositories\NewsTypesRepository)->list('all'),
+        'cooking_types_list' => (new \App\Repositories\CookingTypesRepository)->list('all'),
+        'directory_list' => (new \App\Repositories\DirectoryRepository)->apiMenu(),
+    ];
+
+    return response()->JSON($array);
+});
+
 # 大圖輪播
 Route::get('banners/list', [BannersController::class, 'list']);
 

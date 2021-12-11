@@ -63109,6 +63109,7 @@ window.app = createApp({
       set_info.info.keywords = info.keywords ? info.keywords.split(',') : [];
       set_info.info.description = info.description;
       set_info.info.product_front_cover_image_id = info.product_front_cover_image_id;
+      set_info.info.product_mobile_front_cover_image_id = info.product_mobile_front_cover_image_id;
       info.web_img_list.forEach(function (v) {
         v["delete"] = 0;
       });
@@ -63269,6 +63270,7 @@ var set_info = createApp({
         keywords: [],
         description: '',
         product_front_cover_image_id: '',
+        product_mobile_front_cover_image_id: '',
         web_img_list: [],
         web_new_img_list: [],
         mobile_img_list: [],
@@ -63365,6 +63367,7 @@ var set_info = createApp({
       this.info.keywords = [];
       this.info.description = '';
       this.info.product_front_cover_image_id = '';
+      this.info.product_mobile_front_cover_image_id;
       this.info.web_img_list = [];
       this.info.web_new_img_list = [];
       this.info.mobile_img_list = [];
@@ -63495,6 +63498,7 @@ var set_info = createApp({
       formData.append("keywords", this.info.keywords);
       formData.append("description", this.info.description);
       formData.append("product_front_cover_image_id", this.info.product_front_cover_image_id);
+      formData.append("product_mobile_front_cover_image_id", this.info.product_mobile_front_cover_image_id);
       var delete_list = '';
       this.info.web_img_list.forEach(function (v, k) {
         if (v["delete"] === 1) {

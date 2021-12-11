@@ -17,7 +17,7 @@ class NewsTypesRepository extends Repository
 
         $keywords = data_get($params, 'keywords');
 
-        $data = !$keywords ? $this->model : $this->model->where('name', 'LIKE', '%' . $keywords . '%');
+        $data = !$keywords ? $this->model->select(['id', 'name']) : $this->model->select(['id', 'name'])->where('name', 'LIKE', '%' . $keywords . '%');
 
         # 是否分頁顯示
         $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;

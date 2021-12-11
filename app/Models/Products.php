@@ -18,6 +18,7 @@ class Products extends Model
         'keywords',
         'description',
         'product_front_cover_image_id',
+        'product_mobile_front_cover_image_id',
         'web_img_name',
         'web_img',
         'mobile_img_name',

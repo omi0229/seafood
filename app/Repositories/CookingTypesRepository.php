@@ -17,7 +17,7 @@ class CookingTypesRepository extends Repository
 
         $keywords = data_get($params, 'keywords');
 
-        $data = !$keywords ? $this->model : $this->model->where('name', 'LIKE', '%' . $keywords . '%');
+        $data = !$keywords ? $this->model->select(['id', 'name']) : $this->model->select(['id', 'name'])->where('name', 'LIKE', '%' . $keywords . '%');
 
         if ($page !== 'all' && is_numeric($page)) {
             $start = ($page - 1) * 10;

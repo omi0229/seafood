@@ -241,6 +241,7 @@
                             <table class="table table-sm table-bordered table-hover text-nowrap">
                                 <thead>
                                     <tr>
+                                        <th class="width percent-5">指定封面圖</th>
                                         <th class="width percent-20">縮圖</th>
                                         <th class="width percent-70">檔案名稱</th>
                                         <th class="width percent-5" class="text-center">刪除</th>
@@ -249,6 +250,9 @@
                                 <tbody>
                                     <template v-for="(item, key) in info.mobile_img_list">
                                         <tr class="s-14" v-show="item.delete == 0">
+                                            <td class="text-center align-middle" @click="info.product_mobile_front_cover_image_id = item.id">
+                                                <input type="radio" :value="item.id" v-model="info.product_mobile_front_cover_image_id">
+                                            </td>
                                             <td class="text-center align-middle">
                                                 <a data-fancybox :href="item.path">
                                                     <img :src="item.path" width="120" />
@@ -262,6 +266,9 @@
                                     </template>
                                     <!-- v-for -->
                                     <tr class="s-14" v-for="(item, key) in info.mobile_new_img_list">
+                                        <td class="text-center align-middle" @click="info.product_mobile_front_cover_image_id = 'new.' + key">
+                                            <input type="radio" :value="'new.' + key" v-model="info.product_mobile_front_cover_image_id">
+                                        </td>
                                         <td class="text-center align-middle">
                                             <img :src="fileRead(item)" width="120" />
                                         </td>
