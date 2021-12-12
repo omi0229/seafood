@@ -27,11 +27,26 @@ class PutOnRepository extends Repository
         $sort = data_get($params, 'sort');
         $product_page_item_count = data_get($params, 'product_page_item_count');
 
+        $data = $this->model::with([
+            'product' => function ($query) {
+                $query->select('title', 'product_front_cover_image_id', 'product_mobile_front_cover_image_id');
+            },
+            'product.product_specification' => function ($query) {
+                $query->select('id', 'name', 'original_price', 'selling_price', 'unit');
+            },
+            'product.product_images'
+        ]);
+
         # 有 目錄ID
-        $data = $directories_id ? $this->model::with(['product.product_specification', 'product.product_images'])->where('directories_id', Directory::decodeSlug($directories_id)) : $this->model::with(['product.product_specification', 'product.product_images']);
+        $data = $directories_id ? $data->where('directories_id', Directory::decodeSlug($directories_id)) : $data;
 
         # 商品是否有開放
-        $data = $status === 1 ? $data->where('status', 1)->orWhere('status', 2) : $data;
+        if ($status === 1) {
+            $data->where(function (Builder $query) {
+                $query->where('status', 1);
+                $query->orWhere('status', 2);
+            });
+        }
 
         # 有 關鍵字
         $data = !$keywords ? $data : $data->whereHas('product', function (Builder $query) use ($keywords) {
@@ -73,8 +88,8 @@ class PutOnRepository extends Repository
         foreach ($data as $key => $row) {
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
-            $list[$key]['product'] = $row->product->toArray();
             $list[$key]['product']['id'] = $row->product->hash_id;
+            $list[$key]['product']['title'] = $row->product->title;
 
             $list[$key]['product_specification'] = ProductSpecificationResource::collection($row->product->product_specification)->toResponse(app('request'))->getData(true);
 
@@ -99,12 +114,12 @@ class PutOnRepository extends Repository
             $mobile_img_list = collect($list[$key]['mobile_img_list']);
             $list[$key]['mobile_img_list'] = $mobile_img_list->values()->toArray();
 
-            if (!$list[$key]['product']['product_front_cover_image_id'] && $web_img_list->count() > 0) {
+            if (!$row->product->product_front_cover_image_id && $web_img_list->count() > 0) {
                 $list[$key]['img'] = $web_img_list->first()['path'];
             }
 
-            if (!$list[$key]['product']['product_mobile_front_cover_image_id'] && $mobile_img_list->count() > 0) {
-                $list[$key]['mobile_img'] = $web_img_list->first()['path'];
+            if (!$row->product->product_mobile_front_cover_image_id && $mobile_img_list->count() > 0) {
+                $list[$key]['mobile_img'] = $mobile_img_list->first()['path'];
             }
 
             unset($list[$key]['product']['product_front_cover_image_id']);
@@ -150,12 +165,17 @@ class PutOnRepository extends Repository
             $info->product->load('product_images');
             $item['web_img_list'] = $item['mobile_img_list'] = [];
             $item['img'] = null;
+            $item['mobile_img'] = null;
             foreach ($info->product->product_images as $key => $row) {
                 $type = $row->type === 'web' ? 'web_img_list' : 'mobile_img_list';
                 $item[$type][$key]['path'] = Storage::disk('s3')->exists($row->path) ? env('CDN_URL') . $row->path : null;
 
                 if ($info->product->product_front_cover_image_id === $row->id) {
                     $item['img'] = $item[$type][$key]['path'];
+                }
+
+                if ($info->product->product_mobile_front_cover_image_id === $row->id) {
+                    $item['mobile_img'] = $item[$type][$key]['path'];
                 }
             }
 
@@ -165,11 +185,16 @@ class PutOnRepository extends Repository
             $mobile_img_list = collect($item['mobile_img_list']);
             $item['mobile_img_list'] = $mobile_img_list->values()->toArray();
 
-            if (!$item['product']['product_front_cover_image_id'] && $web_img_list->count() > 0) {
+            if (!$info->product->product_front_cover_image_id && $web_img_list->count() > 0) {
                 $item['img'] = $web_img_list->first()['path'];
             }
 
+            if (!$info->product->product_mobile_front_cover_image_id && $web_img_list->count() > 0) {
+                $item['mobile_img'] = $web_img_list->first()['path'];
+            }
+
             unset($item['product']['product_front_cover_image_id']);
+            unset($item['product']['product_mobile_front_cover_image_id']);
 
             return $item;
         }
@@ -179,7 +204,10 @@ class PutOnRepository extends Repository
 
     public function searchList($page, $keywords = null)
     {
-        $data = $this->model->where('status', 1);
+        $data = $this->model->where(function (Builder $query) {
+            $query->where('status', 1);
+            $query->orWhere('status', 2);
+        });
 
         # 有 關鍵字
         $data = !$keywords ? $data : $data->whereHas('product', function (Builder $query) use ($keywords) {
@@ -194,12 +222,15 @@ class PutOnRepository extends Repository
 
         $page = $page ? $page : 1;
 
-        $params = ['status' => 1];
+        $params = [
+            'status' => 1,
+            'product_page_item_count' => (int)env('PRODUCT_PAGE_ITEM_COUNT', 10),
+        ];
         if ($keywords) {
             $params['keywords'] = $keywords;
         }
 
-        return ['list' => $this->list($page, $params), 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => (int)env('PRODUCT_PAGE_ITEM_COUNT', 10)];
+        return ['list' => $this->list($page, $params), 'all_count' => (int)$all_count, 'page_count' => (int)$page_count, 'page_item_count' => (int)env('PRODUCT_PAGE_ITEM_COUNT', 10)];
     }
 
     public function count(array $params = [])

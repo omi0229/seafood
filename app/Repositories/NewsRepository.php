@@ -62,15 +62,17 @@ class NewsRepository extends Repository
         # 此分類的全部數量
         $all_count = $data->count();
 
+        $page_item_count = 10;
+
         # 此分類共有幾頁
-        $page_count = $type_id ? ceil($all_count / 10) : 1;
+        $page_count = $type_id ? ceil($all_count / $page_item_count) : 1;
 
         if ($type_id) {
             $page = $page ? $page : 1;
 
             # 是否分頁顯示
-            $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;
-            $data = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(10) : $data;
+            $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * $page_item_count : null;
+            $data = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take($page_item_count) : $data;
         }
 
         $list = [];
@@ -83,7 +85,7 @@ class NewsRepository extends Repository
             $list[$key]['mobile_img_path'] = $row->mobile_img && Storage::disk('s3')->exists($row->mobile_img) ? env('CDN_URL') . $row->mobile_img : null;
         }
 
-        return ['list' => $list, 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => 10];
+        return ['list' => $list, 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => $page_item_count];
     }
 
     public function apiInfo($id)

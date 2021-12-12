@@ -131,10 +131,12 @@ let set_info = createApp({
             this.info.web_img_delete = 0;
             this.info.web_img_name = '請選擇檔案';
             this.info.web_img = null;
+            this.$refs.web_img.value = null;
             this.info.web_img_path = '';
             this.info.mobile_img_delete = 0;
             this.info.mobile_img_name = '請選擇檔案';
             this.info.mobile_img = null;
+            this.$refs.mobile_img.value = null;
             this.info.mobile_img_path = '';
         },
         fileAuth(list, type) {

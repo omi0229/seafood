@@ -40,7 +40,7 @@ class CookingRepository extends Repository
 
     public function searchList($page, $keywords = null)
     {
-        $data = $this->model->where('status', 1);
+        $data = $this->model::with(['cooking_types'])->where('status', 1);
 
         # 有 關鍵字
         $data = !$keywords ? $data : $data->where('title', 'LIKE', '%' . $keywords . '%');

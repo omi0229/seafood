@@ -63368,8 +63368,10 @@ var set_info = createApp({
       this.info.description = '';
       this.info.product_front_cover_image_id = '';
       this.info.product_mobile_front_cover_image_id;
+      this.$refs.web_img.value = null;
       this.info.web_img_list = [];
       this.info.web_new_img_list = [];
+      this.$refs.mobile_img.value = null;
       this.info.mobile_img_list = [];
       this.info.mobile_new_img_list = [];
       this.info.sales_status = '0';
