@@ -84,3 +84,8 @@
 .keywords-border {
   border: 2px solid #17a2b8;
 }
+
+// close ckeditor image function
+.cke_button__image {
+    display: none !important;
+}

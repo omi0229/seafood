@@ -80,3 +80,7 @@
 .keywords-border {
   border: 2px solid #17a2b8;
 }
+
+.cke_button__image {
+  display: none !important;
+}
