@@ -45881,7 +45881,6 @@ window.app = createApp({
       window.open('/member/export');
     },
     orders: function orders(member_name) {
-      loading.show = true;
       sessionStorage.setItem('keywords', member_name);
       location.href = '/orders';
     }
