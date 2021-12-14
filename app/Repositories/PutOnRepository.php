@@ -21,6 +21,9 @@ class PutOnRepository extends Repository
 
     public function list($page, array $params = [])
     {
+        # from api or web
+        $type = data_get($params, 'type');
+
         $keywords = data_get($params, 'keywords');
         $directories_id = data_get($params, 'directories_id');
         $status = data_get($params, 'status');
@@ -42,10 +45,20 @@ class PutOnRepository extends Repository
 
         # 商品是否有開放
         if ($status === 1) {
-            $data->where(function (Builder $query) {
-                $query->where('status', 1);
-                $query->orWhere('status', 2);
-            });
+            if ($type === 'api') { # 上下架判斷
+                $data->where(function (Builder $query) {
+                    $query->where('status', 1);
+                    $query->orWhere(function (Builder $query) {
+                        $query->where('start_date', '<=', now()->format('Y-m-d H:i:s'));
+                        $query->where('end_date', '>=', now()->format('Y-m-d H:i:s'));
+                    });
+                });
+            } else {
+                $data->where(function (Builder $query) {
+                    $query->where('status', 1);
+                    $query->orWhere('status', 2);
+                });
+            }
         }
 
         # 有 關鍵字
@@ -131,7 +144,16 @@ class PutOnRepository extends Repository
 
     public function apiList($type_id, $page = null, $params = [])
     {
-        $data = $this->model->where('directories_id', Directory::decodeSlug($type_id))->where('status', 1);
+        $data = $this->model->where('directories_id', Directory::decodeSlug($type_id));
+
+        #上下架判斷
+        $data->where(function (Builder $query) {
+            $query->where('status', 1);
+            $query->orWhere(function (Builder $query) {
+                $query->where('start_date', '<=', now()->format('Y-m-d H:i:s'));
+                $query->where('end_date', '>=', now()->format('Y-m-d H:i:s'));
+            });
+        });
 
         # 此分類的全部數量
         $all_count = $data->count();
@@ -147,7 +169,7 @@ class PutOnRepository extends Repository
 
         $page = $page ? $page : 1;
 
-        return ['list' => $this->list($page, ['directories_id' => $type_id, 'status' => 1, 'sort' => $sort, 'product_page_item_count' => $product_page_item_count]), 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => $product_page_item_count];
+        return ['list' => $this->list($page, ['type' => 'api','directories_id' => $type_id, 'status' => 1, 'sort' => $sort, 'product_page_item_count' => $product_page_item_count]), 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => $product_page_item_count];
     }
 
     public function apiInfo($id)
