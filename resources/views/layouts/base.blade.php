@@ -340,38 +340,55 @@
                             @php
                                 $order_manage = $permissions
                                     ->filter(function ($p){
-                                        if($p->name == 'freight' || $p->name == 'orders') {
+                                        if($p->name == 'orders') {
                                             return true;
                                         }
 
                                         return false;
                                     });
                             @endphp
-                            @if($order_manage->count() > 0 && ($login_user->can('freight') || $login_user->can('orders')))
-                            <li class="nav-item @php if($action_uri === 'freight' || $action_uri === 'orders') echo 'menu-open' @endphp">
-                                <a href="#" class="nav-link @php if($action_uri === 'freight' || $action_uri === 'orders') echo 'active' @endphp">
+                            @if($order_manage->count() > 0 && $login_user->can('orders'))
+                            <li class="nav-item">
+                                <a href="/orders" class="nav-link @php if($action_uri === 'orders') echo 'active' @endphp">
                                     <i class="nav-icon fas fa-scroll"></i>
+                                    <p>訂單管理</p>
+                                </a>
+                            </li>
+                            @endif
+
+                            @php
+                                $sale_manage = $permissions
+                                    ->filter(function ($p){
+                                        if($p->name == 'freight' || $p->name == 'discount-code') {
+                                            return true;
+                                        }
+
+                                        return false;
+                                    });
+                            @endphp
+                            @if($sale_manage->count() > 0 && ($login_user->can('discount-code') || $login_user->can('freight')))
+                            <li class="nav-item @php if($action_uri === 'freight' || $action_uri === 'discount-code') echo 'menu-open' @endphp">
+                                <a href="#" class="nav-link @php if($action_uri === 'freight' || $action_uri === 'discount-code') echo 'active' @endphp">
+                                    <i class="nav-icon fas fa-list"></i>
                                     <p>
-                                        訂單管理
+                                        銷售管理
                                         <i class="right fas fa-angle-left"></i>
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview">
+                                    @if($login_user->can('discount-code'))
+                                    <li class="nav-item">
+                                        <a href="/discount-code" class="nav-link @php if($action_uri === 'discount-code') echo 'active' @endphp">
+                                            <i class="nav-icon fas fa-search-dollar"></i>
+                                            <p>{{ $sale_manage->where('name', 'discount-code')->first()->display_name  }}</p>
+                                        </a>
+                                    </li>
+                                    @endif
                                     @if($login_user->can('freight'))
                                     <li class="nav-item">
                                         <a href="/freight" class="nav-link @php if($action_uri === 'freight') echo 'active' @endphp">
                                             <i class="nav-icon fas fa-truck-moving"></i>
-                                            <p>{{ $order_manage->where('name', 'freight')->first()->display_name  }}</p>
-                                        </a>
-                                    </li>
-                                    @endif
-                                </ul>
-                                <ul class="nav nav-treeview">
-                                    @if($login_user->can('orders'))
-                                    <li class="nav-item">
-                                        <a href="/orders" class="nav-link @php if($action_uri === 'orders') echo 'active' @endphp">
-                                            <i class="nav-icon fas fa-clipboard-list"></i>
-                                            <p>{{ $order_manage->where('name', 'orders')->first()->display_name  }}</p>
+                                            <p>{{ $sale_manage->where('name', 'freight')->first()->display_name  }}</p>
                                         </a>
                                     </li>
                                     @endif

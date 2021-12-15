@@ -23,6 +23,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\FreightController;
 use App\Http\Controllers\PagesController;
+use App\Http\Controllers\DiscountCodeController;
 
 
 /*
@@ -188,6 +189,9 @@ Route::middleware(['auth.web'])->group(function () {
     Route::get('orders/get/logistics-print-url', [OrderController::class, 'logisticsPrintUrl']);
     # 列印託運單
     Route::post('orders/print/logistics', [OrderController::class, 'logisticsPrint']);
+
+    # 優惠代碼
+    Route::get('discount-code', [DiscountCodeController::class, 'index']);
 
     # 運費設定
     Route::get('freight', [FreightController::class, 'index']);

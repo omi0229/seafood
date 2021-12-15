@@ -1,0 +1,39 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateDiscountCodesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('discount_codes', function (Blueprint $table) {
+            $table->id();
+            $table->string('title', 50)->comment('標題');
+            $table->integer('records')->comment('優惠筆數');
+            $table->integer('full_amount')->comment('結帳時滿此數字即可滿足優惠金額');
+            $table->integer('discount')->comment('折扣金額');
+            $table->tinyInteger('fixed_name')->comment('固定名稱(0 => 否, 1 => 是，欲產生的名稱為此欄位名稱)')->default(0)->unsigned();
+            $table->dateTime('start_date')->comment('開始時間');
+            $table->dateTime('end_date')->comment('結束時間');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('discount_codes');
+    }
+}

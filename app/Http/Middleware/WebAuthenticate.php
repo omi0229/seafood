@@ -43,6 +43,7 @@ class WebAuthenticate
             'freight' => 'freight',
             'orders' => 'orders',
             'pages' => 'pages',
+            'discount-code' => 'discount-code',
         ];
 
         $login_user = \Session::get('seafood_user');
