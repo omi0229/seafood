@@ -192,6 +192,10 @@ Route::middleware(['auth.web'])->group(function () {
 
     # 優惠代碼
     Route::get('discount-code', [DiscountCodeController::class, 'index']);
+    Route::get('discount-code/count', [DiscountCodeController::class, 'count']);
+    Route::get('discount-code/list/{page}', [DiscountCodeController::class, 'list']);
+    Route::post('discount-code/insert', [DiscountCodeController::class, 'insert']);
+    Route::post('discount-code/update', [DiscountCodeController::class, 'update']);
 
     # 運費設定
     Route::get('freight', [FreightController::class, 'index']);

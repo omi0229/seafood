@@ -38,7 +38,7 @@ window.app = createApp({
     methods: {
         getCount() {
             return new Promise(resolve => {
-                let url = !this.search_text ? '/news-type/count' : '/news-type/count?keywords=' + this.search_text;
+                let url = !this.search_text ? '/discount-code/count' : '/discount-code/count?keywords=' + this.search_text;
                 axios.get(url).then(res => {
                     this.all_count = res.data.count;
                     this.page_count = res.data.page_count;
@@ -48,7 +48,7 @@ window.app = createApp({
         },
         getData(page) {
             return new Promise(resolve => {
-                let url = '/news-type/list/' + page;
+                let url = '/discount-code/list/' + page;
 
                 if (this.search_text) {
                     url += '?keywords=' + this.search_text;
@@ -115,28 +115,101 @@ let set_info = createApp({
     data() {
         return {
             mode: 'create',
-            user_info: {
-                name: '',
+            info: {
+                id: null,
+                records: null,
+                title: '',
+                full_amount: null,
+                discount: null,
+                is_fixed: '0',
+                fixed_name: '',
+                start_date: '',
+                end_date: '',
             },
         }
     },
     delimiters: ["${", "}"],
     mounted() {
+        let datetimepicker_obj = {
+            locale: 'zh-tw',
+            format: 'YYYY-MM-DD',
+            icons: {time: 'far fa-clock'},
+        };
+
+        $('#start_date').datetimepicker(datetimepicker_obj);
+        $('#end_date').datetimepicker(datetimepicker_obj);
     },
     methods: {
         dataInit() {
-            this.checkAll = false;
-            this.user_info.name = '';
+            $('input[data-target="#start_date"]').datetimepicker('clear');
+            $('input[data-target="#end_date"]').datetimepicker('clear');
+            this.info.id = null;
+            this.info.records = null;
+            this.info.title = '';
+            this.info.full_amount = null;
+            this.info.discount = null;
+            this.info.is_fixed = '0';
+            this.info.fixed_name = '';
+            this.info.start_date = '';
+            this.info.end_date = '';
         },
         auth(data) {
-            if (!data.name) {
-                return {auth: false, message: '名稱不得為空！'};
+            if (!data.records) {
+                return {auth: false, message: '請輸入優惠筆數！'};
             }
+
+            if (isNaN(data.records)) {
+                return {auth: false, message: '優惠筆數請 輸入數字！'};
+            }
+
+            if (!data.title) {
+                return {auth: false, message: '請輸入標題！'};
+            }
+
+            if (!data.full_amount) {
+                return {auth: false, message: '請輸入結帳金額！'};
+            }
+
+            if (isNaN(data.full_amount)) {
+                return {auth: false, message: '結帳金額請 輸入數字！'};
+            }
+
+            if (!data.discount) {
+                return {auth: false, message: '請輸入優惠金額！'};
+            }
+
+            if (isNaN(data.discount)) {
+                return {auth: false, message: '優惠金額請 輸入數字！'};
+            }
+
+            if(data.is_fixed === '1') {
+                if (!data.fixed_name) {
+                    return {auth: false, message: '請輸入固定名稱！'};
+                }
+            }
+
+            let start_date = $('input[data-target="#start_date"]').val();
+            let end_date = $('input[data-target="#end_date"]').val();
+
+            if (!start_date) {
+                return {auth: false, message: '請選擇開始日期！'};
+            }
+
+            if (!end_date) {
+                return {auth: false, message: '請選擇結束日期！'};
+            }
+
+            if (start_date > end_date) {
+                return {auth: false, message: '日期格式或日期範圍錯誤！'};
+            }
+
+            data.start_date = start_date + ' 00:00:00';
+            data.end_date = end_date + ' 23:59:59';
 
             return {auth: true, message: 'success'};
         },
         confirm() {
-            let auth = this.auth(this.user_info);
+            let auth = this.auth(this.info);
             if (!auth.auth) {
                 Toast.fire({icon: 'error', title: auth.message});
                 return false;
@@ -144,16 +217,17 @@ let set_info = createApp({
 
             let text = this.mode === 'create' ? '新增' : '編輯';
 
-            swal2Confirm(`確定${text}此分類？`).then(confirm => {
+            swal2Confirm(`確定${text}此優惠代碼？`).then(confirm => {
                 if (confirm) {
                     this.save();
                 }
             });
         },
         save() {
-            let url = this.mode === 'create' ? '/news-type/insert' : '/news-type/update';
+            let url = this.mode === 'create' ? '/discount-code/insert' : '/discount-code/update';
+
             loading.show = true;
-            axios.post(url, this.user_info).then(async res => {
+            axios.post(url, this.info).then(async res => {
                 if (res.data.status) {
                     $('#set-info').modal('hide');
                 }

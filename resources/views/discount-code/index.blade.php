@@ -1,6 +1,7 @@
 @extends('layouts.base')
 
 @section('content')
+    <link rel="stylesheet" href="plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
     <div id="app" v-cloak>
         <div class="content-header px-4">
             <div class="container-fluid">
@@ -91,7 +92,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
-                        <template v-if="mode == 'create'">新增</template><template v-else>編輯</template>分類
+                        <template v-if="mode == 'create'">新增</template><template v-else>編輯</template>優惠代碼
                     </h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -99,8 +100,71 @@
                 </div>
                 <div class="modal-body px-5">
                     <div class="form-group">
-                        <label for="name">名稱</label>
-                        <input type="text" maxlength="20" class="form-control form-control-sm" id="name" placeholder="請輸入名稱" v-model="user_info.name">
+                        <label for="name">優惠筆數</label><span class="text-danger">*</span>
+                        <div class="d-flex align-items-center">
+                        本次即將產生
+                        <div class="col-4">
+                            <input type="text" maxlength="11" class="form-control form-control-sm" id="records" placeholder="請輸入優惠筆數" v-model="info.records">
+                        </div>
+                        組，請輸入數字
+                        </div>
+                    </div>
+                    <div class="mt-5 text-danger text-bold">以下欄位新增後不得更改</div>
+                    <hr />
+                    <div class="form-group">
+                        <label for="name">標題</label><span class="text-danger">*</span>
+                        <input type="text" maxlength="50" class="form-control form-control-sm" id="title" placeholder="請輸入標題" v-model="info.title">
+                    </div>
+                    <div class="form-group">
+                        <label for="name">優惠內容</label><span class="text-danger">*</span>
+                        <div class="d-flex align-items-center flex-wrap s-14">
+                            結帳時滿
+                            <div class="col-6">
+                                <input type="text" maxlength="11" class="form-control form-control-sm" id="full_amount" placeholder="請輸入結帳金額" v-model="info.full_amount">
+                            </div>
+                            可使用，
+                        </div>
+                        <div class="d-flex align-items-center flex-wrap s-14 mt-2">
+                            優惠金額為
+                            <div class="col-6">
+                                <input type="text" maxlength="11" class="form-control form-control-sm" id="discount" placeholder="請輸入優惠金額" v-model="info.discount">
+                            </div>
+                            元，請輸入數字
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">固定名稱</label><span class="text-danger">*</span>
+                        <div class="d-flex align-items-center s-14">
+                            <div class="form-check d-flex align-items-center">
+                                <input id="is_fixed_enabled" class="form-check-input" type="radio" value="1" v-model="info.is_fixed">
+                                <label for="is_fixed_enabled" class="form-check-label">是，欲產生的名稱為</label>
+                                <div class="col-7">
+                                    <input type="text" maxlength="10" class="form-control form-control-sm" id="title" placeholder="請輸入名稱" v-model="info.fixed_name">
+                                </div>
+                            </div>
+                            <div class="form-check">
+                                <input id="is_fixed_disabled" class="form-check-input" type="radio" value="0" v-model="info.is_fixed">
+                                <label for="is_fixed_disabled" class="form-check-label">否</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="start_date">開始日期 <span class="text-danger">*</span></label>
+                        <div class="input-group date" id="start_date" data-target-input="nearest">
+                            <input type="text" class="form-control form-control-sm datetimepicker-input s-14" placeholder="請選擇開始日期" data-target="#start_date" />
+                            <div class="input-group-append" data-target="#start_date" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="end_date">結束日期 <span class="text-danger">*</span></label>
+                        <div class="input-group date" id="end_date" data-target-input="nearest">
+                            <input type="text" class="form-control form-control-sm datetimepicker-input s-14" placeholder="請選擇結束日期" data-target="#end_date" />
+                            <div class="input-group-append" data-target="#end_date" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-end">
@@ -110,5 +174,7 @@
             </div>
         </div>
     </div>
+    <script src="plugins/moment/moment-with-locales.min.js"></script>
+    <script src="plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
     <script src="js/discount-code.js"></script>
 @endsection

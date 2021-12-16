@@ -62616,7 +62616,7 @@ window.app = createApp({
       var _this = this;
 
       return new Promise(function (resolve) {
-        var url = !_this.search_text ? '/news-type/count' : '/news-type/count?keywords=' + _this.search_text;
+        var url = !_this.search_text ? '/discount-code/count' : '/discount-code/count?keywords=' + _this.search_text;
         axios.get(url).then(function (res) {
           _this.all_count = res.data.count;
           _this.page_count = res.data.page_count;
@@ -62628,7 +62628,7 @@ window.app = createApp({
       var _this2 = this;
 
       return new Promise(function (resolve) {
-        var url = '/news-type/list/' + page;
+        var url = '/discount-code/list/' + page;
 
         if (_this2.search_text) {
           url += '?keywords=' + _this2.search_text;
@@ -62763,26 +62763,130 @@ var set_info = createApp({
   data: function data() {
     return {
       mode: 'create',
-      user_info: {
-        name: ''
+      info: {
+        id: null,
+        records: null,
+        title: '',
+        full_amount: null,
+        discount: null,
+        is_fixed: '0',
+        fixed_name: '',
+        start_date: '',
+        end_date: ''
       }
     };
   },
   delimiters: ["${", "}"],
-  mounted: function mounted() {},
+  mounted: function mounted() {
+    var datetimepicker_obj = {
+      locale: 'zh-tw',
+      format: 'YYYY-MM-DD',
+      icons: {
+        time: 'far fa-clock'
+      }
+    };
+    $('#start_date').datetimepicker(datetimepicker_obj);
+    $('#end_date').datetimepicker(datetimepicker_obj);
+  },
   methods: {
     dataInit: function dataInit() {
-      this.checkAll = false;
-      this.user_info.name = '';
+      $('input[data-target="#start_date"]').datetimepicker('clear');
+      $('input[data-target="#end_date"]').datetimepicker('clear');
+      this.info.id = null;
+      this.info.records = null;
+      this.info.title = '';
+      this.info.full_amount = null;
+      this.info.discount = null;
+      this.info.is_fixed = '0';
+      this.info.fixed_name = '';
+      this.info.start_date = '';
+      this.info.end_date = '';
     },
     auth: function auth(data) {
-      if (!data.name) {
+      if (!data.records) {
         return {
           auth: false,
-          message: '名稱不得為空！'
+          message: '請輸入優惠筆數！'
         };
       }
 
+      if (isNaN(data.records)) {
+        return {
+          auth: false,
+          message: '優惠筆數請 輸入數字！'
+        };
+      }
+
+      if (!data.title) {
+        return {
+          auth: false,
+          message: '請輸入標題！'
+        };
+      }
+
+      if (!data.full_amount) {
+        return {
+          auth: false,
+          message: '請輸入結帳金額！'
+        };
+      }
+
+      if (isNaN(data.full_amount)) {
+        return {
+          auth: false,
+          message: '結帳金額請 輸入數字！'
+        };
+      }
+
+      if (!data.discount) {
+        return {
+          auth: false,
+          message: '請輸入優惠金額！'
+        };
+      }
+
+      if (isNaN(data.discount)) {
+        return {
+          auth: false,
+          message: '優惠金額請 輸入數字！'
+        };
+      }
+
+      if (data.is_fixed === '1') {
+        if (!data.fixed_name) {
+          return {
+            auth: false,
+            message: '請輸入固定名稱！'
+          };
+        }
+      }
+
+      var start_date = $('input[data-target="#start_date"]').val();
+      var end_date = $('input[data-target="#end_date"]').val();
+
+      if (!start_date) {
+        return {
+          auth: false,
+          message: '請選擇開始日期！'
+        };
+      }
+
+      if (!end_date) {
+        return {
+          auth: false,
+          message: '請選擇結束日期！'
+        };
+      }
+
+      if (start_date > end_date) {
+        return {
+          auth: false,
+          message: '日期格式或日期範圍錯誤！'
+        };
+      }
+
+      data.start_date = start_date + ' 00:00:00';
+      data.end_date = end_date + ' 23:59:59';
       return {
         auth: true,
         message: 'success'
@@ -62791,7 +62895,7 @@ var set_info = createApp({
     confirm: function confirm() {
       var _this6 = this;
 
-      var auth = this.auth(this.user_info);
+      var auth = this.auth(this.info);
 
       if (!auth.auth) {
         Toast.fire({
@@ -62802,16 +62906,16 @@ var set_info = createApp({
       }
 
       var text = this.mode === 'create' ? '新增' : '編輯';
-      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)("\u78BA\u5B9A".concat(text, "\u6B64\u5206\u985E\uFF1F")).then(function (confirm) {
+      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)("\u78BA\u5B9A".concat(text, "\u6B64\u512A\u60E0\u4EE3\u78BC\uFF1F")).then(function (confirm) {
         if (confirm) {
           _this6.save();
         }
       });
     },
     save: function save() {
-      var url = this.mode === 'create' ? '/news-type/insert' : '/news-type/update';
+      var url = this.mode === 'create' ? '/discount-code/insert' : '/discount-code/update';
       loading.show = true;
-      axios.post(url, this.user_info).then( /*#__PURE__*/function () {
+      axios.post(url, this.info).then( /*#__PURE__*/function () {
         var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(res) {
           var icon;
           return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {

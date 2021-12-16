@@ -4,8 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\HashId;
 
 class DiscountCode extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes, HashId;
+
+    protected $fillable = [
+        'title',
+        'records',
+        'full_amount',
+        'discount',
+        'is_fixed',
+        'fixed_name',
+        'start_date',
+        'end_date',
+    ];
 }
