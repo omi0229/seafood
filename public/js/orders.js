@@ -67548,15 +67548,22 @@ window.app = createApp({
             Specification: this.value.specification
           };
           axiosPostMethod('/orders/form-data/logistics', obj).then(function (res) {
-            _this8.searchService().then(function () {
-              loading.show = false;
-              $('#specification').modal('hide');
-              var icon = res.data.status ? 'success' : 'error';
+            if (res.data.status) {
+              _this8.searchService().then(function () {
+                loading.show = false;
+                $('#specification').modal('hide');
+                Toast.fire({
+                  icon: 'success',
+                  title: res.data.message
+                });
+              });
+            } else {
               Toast.fire({
-                icon: icon,
+                icon: 'error',
                 title: res.data.message
               });
-            });
+              loading.show = false;
+            }
           });
         }
       }

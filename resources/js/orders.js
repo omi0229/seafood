@@ -299,13 +299,16 @@ window.app = createApp({
                     };
 
                     axiosPostMethod('/orders/form-data/logistics', obj).then(res => {
-                        this.searchService().then(() => {
+                        if (res.data.status) {
+                            this.searchService().then(() => {
+                                loading.show = false;
+                                $('#specification').modal('hide');
+                                Toast.fire({icon: 'success', title: res.data.message});
+                            });
+                        } else {
+                            Toast.fire({icon: 'error', title: res.data.message});
                             loading.show = false;
-                            $('#specification').modal('hide');
-
-                            let icon = res.data.status ? 'success' : 'error';
-                            Toast.fire({icon: icon, title: res.data.message});
-                        });
+                        }
                     });
                 }
             }
