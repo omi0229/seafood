@@ -46,7 +46,7 @@ class OrderRepository extends Repository
     {
         $keywords = data_get($params, 'keywords');
 
-        $data = !$keywords ? $this->model::with(['order_products','member']) : $this->model::with(['order_products','member'])->where('merchant_trade_no', 'LIKE', '%' . $keywords . '%')->orWhere('name', 'LIKE', '%' . $keywords . '%');
+        $data = !$keywords ? $this->model::with(['order_products', 'order_products.product', 'order_products.product.product_images', 'order_products.product_specifications','member']) : $this->model::with(['order_products', 'order_products.product', 'order_products.product.product_images', 'order_products.product_specifications', 'member'])->where('merchant_trade_no', 'LIKE', '%' . $keywords . '%')->orWhere('name', 'LIKE', '%' . $keywords . '%');
 
         $member_id  = data_get($params, 'member_id');
         $data = !$member_id ? $data : $data->where('member_id', Member::decodeSlug($member_id));
@@ -64,7 +64,7 @@ class OrderRepository extends Repository
         $data = $data->orderBy('created_at', 'DESC')->get();
 
         $list = [];
-        foreach ($data as $key => $row) {
+        foreach ($data as $row) {
             array_push($list, new OrderResource($row));
         }
 
