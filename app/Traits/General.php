@@ -24,7 +24,7 @@ trait General
         return response()->json([
             'status' => true,
             'message' => 'success',
-            'page_count' => env('USER_PAGE_COUNT', 10),
+            'page_count' => (int)env('USER_PAGE_COUNT', 10),
             'count' => $this->repository->count($request->all())
         ]);
     }

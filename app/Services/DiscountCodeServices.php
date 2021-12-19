@@ -24,13 +24,14 @@ class DiscountCodeServices
             'full_amount' => 'required|numeric',
             'discount' => 'required|numeric',
             'is_fixed' => 'required|numeric',
+            'fixed_name' => [
+                'required',
+                'string',
+                Rule::unique('discount_codes')->ignore($model::find($model::decodeSlug($inputs['id'])))->whereNull('deleted_at')
+            ],
             'start_date' => 'required|date',
             'end_date' => 'required|date',
         ];
-
-        if ($inputs['is_fixed'] == 1) {
-            $auth['fixed_name'] = 'required|string';
-        }
 
         $tip = [
             'records.required' => '請填寫優惠筆數',
@@ -45,6 +46,7 @@ class DiscountCodeServices
             'is_fixed.numeric' => '固定名稱類型需為數字',
             'fixed_name.required' => '請選擇固定名稱',
             'fixed_name.string' => '固定名稱類型需為字串',
+            'fixed_name.unique' => '已有重複優惠代碼',
             'start_date.required' => '請選擇開始日期',
             'start_date.date' => '開始日期類型需為日期格式',
             'end_date.required' => '請選擇結束日期',
@@ -54,52 +56,24 @@ class DiscountCodeServices
         return Validator::make($inputs, $auth, $tip);
     }
 
-    public function authDelete($array)
+    public function search($fixed_name)
     {
-        $count = 0;
-        $string = '';
-        foreach ($array as $row) {
-            if($row->children->count() > 0) {
-                $count += $row->children->count();
-                $string .= !$string ? $row->title : '、' . $row->title;
-            }
+        if (!$fixed_name) {
+            return ['status' => false, 'message' => '無此優惠代碼'];
         }
 
-        return ['count' => $count, 'string' => $string];
-    }
-
-    public function getFeightList()
-    {
         $model = app()->make(self::$model);
-        $now = now()->format('Y-m-d h:i:s');
-        $array = $model::with('children.children')->where('floor', 1)->orderBy('start_date', 'DESC')->get()->toArray();
-        $list = [];
-        foreach ($array as $row) {
-            # 第一層 若沒有設定基本值或現在時間未在範圍內 則不採用此運費規則
-            if(!($row['default'] === 1 || ($row['default'] === 0 && ($now > $row['start_date'] && $now <= $row['end_date'])))){
-                continue;
-            }
 
-            $floor2_array = collect($row['children'])->where('status', 1)->sortBy('sort')->toArray();
-            # 第二層迴圈
-            foreach ($floor2_array as $floor2) {
+        $data = $model->where('start_date', '<=', now()->format('Y-m-d H:i:s'))
+            ->where('end_date', '>=', now()->format('Y-m-d H:i:s'))
+            ->where('records', '>', 0);
 
-                $floor3_array = collect($floor2['children'])->sortBy('start_total')->toArray();
-                foreach ($floor3_array as $floor3) {
-                    $data = [
-                        'id' => $model->find($floor3['id'])->hash_id ?? null,
-                        'floor1_type' => $row['title'],
-                        'floor2_type' => $floor2['title'],
-                        'start_total' => $floor3['start_total'],
-                        'end_total' => $floor3['end_total'],
-                        'freight' => $floor3['freight'],
-                    ];
-                    array_push($list, $data);
-                }
+        $info = $data->firstWhere('fixed_name', $fixed_name);
 
-            }
+        if ($info) {
+            return ['status' => true, 'message' => 'success', 'data' => $info];
         }
 
-        return $list;
+        return ['status' => false, 'message' => '無此優惠代碼'];
     }
 }

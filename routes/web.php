@@ -196,6 +196,8 @@ Route::middleware(['auth.web'])->group(function () {
     Route::get('discount-code/list/{page}', [DiscountCodeController::class, 'list']);
     Route::post('discount-code/insert', [DiscountCodeController::class, 'insert']);
     Route::post('discount-code/update', [DiscountCodeController::class, 'update']);
+    Route::delete('discount-code/delete', [DiscountCodeController::class, 'delete']);
+    Route::delete('discount-code/record-delete', [DiscountCodeController::class, 'recordDelete']);
 
     # 運費設定
     Route::get('freight', [FreightController::class, 'index']);

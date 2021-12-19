@@ -16,16 +16,27 @@ class DiscountCodeRepository extends Repository
     public function list($page, array $params = [])
     {
         $keywords = data_get($params, 'keywords');
-        $data = !$keywords ? $this->model::with('children') : $this->model::with('children')->where('title', 'LIKE', '%' . $keywords . '%');
+
+        $data = $this->model::with([
+            'discount_records' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            },
+            'discount_records.order'
+        ])->withCount(['discount_records']);
+
+        $data = !$keywords ? $data : $data->where('title', 'LIKE', '%' . $keywords . '%')->orWhere('fixed_name', 'LIKE', '%' . $keywords . '%');
 
         # 是否分頁顯示
         $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;
-        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(10) : $data;
+        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take(10)->get() : $data->get();
 
         $list = [];
         foreach ($data as $key => $row) {
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
+            foreach ($row->discount_records as $record_key => $record) {
+                $list[$key]['discount_records'][$record_key]['id'] = $record->hash_id;
+            }
         }
 
         return $list;
@@ -35,9 +46,6 @@ class DiscountCodeRepository extends Repository
     {
         $keywords = data_get($params, 'keywords');
         $data = !$keywords ? $this->model : $this->model->where('title', 'LIKE', '%' . $keywords . '%');
-
-        $floor = data_get($params, 'floor');
-        $data = !$floor ? $data : $data->where('floor', $floor);
 
         return $data->count();
     }

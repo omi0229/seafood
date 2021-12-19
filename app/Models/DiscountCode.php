@@ -21,4 +21,9 @@ class DiscountCode extends Model
         'start_date',
         'end_date',
     ];
+
+    public function discount_records()
+    {
+        return $this->hasMany('App\Models\DiscountRecord', 'discount_codes_id');
+    }
 }

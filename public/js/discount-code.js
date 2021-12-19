@@ -62597,13 +62597,23 @@ window.app = createApp({
   delimiters: ["${", "}"],
   watch: {
     'checkAll': function checkAll(newData, oldData) {
-      this.check = newData ? _.map(this.list, 'id') : [];
+      var _this = this;
+
+      this.check = [];
+
+      if (newData) {
+        this.list.forEach(function (o) {
+          if (o.discount_records_count <= 0) {
+            _this.check.push(o.id);
+          }
+        });
+      }
     }
   },
   computed: {
     dateFormat: function dateFormat() {
       return function (datetime) {
-        return moment__WEBPACK_IMPORTED_MODULE_1___default()(datetime).format('Y-MM-DD HH:mm');
+        return moment__WEBPACK_IMPORTED_MODULE_1___default()(datetime).format('Y-MM-DD');
       };
     }
   },
@@ -62613,29 +62623,29 @@ window.app = createApp({
   },
   methods: {
     getCount: function getCount() {
-      var _this = this;
+      var _this2 = this;
 
       return new Promise(function (resolve) {
-        var url = !_this.search_text ? '/discount-code/count' : '/discount-code/count?keywords=' + _this.search_text;
-        axios.get(url).then(function (res) {
-          _this.all_count = res.data.count;
-          _this.page_count = res.data.page_count;
+        var url = !_this2.search_text ? '/discount-code/count' : '/discount-code/count?keywords=' + _this2.search_text;
+        axiosGetMethod(url).then(function (res) {
+          _this2.all_count = res.data.count;
+          _this2.page_count = res.data.page_count;
           resolve();
         });
       });
     },
     getData: function getData(page) {
-      var _this2 = this;
+      var _this3 = this;
 
       return new Promise(function (resolve) {
         var url = '/discount-code/list/' + page;
 
-        if (_this2.search_text) {
-          url += '?keywords=' + _this2.search_text;
+        if (_this3.search_text) {
+          url += '?keywords=' + _this3.search_text;
         }
 
-        axios.get(url).then(function (res) {
-          _this2.list = res.data.data;
+        axiosGetMethod(url).then(function (res) {
+          _this3.list = res.data.data;
 
           if (loading && loading.show) {
             loading.show = false;
@@ -62652,21 +62662,27 @@ window.app = createApp({
     modify: function modify(id) {
       set_info.dataInit();
       set_info.mode = 'modify';
-      set_info.user_info.id = id;
+      set_info.info.id = id;
 
       var info = _.find(this.list, {
         'id': id
       });
 
-      set_info.user_info.name = info.name;
-      set_info.user_info.check = _.map(info.permissions, 'name');
+      set_info.info.records = 0;
+      set_info.info.title = info.title;
+      set_info.info.full_amount = info.full_amount;
+      set_info.info.discount = info.discount;
+      set_info.info.is_fixed = info.is_fixed;
+      set_info.info.fixed_name = info.fixed_name;
+      set_info.info.start_date = info.start_date;
+      set_info.info.end_date = info.end_date;
     },
     "delete": function _delete() {
-      var _this3 = this;
+      var _this4 = this;
 
       if (this.check.length > 0) {
         loading.show = true;
-        axios["delete"]('/news-type/delete', {
+        axios["delete"]('/discount-code/delete', {
           data: this.check
         }).then( /*#__PURE__*/function () {
           var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(res) {
@@ -62680,7 +62696,7 @@ window.app = createApp({
                         title: '刪除成功'
                       });
 
-                      _this3.searchService('delete');
+                      _this4.searchService('delete');
                     }
 
                   case 1:
@@ -62698,7 +62714,7 @@ window.app = createApp({
       }
     },
     searchService: function searchService() {
-      var _this4 = this;
+      var _this5 = this;
 
       var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       return new Promise( /*#__PURE__*/function () {
@@ -62708,29 +62724,29 @@ window.app = createApp({
               switch (_context2.prev = _context2.next) {
                 case 0:
                   _context2.next = 2;
-                  return _this4.getCount();
+                  return _this5.getCount();
 
                 case 2:
                   _context2.next = 4;
-                  return _this4.getData(_this4.$refs.pagination.page);
+                  return _this5.getData(_this5.$refs.pagination.page);
 
                 case 4:
-                  if (!(_this4.$refs.pagination.page > 1 && _this4.list.length === 0)) {
+                  if (!(_this5.$refs.pagination.page > 1 && _this5.list.length === 0)) {
                     _context2.next = 10;
                     break;
                   }
 
-                  if (!(type === 'delete' || _this4.search_text)) {
+                  if (!(type === 'delete' || _this5.search_text)) {
                     _context2.next = 10;
                     break;
                   }
 
                   loading.show = true;
                   _context2.next = 9;
-                  return _this4.getData(1);
+                  return _this5.getData(1);
 
                 case 9:
-                  _this4.$refs.pagination.setPage(1);
+                  _this5.$refs.pagination.setPage(1);
 
                 case 10:
                   resolve();
@@ -62749,13 +62765,22 @@ window.app = createApp({
       }());
     },
     confirm: function confirm() {
-      var _this5 = this;
+      var _this6 = this;
 
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)('確定刪除選取的分類？').then(function (confirm) {
         if (confirm) {
-          _this5["delete"]();
+          _this6["delete"]();
         }
       });
+    },
+    shotItems: function shotItems(id) {
+      var items = _.find(this.list, {
+        'id': id
+      });
+
+      set_show_items.id = id;
+      set_show_items.discount_codes = items;
+      set_show_items.discount_records = set_show_items.original = items.discount_records;
     }
   }
 }).mount('#app');
@@ -62773,25 +62798,20 @@ var set_info = createApp({
         fixed_name: '',
         start_date: '',
         end_date: ''
+      },
+      datetimepicker_obj: {
+        locale: 'zh-tw',
+        format: 'YYYY-MM-DD',
+        icons: {
+          time: 'far fa-clock'
+        }
       }
     };
   },
   delimiters: ["${", "}"],
-  mounted: function mounted() {
-    var datetimepicker_obj = {
-      locale: 'zh-tw',
-      format: 'YYYY-MM-DD',
-      icons: {
-        time: 'far fa-clock'
-      }
-    };
-    $('#start_date').datetimepicker(datetimepicker_obj);
-    $('#end_date').datetimepicker(datetimepicker_obj);
-  },
+  mounted: function mounted() {},
   methods: {
     dataInit: function dataInit() {
-      $('input[data-target="#start_date"]').datetimepicker('clear');
-      $('input[data-target="#end_date"]').datetimepicker('clear');
       this.info.id = null;
       this.info.records = null;
       this.info.title = '';
@@ -62801,6 +62821,17 @@ var set_info = createApp({
       this.info.fixed_name = '';
       this.info.start_date = '';
       this.info.end_date = '';
+      setTimeout(function () {
+        var datetimepicker_obj = {
+          locale: 'zh-tw',
+          format: 'YYYY-MM-DD',
+          icons: {
+            time: 'far fa-clock'
+          }
+        };
+        $('#start_date').datetimepicker(datetimepicker_obj);
+        $('#end_date').datetimepicker(datetimepicker_obj);
+      }, 1);
     },
     auth: function auth(data) {
       if (!data.records) {
@@ -62893,29 +62924,42 @@ var set_info = createApp({
       };
     },
     confirm: function confirm() {
-      var _this6 = this;
+      var _this7 = this;
 
-      var auth = this.auth(this.info);
+      if (this.mode === 'create') {
+        var auth = this.auth(this.info);
 
-      if (!auth.auth) {
-        Toast.fire({
-          icon: 'error',
-          title: auth.message
-        });
-        return false;
+        if (!auth.auth) {
+          Toast.fire({
+            icon: 'error',
+            title: auth.message
+          });
+          return false;
+        }
       }
 
       var text = this.mode === 'create' ? '新增' : '編輯';
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)("\u78BA\u5B9A".concat(text, "\u6B64\u512A\u60E0\u4EE3\u78BC\uFF1F")).then(function (confirm) {
         if (confirm) {
-          _this6.save();
+          _this7.save();
         }
       });
     },
     save: function save() {
       var url = this.mode === 'create' ? '/discount-code/insert' : '/discount-code/update';
+      var info;
+
+      if (this.mode === 'create') {
+        info = this.info;
+      } else {
+        info = {
+          id: this.info.id,
+          records: this.info.records
+        };
+      }
+
       loading.show = true;
-      axios.post(url, this.info).then( /*#__PURE__*/function () {
+      axios.post(url, info).then( /*#__PURE__*/function () {
         var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(res) {
           var icon;
           return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
@@ -62951,6 +62995,115 @@ var set_info = createApp({
     }
   }
 }).mount('#set-info');
+var set_show_items = createApp({
+  data: function data() {
+    return {
+      id: null,
+      discount_codes: null,
+      discount_records: [],
+      original: [],
+      check: [],
+      checkAll: false,
+      value: {
+        payment_status: ''
+      }
+    };
+  },
+  delimiters: ["${", "}"],
+  computed: {
+    dateFormat: function dateFormat() {
+      return function (datetime) {
+        return moment__WEBPACK_IMPORTED_MODULE_1___default()(datetime).format('Y-MM-DD HH:mm');
+      };
+    }
+  },
+  watch: {
+    'checkAll': function checkAll(newData, oldData) {
+      var _this8 = this;
+
+      this.check = [];
+
+      if (newData) {
+        this.discount_records.forEach(function (o) {
+          if (o.order.payment_status !== 1) {
+            _this8.check.push(o.id);
+          }
+        });
+      }
+    }
+  },
+  methods: {
+    recordFilter: function recordFilter() {
+      var _this9 = this;
+
+      this.checkAll = false;
+
+      if (this.value.payment_status || this.value.payment_status === 0) {
+        this.discount_records = _.filter(this.original, function (o) {
+          return o.order.payment_status === Number(_this9.value.payment_status);
+        });
+      } else {
+        this.discount_records = this.original;
+      }
+    },
+    confirm: function confirm() {
+      var _this10 = this;
+
+      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)('確定刪除此紀錄？').then(function (confirm) {
+        if (confirm) {
+          _this10["delete"]();
+        }
+      });
+    },
+    "delete": function _delete() {
+      var _this11 = this;
+
+      if (this.check.length > 0) {
+        loading.show = true;
+        axiosDeleteMethod('/discount-code/record-delete', {
+          data: this.check
+        }).then( /*#__PURE__*/function () {
+          var _ref4 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(res) {
+            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
+              while (1) {
+                switch (_context4.prev = _context4.next) {
+                  case 0:
+                    if (!res.data.status) {
+                      _context4.next = 6;
+                      break;
+                    }
+
+                    loading.show = false;
+                    _context4.next = 4;
+                    return app.searchService();
+
+                  case 4:
+                    app.shotItems(_this11.id);
+                    Toast.fire({
+                      icon: 'success',
+                      title: '刪除成功'
+                    });
+
+                  case 6:
+                  case "end":
+                    return _context4.stop();
+                }
+              }
+            }, _callee4);
+          }));
+
+          return function (_x4) {
+            return _ref4.apply(this, arguments);
+          };
+        }());
+      }
+    },
+    orders: function orders(merchant_trade_no) {
+      sessionStorage.setItem('keywords', merchant_trade_no);
+      location.href = '/orders';
+    }
+  }
+}).mount('#set-show-items');
 })();
 
 /******/ })()

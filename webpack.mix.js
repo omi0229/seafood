@@ -65,6 +65,7 @@ mix.sass('resources/scss/put-on.scss', 'public/css')
 mix.js('resources/js/member.js', 'public/js')
 //discount-code
 mix.js('resources/js/discount-code.js', 'public/js')
+mix.sass('resources/scss/discount-codes.scss', 'public/css')
 // freight
 mix.js('resources/js/freight.js', 'public/js')
 mix.sass('resources/scss/freight.scss', 'public/css')

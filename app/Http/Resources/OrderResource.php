@@ -67,6 +67,7 @@ class OrderResource extends JsonResource
             'created_at' => $this->created_at,
             'member' => $this->member,
             'order_products' => $order_products,
+            'discount_record' => $this->discount_record,
         ];
     }
 }

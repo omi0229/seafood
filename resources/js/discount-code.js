@@ -21,13 +21,20 @@ window.app = createApp({
     delimiters: ["${", "}"],
     watch: {
         'checkAll'(newData, oldData) {
-            this.check = newData ? _.map(this.list, 'id') : [];
+            this.check = [];
+            if (newData) {
+                this.list.forEach(o => {
+                    if (o.discount_records_count <= 0) {
+                        this.check.push(o.id);
+                    }
+                });
+            }
         },
     },
     computed: {
         dateFormat() {
             return datetime => {
-                return moment(datetime).format('Y-MM-DD HH:mm');
+                return moment(datetime).format('Y-MM-DD');
             }
         },
     },
@@ -39,7 +46,7 @@ window.app = createApp({
         getCount() {
             return new Promise(resolve => {
                 let url = !this.search_text ? '/discount-code/count' : '/discount-code/count?keywords=' + this.search_text;
-                axios.get(url).then(res => {
+                axiosGetMethod(url).then(res => {
                     this.all_count = res.data.count;
                     this.page_count = res.data.page_count;
                     resolve();
@@ -54,7 +61,7 @@ window.app = createApp({
                     url += '?keywords=' + this.search_text;
                 }
 
-                axios.get(url).then(res => {
+                axiosGetMethod(url).then(res => {
                     this.list = res.data.data;
                     if (loading && loading.show) {
                         loading.show = false;
@@ -70,15 +77,21 @@ window.app = createApp({
         modify(id) {
             set_info.dataInit();
             set_info.mode = 'modify';
-            set_info.user_info.id = id;
+            set_info.info.id = id;
             let info = _.find(this.list, {'id': id});
-            set_info.user_info.name = info.name;
-            set_info.user_info.check = _.map(info.permissions, 'name');
+            set_info.info.records = 0;
+            set_info.info.title = info.title;
+            set_info.info.full_amount = info.full_amount;
+            set_info.info.discount = info.discount;
+            set_info.info.is_fixed = info.is_fixed;
+            set_info.info.fixed_name = info.fixed_name;
+            set_info.info.start_date = info.start_date;
+            set_info.info.end_date = info.end_date;
         },
         delete() {
             if(this.check.length > 0) {
                 loading.show = true;
-                axios.delete('/news-type/delete', {data: this.check}).then(async res => {
+                axios.delete('/discount-code/delete', {data: this.check}).then(async res => {
                     if (res.data.status) {
                         Toast.fire({icon: 'success', title: '刪除成功'});
                         this.searchService('delete');
@@ -108,6 +121,12 @@ window.app = createApp({
                 }
             });
         },
+        shotItems(id) {
+            let items = _.find(this.list, {'id': id});
+            set_show_items.id = id;
+            set_show_items.discount_codes = items;
+            set_show_items.discount_records = set_show_items.original = items.discount_records;
+        }
     },
 }).mount('#app');
 
@@ -126,23 +145,18 @@ let set_info = createApp({
                 start_date: '',
                 end_date: '',
             },
+            datetimepicker_obj: {
+                locale: 'zh-tw',
+                format: 'YYYY-MM-DD',
+                icons: {time: 'far fa-clock'},
+            },
         }
     },
     delimiters: ["${", "}"],
     mounted() {
-        let datetimepicker_obj = {
-            locale: 'zh-tw',
-            format: 'YYYY-MM-DD',
-            icons: {time: 'far fa-clock'},
-        };
-
-        $('#start_date').datetimepicker(datetimepicker_obj);
-        $('#end_date').datetimepicker(datetimepicker_obj);
     },
     methods: {
         dataInit() {
-            $('input[data-target="#start_date"]').datetimepicker('clear');
-            $('input[data-target="#end_date"]').datetimepicker('clear');
             this.info.id = null;
             this.info.records = null;
             this.info.title = '';
@@ -152,6 +166,16 @@ let set_info = createApp({
             this.info.fixed_name = '';
             this.info.start_date = '';
             this.info.end_date = '';
+
+            setTimeout(() => {
+                let datetimepicker_obj = {
+                    locale: 'zh-tw',
+                    format: 'YYYY-MM-DD',
+                    icons: {time: 'far fa-clock'},
+                };
+                $('#start_date').datetimepicker(datetimepicker_obj);
+                $('#end_date').datetimepicker(datetimepicker_obj);
+            }, 1)
         },
         auth(data) {
             if (!data.records) {
@@ -209,10 +233,12 @@ let set_info = createApp({
             return {auth: true, message: 'success'};
         },
         confirm() {
-            let auth = this.auth(this.info);
-            if (!auth.auth) {
-                Toast.fire({icon: 'error', title: auth.message});
-                return false;
+            if (this.mode === 'create') {
+                let auth = this.auth(this.info);
+                if (!auth.auth) {
+                    Toast.fire({icon: 'error', title: auth.message});
+                    return false;
+                }
             }
 
             let text = this.mode === 'create' ? '新增' : '編輯';
@@ -226,8 +252,18 @@ let set_info = createApp({
         save() {
             let url = this.mode === 'create' ? '/discount-code/insert' : '/discount-code/update';
 
+            let info;
+            if (this.mode === 'create') {
+                info = this.info;
+            } else {
+                info = {
+                    id: this.info.id,
+                    records: this.info.records,
+                };
+            }
+
             loading.show = true;
-            axios.post(url, this.info).then(async res => {
+            axios.post(url, info).then(async res => {
                 if (res.data.status) {
                     $('#set-info').modal('hide');
                 }
@@ -242,3 +278,73 @@ let set_info = createApp({
         },
     },
 }).mount('#set-info');
+
+let set_show_items = createApp({
+    data() {
+        return {
+            id: null,
+            discount_codes: null,
+            discount_records: [],
+            original: [],
+            check: [],
+            checkAll: false,
+            value: {
+                payment_status: '',
+            }
+        }
+    },
+    delimiters: ["${", "}"],
+    computed: {
+        dateFormat() {
+            return datetime => {
+                return moment(datetime).format('Y-MM-DD HH:mm');
+            }
+        },
+    },
+    watch: {
+        'checkAll'(newData, oldData) {
+            this.check = [];
+            if(newData) {
+                this.discount_records.forEach(o => {
+                    if(o.order.payment_status !== 1) {
+                        this.check.push(o.id);
+                    }
+                });
+            }
+        },
+    },
+    methods: {
+        recordFilter() {
+            this.checkAll = false;
+            if(this.value.payment_status || this.value.payment_status === 0){
+                this.discount_records = _.filter(this.original, o => { return o.order.payment_status === Number(this.value.payment_status); })
+            } else {
+                this.discount_records = this.original;
+            }
+        },
+        confirm() {
+            swal2Confirm('確定刪除此紀錄？').then(confirm => {
+                if (confirm) {
+                    this.delete();
+                }
+            });
+        },
+        delete() {
+            if(this.check.length > 0) {
+                loading.show = true;
+                axiosDeleteMethod('/discount-code/record-delete', {data: this.check}).then(async res => {
+                    if (res.data.status) {
+                        loading.show = false;
+                        await app.searchService();
+                        app.shotItems(this.id);
+                        Toast.fire({icon: 'success', title: '刪除成功'});
+                    }
+                });
+            }
+        },
+        orders(merchant_trade_no) {
+            sessionStorage.setItem('keywords', merchant_trade_no);
+            location.href = '/orders';
+        },
+    },
+}).mount('#set-show-items');

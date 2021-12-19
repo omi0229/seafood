@@ -59,4 +59,9 @@ class Orders extends Model
     {
         return $this->hasOne('App\Models\Log', 'data_id')->where('type', 'payment');
     }
+
+    public function discount_record()
+    {
+        return $this->hasOne('App\Models\DiscountRecord');
+    }
 }

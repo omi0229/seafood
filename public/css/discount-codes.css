@@ -1,0 +1,9 @@
+#set-show-items th.width-5 {
+  width: 5%;
+}
+#set-show-items th.width-10 {
+  width: 10%;
+}
+#set-show-items th.width-15 {
+  width: 15%;
+}

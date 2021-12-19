@@ -14,6 +14,8 @@ use App\Http\Controllers\Api\BannersController;
 use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PagesController;
+use App\Http\Controllers\Api\DiscountCodeController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -121,6 +123,8 @@ Route::middleware(['auth:member_api'])->group(function () {
     Route::get('order/get/payment_url', function () {
         return env('ECPAY.PAYMENT_URL');
     });
+    # 查詢優惠代碼
+    Route::post('discount-code/search', [DiscountCodeController::class, 'search']);
 
     ### 會員中心
     # 編輯會員

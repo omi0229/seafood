@@ -28,6 +28,7 @@ class OrderController extends Controller
     {
         $member_id = data_get($this->request->all(), 'member_id');
         $synchronize = data_get($this->request->all(), 'synchronize');
+
         if ($synchronize) {
             $form = data_get($this->request->all(), 'form');
             if ($form && $member_id) {
@@ -53,7 +54,7 @@ class OrderController extends Controller
             ProductSpecificationServices::inventoryCalculation($list);
             \AppLog::record(['type' => 'inventory-reduction', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => json_encode($list)]);
 
-            return response()->Json(['status' => true, 'message' => '訂單新增成功', 'ecpay' => OrderServices::ecpayForm($order_no, $time, $order->payment_method, $list, $order->hash_id, $receiver['freight'])]);
+            return response()->Json(['status' => true, 'message' => '訂單新增成功', 'ecpay' => OrderServices::ecpayForm($order_no, $time, $order->payment_method, $list, $order->hash_id, $receiver['freight'], null, $this->request->all())]);
         }
         return response()->Json(['status' => false, 'message' => '訂單新增失敗']);
     }

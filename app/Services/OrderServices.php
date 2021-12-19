@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\ProductSpecifications;
 use App\Models\OrderProducts;
+use App\Models\DiscountRecord;
 use Ecpay\Sdk\Services\CheckMacValueService;
 
 class OrderServices
@@ -40,8 +41,9 @@ class OrderServices
         return Validator::make($inputs, $auth, $tip);
     }
 
-    static function ecpayForm($order_no, $time, $payment_method, $list, $order_id, $freight, $mode = null)
+    static function ecpayForm($order_no, $time, $payment_method, $list, $order_id, $freight, $mode = null, array $params = [])
     {
+        $order_model = app()->make(self::$model);
         $model = \App\Models\Config::where('config_name', 'goldflow_MerchantID')->orWhere('config_name', 'goldflow_HashKey')->orWhere('config_name', 'goldflow_HashIV')->get();
         $MerchantID = $model->find('goldflow_MerchantID') ? $model->find('goldflow_MerchantID')->config_value : null;
         $HashKey = $model->find('goldflow_HashKey') ? $model->find('goldflow_HashKey')->config_value : null;
@@ -55,14 +57,25 @@ class OrderServices
                 $ChoosePayment = 'Credit';
         }
 
+        # 如果有優惠代碼
+        $discount = null;
+        $discount_codes = data_get($params, 'discount_codes') ? data_get($params, 'discount_codes') : null;
+        if ($discount_codes) {
+            $discount_result = (new DiscountCodeServices)->search($discount_codes);
+            if ($discount_result['status'] && self::listTotalAmount($list, $freight, $mode, 'list_total') > $discount_result['data']['full_amount']) {
+                $discount = $discount_result['data']['discount'];
+                DiscountRecord::create(['type' => 'discount_codes', 'discount_codes_id' => $discount_result['data']['id'], 'orders_id' => $order_model::decodeSlug($order_id)]);
+            }
+        }
+
         $array = [
             'MerchantID' => $MerchantID,
             'MerchantTradeNo' => $order_no,
             'MerchantTradeDate' => $time->format('Y/m/d H:i:s'),
             'PaymentType' => 'aio',
-            'TotalAmount' => self::listTotalAmount($list, $freight, $mode),
+            'TotalAmount' => self::listTotalAmount($list, $freight, $mode, 'all_total', $discount),
             'TradeDesc' => '海龍王商城購物',
-            'ItemName' => self::listItemName($list, $freight, $mode),
+            'ItemName' => self::listItemName($list, $freight, $mode, $discount),
             'ReturnURL' => env('APP_URL') . '/ecpay-return',
             'ChoosePayment' => $ChoosePayment,
             'EncryptType' => 1,
@@ -247,7 +260,7 @@ class OrderServices
         return $sMacValue;
     }
 
-    static function listTotalAmount($list, $freight = 0, $mode = null)
+    static function listTotalAmount($list, $freight = 0, $mode = null, $get_type = null, $discount = null)
     {
         $total = 0;
         foreach ($list as $row) {
@@ -258,12 +271,20 @@ class OrderServices
             }
         }
 
-        $total += $freight;
+        # 扣優惠代碼折扣
+        if ($discount && is_numeric($discount)) {
+            $total -= $discount;
+        }
+
+        if ($get_type === 'all_total') {
+            # 加運費
+            $total += $freight;
+        }
 
         return $total;
     }
 
-    static function listItemName($list, $freight = 0, $mode = null)
+    static function listItemName($list, $freight = 0, $mode = null, $discount = null)
     {
         $item_name = '';
         foreach ($list as $row) {
@@ -274,6 +295,11 @@ class OrderServices
                 $item = $data->name . ' ' .$row['product_specification']['selling_price'] . '元 x ' . $row['count'] . $data->unit;
             }
             $item_name .= $item_name ? '#' . $item : $item;
+        }
+
+        # 優惠代碼名稱
+        if ($discount) {
+            $item_name .= '#優惠代碼折扣 -' . $discount . '元';
         }
 
         $item_name .= '#運費 ' . $freight . '元';
