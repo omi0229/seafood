@@ -20,7 +20,7 @@ class CreateDiscountCodesTable extends Migration
             $table->integer('full_amount')->comment('結帳時滿此數字即可滿足優惠金額');
             $table->integer('discount')->comment('折扣金額');
             $table->tinyInteger('is_fixed')->comment('優惠代碼是否固定名稱(0 => 否, 1 => 是，欲產生的名稱為此欄位名稱)')->default(0)->unsigned();
-            $table->string('fixed_name', 13)->nullable()->comment('優惠代碼固定名稱');
+            $table->string('fixed_name', 20)->nullable()->comment('優惠代碼固定名稱');
             $table->dateTime('start_date')->comment('開始時間');
             $table->dateTime('end_date')->comment('結束時間');
             $table->timestamps();

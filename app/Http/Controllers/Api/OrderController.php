@@ -70,7 +70,7 @@ class OrderController extends Controller
             $order_no = 'o' . substr($time->format('YmdHis'), 2) . str_pad($order->id, 6, "0", STR_PAD_LEFT);
             $this->repository->update($order->id, ['merchant_trade_no' => $order_no]);
 
-            return response()->Json(['status' => true, 'message' => '付款資料建構成功', 'ecpay' => OrderServices::ecpayForm($order_no, $time, $payment_method, $list, $order_id, $order->freight, 'make_up')]);
+            return response()->Json(['status' => true, 'message' => '付款資料建構成功', 'ecpay' => OrderServices::ecpayForm($order_no, $time, $payment_method, $list, $order_id, $order->freight, 'make_up', $this->request->all())]);
         }
 
         return response()->Json(['status' => false, 'message' => '付款資料建構失敗']);

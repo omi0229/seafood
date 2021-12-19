@@ -120,9 +120,17 @@ window.app = createApp({
             }
         },
         orderTotal() {
-              return (freight, list) => {
+              return (freight, list, discount_record) => {
                   let price = 0;
                   list.forEach(v => { price += v.price * v.count });
+
+                  // 有使用優惠代碼
+                  if (discount_record && discount_record.discount_codes) {
+                      if (price > discount_record.discount_codes.full_amount) {
+                          price -= discount_record.discount_codes.discount;
+                      }
+                  }
+
                   price += freight;
                   return price.toLocaleString();
               }
@@ -220,18 +228,19 @@ window.app = createApp({
             detailed_content.info.receiver.address = info.address;
 
             detailed_content.info.order_products = info.order_products;
+            detailed_content.info.discount_record = info.discount_record;
         },
-        delete() {
-            if(this.check.length > 0) {
-                loading.show = true;
-                axiosDeleteMethod('/cooking/delete', {data: this.check}).then(async res => {
-                    if (res.data.status) {
-                        Toast.fire({icon: 'success', title: '刪除成功'});
-                        this.searchService('delete');
-                    }
-                });
-            }
-        },
+        // delete() {
+        //     if(this.check.length > 0) {
+        //         loading.show = true;
+        //         axiosDeleteMethod('/cooking/delete', {data: this.check}).then(async res => {
+        //             if (res.data.status) {
+        //                 Toast.fire({icon: 'success', title: '刪除成功'});
+        //                 this.searchService('delete');
+        //             }
+        //         });
+        //     }
+        // },
         searchService(type = null) {
             return new Promise(async resolve => {
                 await this.getCount();
@@ -294,7 +303,7 @@ window.app = createApp({
                 if (info) {
                     let obj = {
                         order_id: this.check[0],
-                        order_total: this.orderTotal(info.freight, info.order_products),
+                        order_total: this.orderTotal(info.freight, info.order_products, info.discount_record),
                         Specification: this.value.specification,
                     };
 
@@ -376,6 +385,7 @@ let detailed_content = createApp({
                 bookmark: '',
                 created_at: '',
                 order_products: [],
+                discount_record: null,
             },
             value: {
                 keyword: '',
@@ -409,9 +419,17 @@ let detailed_content = createApp({
             }
         },
         orderTotal() {
-            return (freight, list) => {
+            return (freight, list, discount_record) => {
                 let price = 0;
                 list.forEach(v => { price += v.price * v.count });
+
+                // 有使用優惠代碼
+                if (discount_record && discount_record.discount_codes) {
+                    if (price > discount_record.discount_codes.full_amount) {
+                        price -= discount_record.discount_codes.discount;
+                    }
+                }
+
                 price += freight;
                 return price.toLocaleString();
             }

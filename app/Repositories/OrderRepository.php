@@ -41,7 +41,16 @@ class OrderRepository extends Repository
     {
         $keywords = data_get($params, 'keywords');
 
-        $data = !$keywords ? $this->model::with(['order_products', 'order_products.product', 'order_products.product.product_images', 'order_products.product_specifications', 'member']) : $this->model::with(['order_products', 'order_products.product', 'order_products.product.product_images', 'order_products.product_specifications', 'member'])->where('merchant_trade_no', 'LIKE', '%' . $keywords . '%')->orWhere('name', 'LIKE', '%' . $keywords . '%');
+        $data = $this->model::with([
+            'order_products',
+            'order_products.product',
+            'order_products.product.product_images',
+            'order_products.product_specifications',
+            'member',
+            'discount_record.discount_codes'
+        ]);
+
+        $data = !$keywords ? $data : $data->where('merchant_trade_no', 'LIKE', '%' . $keywords . '%')->orWhere('name', 'LIKE', '%' . $keywords . '%');
 
         $member_id  = data_get($params, 'member_id');
         $data = !$member_id ? $data : $data->where('member_id', Member::decodeSlug($member_id));

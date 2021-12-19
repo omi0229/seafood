@@ -97,7 +97,7 @@
                                     <td class="text-center">${dateFormat(item.created_at)}</td>
                                     <td class="text-center" :class="item.payment_status === 0 ? 'text-danger' : ''">${paymentStatusFormat(item.payment_status)}</td>
                                     <td class="text-center" :class="orderStatusColor(item.order_status)">${orderStatusFormat(item.order_status)}</td>
-                                    <td class="text-center text-danger">${orderTotal(item.freight, item.order_products)}</td>
+                                    <td class="text-center text-danger">${orderTotal(item.freight, item.order_products, item.discount_record)}</td>
                                     <td class="text-center" :class="item.AllPayLogisticsID ? 'text-success text-bold' : ''">
                                         ${item.AllPayLogisticsID ? '已取號' : '未取號'}
                                     </td>
@@ -316,6 +316,14 @@
                                     </div>
                                     <div class="row mt-3">
                                         <div class="col-3">
+                                            優惠代碼
+                                        </div>
+                                        <div class="col-9 text-bold">
+                                            ${ info.discount_record && info.discount_record.discount_codes ? info.discount_record.discount_codes.fixed_name : '無'}
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-3">
                                             物流取號狀態
                                         </div>
                                         <div class="col-9 text-bold" :class="info.AllPayLogisticsID ? 'text-success' : ''">
@@ -463,7 +471,7 @@
                                     <div class="row align-middle justify-content-end">
                                         <div class="col-9 text-right">小計：</div>
                                         <div class="col-3 text-right text-danger">
-                                            $ ${ orderTotal(0, info.order_products).toLocaleString() }</div>
+                                            $ ${ orderTotal(0, info.order_products, info.discount_record).toLocaleString() }</div>
                                     </div>
                                     <div class="row align-middle justify-content-end">
                                         <div class="col-9 text-right">運費<span v-if="info.freight_name">(${ info.freight_name })</span>：
@@ -471,10 +479,17 @@
                                         <div class="col-3 text-right text-danger">
                                             $ ${ info.freight.toLocaleString() }</div>
                                     </div>
+                                    <!-- v-if -->
+                                    <div class="row align-middle justify-content-end" v-if="info.discount_record && info.discount_record.discount_codes">
+                                        <div class="col-9 text-right">優惠代碼折扣：
+                                        </div>
+                                        <div class="col-3 text-right text-danger">
+                                            - $ ${ info.discount_record.discount_codes.discount.toLocaleString() }</div>
+                                    </div>
                                     <div class="row align-middle justify-content-end">
                                         <div class="col-9 text-right">本訂單需付款總金額：</div>
                                         <div class="col-3 text-right text-danger">
-                                            $ ${ orderTotal(info.freight, info.order_products).toLocaleString() }</div>
+                                            $ ${ orderTotal(info.freight, info.order_products, info.discount_record).toLocaleString() }</div>
                                     </div>
                                 </div>
                             </div>

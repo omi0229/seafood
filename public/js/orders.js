@@ -67271,11 +67271,18 @@ window.app = createApp({
       };
     },
     orderTotal: function orderTotal() {
-      return function (freight, list) {
+      return function (freight, list, discount_record) {
         var price = 0;
         list.forEach(function (v) {
           price += v.price * v.count;
-        });
+        }); // 有使用優惠代碼
+
+        if (discount_record && discount_record.discount_codes) {
+          if (price > discount_record.discount_codes.full_amount) {
+            price -= discount_record.discount_codes.discount;
+          }
+        }
+
         price += freight;
         return price.toLocaleString();
       };
@@ -67396,100 +67403,76 @@ window.app = createApp({
       detailed_content.info.receiver.zipcode = info.zipcode;
       detailed_content.info.receiver.address = info.address;
       detailed_content.info.order_products = info.order_products;
+      detailed_content.info.discount_record = info.discount_record;
     },
-    "delete": function _delete() {
-      var _this5 = this;
-
-      if (this.check.length > 0) {
-        loading.show = true;
-        axiosDeleteMethod('/cooking/delete', {
-          data: this.check
-        }).then( /*#__PURE__*/function () {
-          var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(res) {
-            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
-              while (1) {
-                switch (_context2.prev = _context2.next) {
-                  case 0:
-                    if (res.data.status) {
-                      Toast.fire({
-                        icon: 'success',
-                        title: '刪除成功'
-                      });
-
-                      _this5.searchService('delete');
-                    }
-
-                  case 1:
-                  case "end":
-                    return _context2.stop();
-                }
-              }
-            }, _callee2);
-          }));
-
-          return function (_x) {
-            return _ref.apply(this, arguments);
-          };
-        }());
-      }
-    },
+    // delete() {
+    //     if(this.check.length > 0) {
+    //         loading.show = true;
+    //         axiosDeleteMethod('/cooking/delete', {data: this.check}).then(async res => {
+    //             if (res.data.status) {
+    //                 Toast.fire({icon: 'success', title: '刪除成功'});
+    //                 this.searchService('delete');
+    //             }
+    //         });
+    //     }
+    // },
     searchService: function searchService() {
-      var _this6 = this;
+      var _this5 = this;
 
       var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       return new Promise( /*#__PURE__*/function () {
-        var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(resolve) {
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+        var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(resolve) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
             while (1) {
-              switch (_context3.prev = _context3.next) {
+              switch (_context2.prev = _context2.next) {
                 case 0:
-                  _context3.next = 2;
-                  return _this6.getCount();
+                  _context2.next = 2;
+                  return _this5.getCount();
 
                 case 2:
-                  _context3.next = 4;
-                  return _this6.getData(_this6.$refs.pagination.page);
+                  _context2.next = 4;
+                  return _this5.getData(_this5.$refs.pagination.page);
 
                 case 4:
-                  if (!(_this6.$refs.pagination.page > 1 && _this6.list.length === 0)) {
-                    _context3.next = 10;
+                  if (!(_this5.$refs.pagination.page > 1 && _this5.list.length === 0)) {
+                    _context2.next = 10;
                     break;
                   }
 
-                  if (!(type === 'delete' || _this6.search_text)) {
-                    _context3.next = 10;
+                  if (!(type === 'delete' || _this5.search_text)) {
+                    _context2.next = 10;
                     break;
                   }
 
                   loading.show = true;
-                  _context3.next = 9;
-                  return _this6.getData(1);
+                  _context2.next = 9;
+                  return _this5.getData(1);
 
                 case 9:
-                  _this6.$refs.pagination.setPage(1);
+                  _this5.$refs.pagination.setPage(1);
 
                 case 10:
                   resolve();
 
                 case 11:
                 case "end":
-                  return _context3.stop();
+                  return _context2.stop();
               }
             }
-          }, _callee3);
+          }, _callee2);
         }));
 
-        return function (_x2) {
-          return _ref2.apply(this, arguments);
+        return function (_x) {
+          return _ref.apply(this, arguments);
         };
       }());
     },
     confirm: function confirm() {
-      var _this7 = this;
+      var _this6 = this;
 
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)('確定送出？').then(function (confirm) {
         if (confirm) {
-          _this7.logistics();
+          _this6.logistics();
         }
       });
     },
@@ -67525,7 +67508,7 @@ window.app = createApp({
       $('#specification').modal('show');
     },
     logistics: function logistics() {
-      var _this8 = this;
+      var _this7 = this;
 
       if (this.check.length !== 1) {
         Toast.fire({
@@ -67544,12 +67527,12 @@ window.app = createApp({
         if (info) {
           var obj = {
             order_id: this.check[0],
-            order_total: this.orderTotal(info.freight, info.order_products),
+            order_total: this.orderTotal(info.freight, info.order_products, info.discount_record),
             Specification: this.value.specification
           };
           axiosPostMethod('/orders/form-data/logistics', obj).then(function (res) {
             if (res.data.status) {
-              _this8.searchService().then(function () {
+              _this7.searchService().then(function () {
                 loading.show = false;
                 $('#specification').modal('hide');
                 Toast.fire({
@@ -67569,7 +67552,7 @@ window.app = createApp({
       }
     },
     print: function print() {
-      var _this9 = this;
+      var _this8 = this;
 
       if (this.check_print.length < 1) {
         Toast.fire({
@@ -67586,7 +67569,7 @@ window.app = createApp({
               key = _Object$entries$_i[0],
               value = _Object$entries$_i[1];
 
-          _this9.ECPay.push({
+          _this8.ECPay.push({
             key: key,
             value: value
           });
@@ -67638,7 +67621,8 @@ var detailed_content = createApp({
         order_status: '',
         bookmark: '',
         created_at: '',
-        order_products: []
+        order_products: [],
+        discount_record: null
       },
       value: {
         keyword: ''
@@ -67674,11 +67658,18 @@ var detailed_content = createApp({
       };
     },
     orderTotal: function orderTotal() {
-      return function (freight, list) {
+      return function (freight, list, discount_record) {
         var price = 0;
         list.forEach(function (v) {
           price += v.price * v.count;
-        });
+        }); // 有使用優惠代碼
+
+        if (discount_record && discount_record.discount_codes) {
+          if (price > discount_record.discount_codes.full_amount) {
+            price -= discount_record.discount_codes.discount;
+          }
+        }
+
         price += freight;
         return price.toLocaleString();
       };
@@ -67700,7 +67691,7 @@ var detailed_content = createApp({
   },
   methods: {
     selectCountry: function selectCountry() {
-      var _this10 = this;
+      var _this9 = this;
 
       var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
@@ -67708,13 +67699,13 @@ var detailed_content = createApp({
         this.info.receiver.city = '';
         this.info.receiver.zipcode = '';
         this.select.main_island_cities = _.filter(this.origin_zipcode.zipcodes, function (v) {
-          return v.county === _this10.info.receiver.country && v.city !== '釣魚臺列嶼' && v.city !== '東沙群島' && v.city !== '南沙群島' && v.city !== '琉球鄉' && v.city !== '綠島鄉' && v.city !== '蘭嶼鄉';
+          return v.county === _this9.info.receiver.country && v.city !== '釣魚臺列嶼' && v.city !== '東沙群島' && v.city !== '南沙群島' && v.city !== '琉球鄉' && v.city !== '綠島鄉' && v.city !== '蘭嶼鄉';
         });
       } else {
         this.form.city = '';
         this.form.zipcode = '';
         this.select.cities = _.filter(this.origin_zipcode.zipcodes, function (v) {
-          return v.county === _this10.form.country;
+          return v.county === _this9.form.country;
         });
       }
     },
@@ -67806,7 +67797,7 @@ var detailed_content = createApp({
       };
     },
     confirm: function confirm() {
-      var _this11 = this;
+      var _this10 = this;
 
       var auth = this.auth(this.info);
 
@@ -67821,7 +67812,7 @@ var detailed_content = createApp({
       var text = this.mode === 'create' ? '新增' : '編輯';
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)("\u78BA\u5B9A".concat(text, "\u6B64\u8CC7\u6599\uFF1F")).then(function (confirm) {
         if (confirm) {
-          _this11.save();
+          _this10.save();
         }
       });
     },
@@ -67829,14 +67820,14 @@ var detailed_content = createApp({
       var url = this.mode === 'create' ? '/orders/insert' : '/orders/update';
       loading.show = true;
       axiosPostMethod(url, this.info).then( /*#__PURE__*/function () {
-        var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(res) {
+        var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(res) {
           var icon;
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
             while (1) {
-              switch (_context4.prev = _context4.next) {
+              switch (_context3.prev = _context3.next) {
                 case 0:
                   res.data.status ? $('#detail').modal('hide') : null;
-                  _context4.next = 3;
+                  _context3.next = 3;
                   return app.searchService();
 
                 case 3:
@@ -67848,14 +67839,14 @@ var detailed_content = createApp({
 
                 case 5:
                 case "end":
-                  return _context4.stop();
+                  return _context3.stop();
               }
             }
-          }, _callee4);
+          }, _callee3);
         }));
 
-        return function (_x3) {
-          return _ref3.apply(this, arguments);
+        return function (_x2) {
+          return _ref2.apply(this, arguments);
         };
       }());
     }

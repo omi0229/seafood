@@ -62,6 +62,6 @@ class Orders extends Model
 
     public function discount_record()
     {
-        return $this->hasOne('App\Models\DiscountRecord');
+        return $this->hasOne('App\Models\DiscountRecord')->where('type', 'discount_codes');
     }
 }
