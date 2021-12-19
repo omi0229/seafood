@@ -62,13 +62,17 @@ class DiscountCodeServices
             return ['status' => false, 'message' => '無此優惠代碼'];
         }
 
-        $model = app()->make(self::$model);
-
-        $data = $model->where('start_date', '<=', now()->format('Y-m-d H:i:s'))
+        $data = app()->make(self::$model)
+            ->with(['discount_records'])
+            ->where('start_date', '<=', now()->format('Y-m-d H:i:s'))
             ->where('end_date', '>=', now()->format('Y-m-d H:i:s'))
             ->where('records', '>', 0);
 
         $info = $data->firstWhere('fixed_name', $fixed_name);
+
+        if ($info->discount_records->count() >= $info->records) {
+            return ['status' => false, 'message' => 'error'];
+        }
 
         if ($info) {
             return ['status' => true, 'message' => 'success', 'data' => $info];
