@@ -59,13 +59,13 @@
                                     <div class="form-group row">
                                         <div class="col-12 col-sm-6">
                                             <label for="web_company">公司名稱</label>
-                                            <input type="text" maxlength="50" class="form-control form-control-sm" id="web_company" placeholder="請輸入訂購專線" v-model="config.basic.basic_company">
+                                            <input type="text" maxlength="50" class="form-control form-control-sm" id="web_company" placeholder="請輸入公司名稱" v-model="config.basic.basic_company">
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-12 col-sm-6">
                                             <label for="web_phone">客服專線</label>
-                                            <input type="text" maxlength="20" class="form-control form-control-sm" id="web_phone" placeholder="請輸入訂購專線" v-model="config.basic.basic_phone">
+                                            <input type="text" maxlength="20" class="form-control form-control-sm" id="web_phone" placeholder="請輸入客服專線" v-model="config.basic.basic_phone">
                                         </div>
                                     </div>
                                     <div class="form-group row">
