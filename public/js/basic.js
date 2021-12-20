@@ -41010,11 +41010,10 @@ window.app = createApp({
       config: {
         basic: {
           basic_title: '',
+          basic_company: '',
           basic_phone: '',
           basic_address: '',
-          basic_email: '',
-          basic_facebook: '',
-          basic_line: ''
+          basic_email: ''
         },
         goldflow: {
           goldflow_MerchantID: '',
@@ -41024,6 +41023,12 @@ window.app = createApp({
         seo: {
           seo_keyword: '',
           seo_description: ''
+        },
+        link: {
+          link_youtube: '',
+          link_facebook: '',
+          link_instagram: '',
+          link_line: ''
         }
       }
     };
@@ -41039,6 +41044,10 @@ window.app = createApp({
             _this.config.basic.basic_title = v.config_value;
             break;
 
+          case 'basic_company':
+            _this.config.basic.basic_company = v.config_value;
+            break;
+
           case 'basic_phone':
             _this.config.basic.basic_phone = v.config_value;
             break;
@@ -41049,14 +41058,6 @@ window.app = createApp({
 
           case 'basic_email':
             _this.config.basic.basic_email = v.config_value;
-            break;
-
-          case 'basic_facebook':
-            _this.config.basic.basic_facebook = v.config_value;
-            break;
-
-          case 'basic_line':
-            _this.config.basic.basic_line = v.config_value;
             break;
 
           case 'goldflow_MerchantID':
@@ -41077,6 +41078,22 @@ window.app = createApp({
 
           case 'seo_description':
             _this.config.seo.seo_description = v.config_value;
+            break;
+
+          case 'link_youtube':
+            _this.config.link.link_youtube = v.config_value;
+            break;
+
+          case 'link_facebook':
+            _this.config.link.link_facebook = v.config_value;
+            break;
+
+          case 'link_instagram':
+            _this.config.link.link_instagram = v.config_value;
+            break;
+
+          case 'link_line':
+            _this.config.link.link_line = v.config_value;
             break;
         }
       });
@@ -41119,6 +41136,10 @@ window.app = createApp({
         case 'seo':
           obj = this.config.seo;
           break;
+
+        case 'link':
+          obj = this.config.link;
+          break;
       }
 
       loading.show = true;
@@ -41129,10 +41150,18 @@ window.app = createApp({
               switch (_context.prev = _context.next) {
                 case 0:
                   loading.show = false;
-                  Toast.fire({
-                    icon: 'success',
-                    title: '儲存完成'
-                  });
+
+                  if (res.data.status) {
+                    Toast.fire({
+                      icon: 'success',
+                      title: '儲存完成'
+                    });
+                  } else {
+                    Toast.fire({
+                      icon: 'error',
+                      title: res.data.message
+                    });
+                  }
 
                 case 2:
                 case "end":

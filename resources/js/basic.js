@@ -7,11 +7,10 @@ window.app = createApp({
             config: {
                 basic: {
                     basic_title: '',
+                    basic_company: '',
                     basic_phone: '',
                     basic_address: '',
                     basic_email: '',
-                    basic_facebook: '',
-                    basic_line: '',
                 },
                 goldflow: {
                     goldflow_MerchantID: '',
@@ -21,6 +20,12 @@ window.app = createApp({
                 seo: {
                     seo_keyword: '',
                     seo_description: '',
+                },
+                link: {
+                    link_youtube: '',
+                    link_facebook: '',
+                    link_instagram: '',
+                    link_line: '',
                 },
             },
         }
@@ -33,6 +38,9 @@ window.app = createApp({
                     case 'basic_title':
                         this.config.basic.basic_title = v.config_value;
                         break;
+                    case 'basic_company':
+                        this.config.basic.basic_company = v.config_value;
+                        break;
                     case 'basic_phone':
                         this.config.basic.basic_phone = v.config_value;
                         break;
@@ -41,12 +49,6 @@ window.app = createApp({
                         break;
                     case 'basic_email':
                         this.config.basic.basic_email = v.config_value;
-                        break;
-                    case 'basic_facebook':
-                        this.config.basic.basic_facebook = v.config_value;
-                        break;
-                    case 'basic_line':
-                        this.config.basic.basic_line = v.config_value;
                         break;
                     case 'goldflow_MerchantID':
                         this.config.goldflow.goldflow_MerchantID = v.config_value;
@@ -62,6 +64,18 @@ window.app = createApp({
                         break;
                     case 'seo_description':
                         this.config.seo.seo_description = v.config_value;
+                        break;
+                    case 'link_youtube':
+                        this.config.link.link_youtube = v.config_value;
+                        break;
+                    case 'link_facebook':
+                        this.config.link.link_facebook = v.config_value;
+                        break;
+                    case 'link_instagram':
+                        this.config.link.link_instagram = v.config_value;
+                        break;
+                    case 'link_line':
+                        this.config.link.link_line = v.config_value;
                         break;
                 }
             })
@@ -98,12 +112,19 @@ window.app = createApp({
                 case 'seo':
                     obj = this.config.seo;
                     break;
+                case 'link':
+                    obj = this.config.link;
+                    break;
             }
 
             loading.show = true;
             axios.post('/basic/set', obj).then(async res => {
                 loading.show = false;
-                Toast.fire({icon: 'success', title: '儲存完成'});
+                if (res.data.status) {
+                    Toast.fire({icon: 'success', title: '儲存完成'});
+                } else {
+                    Toast.fire({icon: 'error', title: res.data.message});
+                }
             }).catch(error => {
                 loading.show = false;
                 Toast.fire({icon: 'error', title: '儲存失敗'});

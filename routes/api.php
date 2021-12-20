@@ -32,6 +32,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+# 網站基本設定
+Route::get('config', function () {
+    return response()->JSON(\App\Models\Config::select(['config_name', 'config_value'])->where(function ($query) {
+        $query->where('config_name', '!=', 'sms_account');
+        $query->where('config_name', '!=', 'sms_password');
+        $query->where('config_name', '!=', 'goldflow_MerchantID');
+        $query->where('config_name', '!=', 'goldflow_HashKey');
+        $query->where('config_name', '!=', 'goldflow_HashIV');
+    })->get());
+});
+
 ### 簡訊驗證碼
 # 發送驗證碼
 Route::post('auth/set-sms-code', [AuthController::class, 'setSmsCode']);
