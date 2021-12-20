@@ -120,13 +120,13 @@ window.app = createApp({
             }
         },
         orderTotal() {
-              return (freight, list, discount_record) => {
+              return (freight, list, discount_record = null) => {
                   let price = 0;
                   list.forEach(v => { price += v.price * v.count });
 
                   // 有使用優惠代碼
                   if (discount_record && discount_record.discount_codes) {
-                      if (price > discount_record.discount_codes.full_amount) {
+                      if (price >= discount_record.discount_codes.full_amount) {
                           price -= discount_record.discount_codes.discount;
                       }
                   }
@@ -419,13 +419,13 @@ let detailed_content = createApp({
             }
         },
         orderTotal() {
-            return (freight, list, discount_record) => {
+            return (freight, list, discount_record = null) => {
                 let price = 0;
                 list.forEach(v => { price += v.price * v.count });
 
                 // 有使用優惠代碼
                 if (discount_record && discount_record.discount_codes) {
-                    if (price > discount_record.discount_codes.full_amount) {
+                    if (price >= discount_record.discount_codes.full_amount) {
                         price -= discount_record.discount_codes.discount;
                     }
                 }

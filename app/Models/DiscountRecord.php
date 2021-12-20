@@ -19,7 +19,7 @@ class DiscountRecord extends Model
 
     public function order()
     {
-        return $this->hasOne('App\Models\Orders', 'id');
+        return $this->belongsTo('App\Models\Orders', 'orders_id', 'id');
     }
 
     public function discount_codes()

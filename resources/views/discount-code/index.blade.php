@@ -72,12 +72,12 @@
                                     <td class="align-middle">
                                         <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check" v-if="item.discount_records_count <= 0">
                                     </td>
-                                    <td>${item.title}</td>
-                                    <td class="text-center">${item.discount}</td>
-                                    <td class="text-center">${dateFormat(item.start_date)}</td>
-                                    <td class="text-center">${dateFormat(item.end_date)}</td>
-                                    <td class="text-center">${item.records}</td>
-                                    <td class="text-center">
+                                    <td class="align-middle">${item.title}</td>
+                                    <td class="align-middle text-center">${item.discount}</td>
+                                    <td class="align-middle text-center">${dateFormat(item.start_date)}</td>
+                                    <td class="align-middle text-center">${dateFormat(item.end_date)}</td>
+                                    <td class="align-middle text-center">${item.records}</td>
+                                    <td class="align-middle text-center">
                                         <template v-if="item.discount_records_count > 0">
                                             <button class="btn btn-link text-bold" data-toggle="modal" data-target="#set-show-items" @click="shotItems(item.id)">${item.discount_records_count}</button>
                                         </template>
@@ -85,7 +85,7 @@
                                             ${item.discount_records_count}
                                         </template>
                                     </td>
-                                    <td class="text-center">
+                                    <td class="align-middle text-center">
                                         <button type="button" class="btn btn-sm btn-info px-2" data-toggle="modal" data-target="#set-info" @click="modify(item.id)">
                                             <i class="fa fa-edit mr-1"></i> 編輯
                                         </button>
@@ -260,11 +260,11 @@
                                 <th class="width-5 align-middle">
                                     <input type="checkbox" class="checkbox-size" v-model="checkAll">
                                 </th>
-                                <th>優惠代碼</th>
-                                <th class="width-10 text-center">優惠金額</th>
-                                <th class="width-15 text-center">建立時間</th>
-                                <th class="width-15 text-center">使用時間</th>
-                                <th class="width-15 text-center">功能</th>
+                                <th class="align-middle">優惠代碼</th>
+                                <th class="width-10 align-middle text-center">優惠金額</th>
+                                <th class="width-15 align-middle text-center">建立時間</th>
+                                <th class="width-15 align-middle text-center">使用時間</th>
+                                <th class="width-15 align-middle text-center">功能</th>
                             </tr>
                             <tr v-if="discount_records.length <= 0">
                                 <th class="text-center" colspan="6"><span class="text-danger">沒有篩選資料</span></th>
@@ -276,11 +276,11 @@
                                 <td class="align-middle">
                                     <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check" v-if="item.order.payment_status !== 1">
                                 </td>
-                                <td>${discount_codes.title}</td>
-                                <td class="text-center">${discount_codes.discount}</td>
-                                <td class="text-center">${dateFormat(discount_codes.created_at)}</td>
-                                <td class="text-center">${dateFormat(item.created_at)}</td>
-                                <td class="text-center">
+                                <td class="align-middle">${discount_codes.title}</td>
+                                <td class="align-middle text-center">${discount_codes.discount}</td>
+                                <td class="align-middle text-center">${dateFormat(discount_codes.created_at)}</td>
+                                <td class="align-middle text-center">${dateFormat(item.created_at)}</td>
+                                <td class="align-middle text-center">
                                     <button type="button" class="btn btn-sm btn-default px-2 ml-2" @click="orders(item.order.merchant_trade_no)">
                                         <i class="fa fa-list mr-1"></i> 訂單資料
                                     </button>

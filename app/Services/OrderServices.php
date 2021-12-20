@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\ProductSpecifications;
 use App\Models\OrderProducts;
+use App\Models\DiscountCode;
 use App\Models\DiscountRecord;
 use Ecpay\Sdk\Services\CheckMacValueService;
 
@@ -61,10 +62,17 @@ class OrderServices
         $discount = null;
         $discount_codes = data_get($params, 'discount_codes') ? data_get($params, 'discount_codes') : null;
         if ($discount_codes) {
-            $discount_result = (new DiscountCodeServices)->search($discount_codes);
-            if ($discount_result['status'] && self::listTotalAmount($list, $freight, $mode, 'list_total') > $discount_result['data']['full_amount']) {
-                $discount = $discount_result['data']['discount'];
-                DiscountRecord::create(['type' => 'discount_codes', 'discount_codes_id' => $discount_result['data']['id'], 'orders_id' => $order_model::decodeSlug($order_id)]);
+            if ($mode === 'make_up') { # 補付款
+                $discount_result = DiscountCode::firstWhere('fixed_name', $discount_codes);
+                if ($discount_result) {
+                    $discount = $discount_result->discount;
+                }
+            } else {
+                $discount_result = (new DiscountCodeServices)->search($discount_codes);
+                if ($discount_result['status'] && self::listTotalAmount($list, $freight, $mode, 'list_total') >= $discount_result['data']['full_amount']) {
+                    $discount = $discount_result['data']['discount'];
+                    DiscountRecord::create(['type' => 'discount_codes', 'discount_codes_id' => $discount_result['data']['id'], 'orders_id' => $order_model::decodeSlug($order_id)]);
+                }
             }
         }
 
@@ -272,7 +280,7 @@ class OrderServices
         }
 
         # 扣優惠代碼折扣
-        if ($discount && is_numeric($discount)) {
+        if ($get_type === 'all_total' && $discount && is_numeric($discount)) {
             $total -= $discount;
         }
 

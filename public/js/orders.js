@@ -67271,14 +67271,15 @@ window.app = createApp({
       };
     },
     orderTotal: function orderTotal() {
-      return function (freight, list, discount_record) {
+      return function (freight, list) {
+        var discount_record = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
         var price = 0;
         list.forEach(function (v) {
           price += v.price * v.count;
         }); // 有使用優惠代碼
 
         if (discount_record && discount_record.discount_codes) {
-          if (price > discount_record.discount_codes.full_amount) {
+          if (price >= discount_record.discount_codes.full_amount) {
             price -= discount_record.discount_codes.discount;
           }
         }
@@ -67658,14 +67659,15 @@ var detailed_content = createApp({
       };
     },
     orderTotal: function orderTotal() {
-      return function (freight, list, discount_record) {
+      return function (freight, list) {
+        var discount_record = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
         var price = 0;
         list.forEach(function (v) {
           price += v.price * v.count;
         }); // 有使用優惠代碼
 
         if (discount_record && discount_record.discount_codes) {
-          if (price > discount_record.discount_codes.full_amount) {
+          if (price >= discount_record.discount_codes.full_amount) {
             price -= discount_record.discount_codes.discount;
           }
         }

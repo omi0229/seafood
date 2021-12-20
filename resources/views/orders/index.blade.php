@@ -471,13 +471,7 @@
                                     <div class="row align-middle justify-content-end">
                                         <div class="col-9 text-right">小計：</div>
                                         <div class="col-3 text-right text-danger">
-                                            $ ${ orderTotal(0, info.order_products, info.discount_record).toLocaleString() }</div>
-                                    </div>
-                                    <div class="row align-middle justify-content-end">
-                                        <div class="col-9 text-right">運費<span v-if="info.freight_name">(${ info.freight_name })</span>：
-                                        </div>
-                                        <div class="col-3 text-right text-danger">
-                                            $ ${ info.freight.toLocaleString() }</div>
+                                            $ ${ orderTotal(0, info.order_products).toLocaleString() }</div>
                                     </div>
                                     <!-- v-if -->
                                     <div class="row align-middle justify-content-end" v-if="info.discount_record && info.discount_record.discount_codes">
@@ -487,9 +481,16 @@
                                             - $ ${ info.discount_record.discount_codes.discount.toLocaleString() }</div>
                                     </div>
                                     <div class="row align-middle justify-content-end">
+                                        <div class="col-9 text-right">運費<span v-if="info.freight_name">(${ info.freight_name })</span>：
+                                        </div>
+                                        <div class="col-3 text-right text-danger">
+                                            $ ${ info.freight.toLocaleString() }</div>
+                                    </div>
+                                    <div class="row align-middle justify-content-end">
                                         <div class="col-9 text-right">本訂單需付款總金額：</div>
                                         <div class="col-3 text-right text-danger">
-                                            $ ${ orderTotal(info.freight, info.order_products, info.discount_record).toLocaleString() }</div>
+                                            $ ${ orderTotal(info.freight, info.order_products, info.discount_record).toLocaleString() }
+                                        </div>
                                     </div>
                                 </div>
                             </div>

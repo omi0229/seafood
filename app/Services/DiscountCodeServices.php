@@ -70,11 +70,12 @@ class DiscountCodeServices
 
         $info = $data->firstWhere('fixed_name', $fixed_name);
 
-        if ($info->discount_records->count() >= $info->records) {
-            return ['status' => false, 'message' => 'error'];
-        }
-
         if ($info) {
+
+            if ($info->discount_records->count() >= $info->records) {
+                return ['status' => false, 'message' => 'error'];
+            }
+
             return ['status' => true, 'message' => 'success', 'data' => $info];
         }
 
