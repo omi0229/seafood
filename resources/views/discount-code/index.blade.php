@@ -212,6 +212,25 @@
                             <div> ${ info.end_date.substr(0, 10) } </div>
                         </template>
                     </div>
+                    <div class="form-group">
+                        <label for="revenue_share">分潤 (數字 1- 99)</label>
+                        <template v-if="mode === 'create'">
+                            <input type="text" maxlength="2" class="form-control form-control-sm" id="revenue_share" placeholder="請輸入標題" v-model="info.revenue_share">
+                        </template>
+                        <template v-else>
+                            <div> ${ info.revenue_share ? info.revenue_share : '無設定分潤' } </div>
+                        </template>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookmark">備註</label>
+                        <template v-if="mode === 'create'">
+                            <textarea class="form-control" rows="4" placeholder="請輸入備註" v-model="info.bookmark"></textarea>
+                        </template>
+                        <template v-else>
+                            <div v-html="info.bookmark" v-if="info.bookmark"></div>
+                            <div v-else>無</div>
+                        </template>
+                    </div>
                 </div>
                 <div class="modal-footer justify-content-end">
                     <button type="button" class="btn btn-sm btn-danger px-3 mr-1" data-dismiss="modal" aria-label="Close">取消</button>
@@ -288,6 +307,9 @@
                             </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div class="text-right text-bold" v-if="discount_codes && discount_codes.revenue_share">
+                        付款成功訂單總金額為：<span class="text-danger">$ ${ orderSuccessTotal }</span>, 分潤為：<span class="text-danger">$ ${ revenueShare }</span>
                     </div>
                 </div>
             </div>

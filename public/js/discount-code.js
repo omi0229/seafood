@@ -62676,6 +62676,8 @@ window.app = createApp({
       set_info.info.fixed_name = info.fixed_name;
       set_info.info.start_date = info.start_date;
       set_info.info.end_date = info.end_date;
+      set_info.info.revenue_share = info.revenue_share;
+      set_info.info.bookmark = info.bookmark;
     },
     "delete": function _delete() {
       var _this4 = this;
@@ -62797,7 +62799,9 @@ var set_info = createApp({
         is_fixed: '0',
         fixed_name: '',
         start_date: '',
-        end_date: ''
+        end_date: '',
+        revenue_share: 0,
+        bookmark: ''
       },
       datetimepicker_obj: {
         locale: 'zh-tw',
@@ -62821,6 +62825,8 @@ var set_info = createApp({
       this.info.fixed_name = '';
       this.info.start_date = '';
       this.info.end_date = '';
+      this.info.revenue_share = '';
+      this.info.bookmark = '';
       setTimeout(function () {
         var datetimepicker_obj = {
           locale: 'zh-tw',
@@ -62918,6 +62924,23 @@ var set_info = createApp({
 
       data.start_date = start_date + ' 00:00:00';
       data.end_date = end_date + ' 23:59:59';
+
+      if (data.revenue_share) {
+        if (isNaN(data.revenue_share)) {
+          return {
+            auth: false,
+            message: '分潤需為數字！'
+          };
+        }
+
+        if (data.revenue_share <= 0) {
+          return {
+            auth: false,
+            message: '分潤需大為0！'
+          };
+        }
+      }
+
       return {
         auth: true,
         message: 'success'
@@ -63015,18 +63038,45 @@ var set_show_items = createApp({
       return function (datetime) {
         return moment__WEBPACK_IMPORTED_MODULE_1___default()(datetime).format('Y-MM-DD HH:mm');
       };
+    },
+    orderSuccessTotal: function orderSuccessTotal() {
+      var _this8 = this;
+
+      var total = 0;
+      this.original.forEach(function (v) {
+        if (v.order.payment_status === 1) {
+          var price = 0;
+          v.order.order_products.forEach(function (v) {
+            price += v.price * v.count;
+          }); // 有使用優惠代碼
+
+          if (_this8.discount_codes) {
+            if (price >= _this8.discount_codes.full_amount) {
+              price -= _this8.discount_codes.discount;
+            }
+          }
+
+          price += v.order.freight;
+          total += price;
+        }
+      });
+      return total;
+    },
+    revenueShare: function revenueShare() {
+      return (this.orderSuccessTotal * this.discount_codes.revenue_share / 100).toFixed(0);
+      ;
     }
   },
   watch: {
     'checkAll': function checkAll(newData, oldData) {
-      var _this8 = this;
+      var _this9 = this;
 
       this.check = [];
 
       if (newData) {
         this.discount_records.forEach(function (o) {
           if (o.order.payment_status !== 1) {
-            _this8.check.push(o.id);
+            _this9.check.push(o.id);
           }
         });
       }
@@ -63034,29 +63084,29 @@ var set_show_items = createApp({
   },
   methods: {
     recordFilter: function recordFilter() {
-      var _this9 = this;
+      var _this10 = this;
 
       this.checkAll = false;
 
       if (this.value.payment_status || this.value.payment_status === 0) {
         this.discount_records = _.filter(this.original, function (o) {
-          return o.order.payment_status === Number(_this9.value.payment_status);
+          return o.order.payment_status === Number(_this10.value.payment_status);
         });
       } else {
         this.discount_records = this.original;
       }
     },
     confirm: function confirm() {
-      var _this10 = this;
+      var _this11 = this;
 
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)('確定刪除此紀錄？').then(function (confirm) {
         if (confirm) {
-          _this10["delete"]();
+          _this11["delete"]();
         }
       });
     },
     "delete": function _delete() {
-      var _this11 = this;
+      var _this12 = this;
 
       if (this.check.length > 0) {
         loading.show = true;
@@ -63078,7 +63128,7 @@ var set_show_items = createApp({
                     return app.searchService();
 
                   case 4:
-                    app.shotItems(_this11.id);
+                    app.shotItems(_this12.id);
                     Toast.fire({
                       icon: 'success',
                       title: '刪除成功'

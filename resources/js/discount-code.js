@@ -87,6 +87,8 @@ window.app = createApp({
             set_info.info.fixed_name = info.fixed_name;
             set_info.info.start_date = info.start_date;
             set_info.info.end_date = info.end_date;
+            set_info.info.revenue_share = info.revenue_share;
+            set_info.info.bookmark = info.bookmark;
         },
         delete() {
             if(this.check.length > 0) {
@@ -126,7 +128,7 @@ window.app = createApp({
             set_show_items.id = id;
             set_show_items.discount_codes = items;
             set_show_items.discount_records = set_show_items.original = items.discount_records;
-        }
+        },
     },
 }).mount('#app');
 
@@ -144,6 +146,8 @@ let set_info = createApp({
                 fixed_name: '',
                 start_date: '',
                 end_date: '',
+                revenue_share: 0,
+                bookmark: '',
             },
             datetimepicker_obj: {
                 locale: 'zh-tw',
@@ -166,6 +170,8 @@ let set_info = createApp({
             this.info.fixed_name = '';
             this.info.start_date = '';
             this.info.end_date = '';
+            this.info.revenue_share = '';
+            this.info.bookmark = '';
 
             setTimeout(() => {
                 let datetimepicker_obj = {
@@ -229,6 +235,16 @@ let set_info = createApp({
 
             data.start_date = start_date + ' 00:00:00';
             data.end_date = end_date + ' 23:59:59';
+
+            if (data.revenue_share) {
+                if(isNaN(data.revenue_share)) {
+                    return {auth: false, message: '分潤需為數字！'};
+                }
+
+                if(data.revenue_share <= 0) {
+                    return {auth: false, message: '分潤需大為0！'};
+                }
+            }
 
             return {auth: true, message: 'success'};
         },
@@ -299,6 +315,31 @@ let set_show_items = createApp({
             return datetime => {
                 return moment(datetime).format('Y-MM-DD HH:mm');
             }
+        },
+        orderSuccessTotal() {
+            let total = 0;
+            this.original.forEach(v => {
+                if(v.order.payment_status === 1) {
+                    let price = 0;
+                    v.order.order_products.forEach(v => { price += v.price * v.count });
+
+                    // 有使用優惠代碼
+                    if (this.discount_codes) {
+                        if (price >= this.discount_codes.full_amount) {
+                            price -= this.discount_codes.discount;
+                        }
+                    }
+
+                    price += v.order.freight;
+
+                    total += price;
+                }
+            });
+
+            return total;
+        },
+        revenueShare() {
+            return ((this.orderSuccessTotal * this.discount_codes.revenue_share) / 100).toFixed(0); ;
         },
     },
     watch: {

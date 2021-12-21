@@ -20,6 +20,8 @@ class DiscountCode extends Model
         'fixed_name',
         'start_date',
         'end_date',
+        'revenue_share',
+        'bookmark',
     ];
 
     public function discount_records()
