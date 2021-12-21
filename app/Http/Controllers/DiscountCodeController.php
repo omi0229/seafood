@@ -45,13 +45,17 @@ class DiscountCodeController extends Controller
     {
         $id = data_get($request->all(), 'id');
         $records = data_get($request->all(), 'records');
-        if (!($id && $records)) {
+        $revenue_share = data_get($request->all(), 'revenue_share');
+        $bookmark = data_get($request->all(), 'bookmark');
+        if (!$id) {
             return response()->json(['status' => false, 'message' => '編輯失敗']);
         }
 
         $item = $this->repository->find($this->model::decodeSlug($id));
-        if ($item && is_numeric($records) && $records >= 0) {
-            $item->records += $records;
+        if ($item) {
+            $item->records += is_numeric($records) && $records >= 0 ? $records : 0;
+            $item->revenue_share = $revenue_share ? $revenue_share : null;
+            $item->bookmark = $bookmark ? $bookmark : null;
             $item->save();
             return response()->json(['status' => true, 'message' => '編輯成功']);
         }

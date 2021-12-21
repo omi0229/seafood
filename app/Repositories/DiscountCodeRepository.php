@@ -35,7 +35,7 @@ class DiscountCodeRepository extends Repository
         foreach ($data as $key => $row) {
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
-            $list[$key]['bookmark'] = nl2br($row->bookmark);
+            $list[$key]['bookmark'] = $row->bookmark;
             foreach ($row->discount_records as $record_key => $record) {
                 $list[$key]['discount_records'][$record_key]['id'] = $record->hash_id;
             }

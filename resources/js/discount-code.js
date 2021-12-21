@@ -192,6 +192,10 @@ let set_info = createApp({
                 return {auth: false, message: '優惠筆數請 輸入數字！'};
             }
 
+            if (data.records <= 0) {
+                return {auth: false, message: '優惠筆數請 大於0！'};
+            }
+
             if (!data.title) {
                 return {auth: false, message: '請輸入標題！'};
             }
@@ -248,13 +252,34 @@ let set_info = createApp({
 
             return {auth: true, message: 'success'};
         },
-        confirm() {
-            if (this.mode === 'create') {
-                let auth = this.auth(this.info);
-                if (!auth.auth) {
-                    Toast.fire({icon: 'error', title: auth.message});
-                    return false;
+        updateAuth(data) { // 編輯時用這個驗證
+            if (data.records) {
+                if (isNaN(data.records)) {
+                    return {auth: false, message: '優惠筆數請 輸入數字！'};
                 }
+
+                if (data.records <= 0) {
+                    return {auth: false, message: '優惠筆數請 大於0！'};
+                }
+            }
+
+            if (data.revenue_share) {
+                if (isNaN(data.revenue_share)) {
+                    return {auth: false, message: '分潤需為數字！'};
+                }
+
+                if (data.revenue_share <= 0) {
+                    return {auth: false, message: '分潤需大為0！'};
+                }
+            }
+
+            return {auth: true, message: 'success'};
+        },
+        confirm() {
+            let auth = this.mode === 'create' ? this.auth(this.info) : this.updateAuth(this.info);
+            if (!auth.auth) {
+                Toast.fire({icon: 'error', title: auth.message});
+                return false;
             }
 
             let text = this.mode === 'create' ? '新增' : '編輯';
@@ -275,6 +300,8 @@ let set_info = createApp({
                 info = {
                     id: this.info.id,
                     records: this.info.records,
+                    revenue_share: this.info.revenue_share,
+                    bookmark: this.info.bookmark,
                 };
             }
 
