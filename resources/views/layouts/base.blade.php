@@ -359,16 +359,16 @@
                             @php
                                 $sale_manage = $permissions
                                     ->filter(function ($p){
-                                        if($p->name == 'freight' || $p->name == 'discount-code') {
+                                        if($p->name == 'freight' || $p->name == 'discount-code' || $p->name == 'coupon') {
                                             return true;
                                         }
 
                                         return false;
                                     });
                             @endphp
-                            @if($sale_manage->count() > 0 && ($login_user->can('discount-code') || $login_user->can('freight')))
-                            <li class="nav-item @php if($action_uri === 'freight' || $action_uri === 'discount-code') echo 'menu-open' @endphp">
-                                <a href="#" class="nav-link @php if($action_uri === 'freight' || $action_uri === 'discount-code') echo 'active' @endphp">
+                            @if($sale_manage->count() > 0 && ($login_user->can('discount-code') || $login_user->can('freight') || $login_user->can('coupon')))
+                            <li class="nav-item @php if($action_uri === 'freight' || $action_uri === 'discount-code' || $action_uri === 'coupon') echo 'menu-open' @endphp">
+                                <a href="#" class="nav-link @php if($action_uri === 'freight' || $action_uri === 'discount-code' || $action_uri === 'coupon') echo 'active' @endphp">
                                     <i class="nav-icon fas fa-list"></i>
                                     <p>
                                         銷售管理
@@ -389,6 +389,14 @@
                                         <a href="/freight" class="nav-link @php if($action_uri === 'freight') echo 'active' @endphp">
                                             <i class="nav-icon fas fa-truck-moving"></i>
                                             <p>{{ $sale_manage->where('name', 'freight')->first()->display_name  }}</p>
+                                        </a>
+                                    </li>
+                                    @endif
+                                    @if($login_user->can('coupon'))
+                                    <li class="nav-item">
+                                        <a href="/coupon" class="nav-link @php if($action_uri === 'coupon') echo 'active' @endphp">
+                                            <i class="nav-icon fas fa-ticket-alt"></i>
+                                            <p>{{ $sale_manage->where('name', 'coupon')->first()->display_name  }}</p>
                                         </a>
                                     </li>
                                     @endif

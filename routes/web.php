@@ -24,6 +24,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\FreightController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\DiscountCodeController;
+use App\Http\Controllers\CouponController;
 
 
 /*
@@ -207,4 +208,7 @@ Route::middleware(['auth.web'])->group(function () {
     Route::post('freight/update', [FreightController::class, 'update']);
     Route::delete('freight/delete', [FreightController::class, 'delete']);
     Route::get('freight/list/parents/{parents_id}', [FreightController::class, 'parents']);
+
+    # 優惠券
+    Route::get('coupon', [CouponController::class, 'index']);
 });

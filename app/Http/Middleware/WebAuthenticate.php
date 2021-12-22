@@ -44,6 +44,7 @@ class WebAuthenticate
             'orders' => 'orders',
             'pages' => 'pages',
             'discount-code' => 'discount-code',
+            'coupon' => 'coupon',
         ];
 
         $login_user = \Session::get('seafood_user');
