@@ -69,4 +69,9 @@ class ProductSpecificationController extends Controller
 
         return response()->json(['status' => false, 'message' => '無此消息資料']);
     }
+
+    public function all()
+    {
+        return response()->json(['status' => true, 'message' => '取得資料成功', 'data' => $this->repository->allData()]);
+    }
 }

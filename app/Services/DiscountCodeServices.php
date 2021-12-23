@@ -45,7 +45,7 @@ class DiscountCodeServices
             'discount.numeric' => '優惠金額請輸入數字',
             'is_fixed.required' => '請選擇固定名稱類型',
             'is_fixed.numeric' => '固定名稱類型需為數字',
-            'fixed_name.required' => '請選擇固定名稱',
+            'fixed_name.required' => '請輸入固定名稱',
             'fixed_name.string' => '固定名稱類型需為字串',
             'fixed_name.unique' => '已有重複優惠代碼',
             'start_date.required' => '請選擇開始日期',

@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Repositories\Repository;
 use App\Models\ProductSpecifications;
 use App\Models\Products;
 
@@ -69,5 +68,10 @@ class ProductSpecificationRepository extends Repository
         }
 
         return false;
+    }
+
+    public function allData()
+    {
+        return $this->model::with(['product'])->get();
     }
 }

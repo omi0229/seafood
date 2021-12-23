@@ -63,7 +63,7 @@
                                     <th class="text-center">功能</th>
                                 </tr>
                                 <tr v-else>
-                                    <th class="text-center" colspan="8"><span class="text-danger">無分類資料</span></th>
+                                    <th class="text-center" colspan="8"><span class="text-danger">無優惠代碼資料</span></th>
                                 </tr>
                                 </thead>
                                 <tbody>

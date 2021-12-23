@@ -152,6 +152,7 @@ Route::middleware(['auth.web'])->group(function () {
     Route::post('product-specification/insert', [ProductSpecificationController::class, 'insert']);
     Route::post('product-specification/update', [ProductSpecificationController::class, 'update']);
     Route::delete('product-specification/delete', [ProductSpecificationController::class, 'delete']);
+    Route::get('product-specification/all', [ProductSpecificationController::class, 'all']);
 
     # 目錄管理
     Route::get('directory', [DirectoryController::class, 'index']);
@@ -211,4 +212,7 @@ Route::middleware(['auth.web'])->group(function () {
 
     # 優惠券
     Route::get('coupon', [CouponController::class, 'index']);
+    Route::get('coupon/count', [CouponController::class, 'count']);
+    Route::get('coupon/list/{page}', [CouponController::class, 'list']);
+    Route::post('coupon/insert', [CouponController::class, 'insert']);
 });

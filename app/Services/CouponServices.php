@@ -19,19 +19,17 @@ class CouponServices
             'records' => 'required|numeric',
             'title' => [
                 'required',
-                Rule::unique('discount_codes')->ignore($model::find($model::decodeSlug($inputs['id'])))->whereNull('deleted_at')
+                Rule::unique('coupons')->ignore($model::find($model::decodeSlug($inputs['id'])))->whereNull('deleted_at')
             ],
             'full_amount' => 'required|numeric',
             'discount' => 'required|numeric',
-            'is_fixed' => 'required|numeric',
-            'fixed_name' => [
+            'coupon' => [
                 'required',
                 'string',
-                Rule::unique('discount_codes')->ignore($model::find($model::decodeSlug($inputs['id'])))->whereNull('deleted_at')
+                Rule::unique('coupons')->ignore($model::find($model::decodeSlug($inputs['id'])))->whereNull('deleted_at')
             ],
             'start_date' => 'required|date',
             'end_date' => 'required|date',
-            'revenue_share' => 'integer|min:1|max:99',
         ];
 
         $tip = [
@@ -43,18 +41,13 @@ class CouponServices
             'full_amount.numeric' => '結帳金額請輸入數字',
             'discount.required' => '請輸入優惠金額',
             'discount.numeric' => '優惠金額請輸入數字',
-            'is_fixed.required' => '請選擇固定名稱類型',
-            'is_fixed.numeric' => '固定名稱類型需為數字',
-            'fixed_name.required' => '請選擇固定名稱',
-            'fixed_name.string' => '固定名稱類型需為字串',
-            'fixed_name.unique' => '已有重複優惠代碼',
+            'coupon.required' => '請輸入優惠劵名稱',
+            'coupon.string' => '優惠劵類型需為字串',
+            'coupon.unique' => '已有重複優惠劵名稱',
             'start_date.required' => '請選擇開始日期',
             'start_date.date' => '開始日期類型需為日期格式',
             'end_date.required' => '請選擇結束日期',
             'end_date.date' => '結束日期類型需為日期格式',
-            'revenue_share.integer' => '分潤欄位需為數字',
-            'revenue_share.min' => '分潤值不得低於1',
-            'revenue_share.max' => '分潤值不得高於99',
         ];
 
         return Validator::make($inputs, $auth, $tip);

@@ -2,6 +2,7 @@
 
 @section('content')
     <link rel="stylesheet" href="plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+    <link rel="stylesheet" href="plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css">
     <link rel="stylesheet" href="css/discount-codes.css">
     <div id="app" v-cloak>
         <div class="content-header px-4">
@@ -63,7 +64,7 @@
                                     <th class="text-center">功能</th>
                                 </tr>
                                 <tr v-else>
-                                    <th class="text-center" colspan="8"><span class="text-danger">無分類資料</span></th>
+                                    <th class="text-center" colspan="8"><span class="text-danger">無優惠券資料</span></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -102,7 +103,7 @@
     </div>
 
     <div class="modal fade" id="set-info" data-backdrop="static">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
@@ -162,29 +163,6 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="name">固定名稱</label><span class="text-danger" v-if="mode === 'create'">*</span>
-                        <div class="d-flex align-items-center s-14">
-                            <template v-if="mode === 'create'">
-                            <div class="form-check d-flex align-items-center">
-                                <input id="is_fixed_enabled" class="form-check-input" type="radio" value="1" v-model="info.is_fixed">
-                                <label for="is_fixed_enabled" class="form-check-label">是，欲產生的名稱為</label>
-                                <div class="col-7">
-                                    <input type="text" maxlength="10" class="form-control form-control-sm" id="title" placeholder="請輸入名稱" v-model="info.fixed_name">
-                                </div>
-                            </div>
-                            <div class="form-check">
-                                <input id="is_fixed_disabled" class="form-check-input" type="radio" value="0" v-model="info.is_fixed">
-                                <label for="is_fixed_disabled" class="form-check-label">否</label>
-                            </div>
-                            </template>
-                            <template v-else>
-                                <!-- v-if -->
-                                <div v-if="info.is_fixed === 1"> 是，優惠券為 <span class="text-danger text-bold">${ info.fixed_name }</span></div>
-                                <div v-else> 否，隨機產生的優惠券為 <span class="text-danger text-bold">${ info.fixed_name }</span> </div>
-                            </template>
-                        </div>
-                    </div>
-                    <div class="form-group">
                         <label for="start_date">開始日期 <span class="text-danger" v-if="mode === 'create'">*</span></label>
                         <template v-if="mode === 'create'">
                         <div class="input-group date" id="start_date" data-target-input="nearest">
@@ -212,13 +190,12 @@
                             <div> ${ info.end_date.substr(0, 10) } </div>
                         </template>
                     </div>
+                    <div class="mt-5 text-bold">可抵用產品</div>
+                    <hr />
                     <div class="form-group">
-                        <label for="revenue_share">分潤 (數字 1- 99)</label>
-                        <input type="text" maxlength="2" class="form-control form-control-sm" id="revenue_share" placeholder="請輸入標題" v-model="info.revenue_share">
-                    </div>
-                    <div class="form-group">
-                        <label for="bookmark">備註</label>
-                        <textarea class="form-control" rows="4" placeholder="請輸入備註" v-model="info.bookmark"></textarea>
+                        <select class="duallistbox" multiple="multiple">
+                            <option v-for="item in product_specifications_list" :value="item.id">${item.product.title} - ${item.name}</option>
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-end">
@@ -307,5 +284,6 @@
 
     <script src="plugins/moment/moment-with-locales.min.js"></script>
     <script src="plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-    <script src="js/discount-code.js"></script>
+    <script src="plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+    <script src="js/coupon.js"></script>
 @endsection

@@ -16,13 +16,7 @@ class CouponRepository extends Repository
     {
         $keywords = data_get($params, 'keywords');
 
-        $data = $this->model::with([
-            'discount_records' => function ($query) {
-                $query->orderBy('created_at', 'desc');
-            },
-            'discount_records.order',
-            'discount_records.order.order_products',
-        ])->withCount(['discount_records']);
+        $data = $this->model;
 
         $data = !$keywords ? $data : $data->where('title', 'LIKE', '%' . $keywords . '%')->orWhere('fixed_name', 'LIKE', '%' . $keywords . '%');
 
@@ -34,10 +28,6 @@ class CouponRepository extends Repository
         foreach ($data as $key => $row) {
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
-            $list[$key]['bookmark'] = $row->bookmark;
-            foreach ($row->discount_records as $record_key => $record) {
-                $list[$key]['discount_records'][$record_key]['id'] = $record->hash_id;
-            }
         }
 
         return $list;
