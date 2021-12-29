@@ -62769,7 +62769,7 @@ window.app = createApp({
     confirm: function confirm() {
       var _this6 = this;
 
-      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)('確定刪除選取的分類？').then(function (confirm) {
+      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)('確定刪除選取的優惠代碼？').then(function (confirm) {
         if (confirm) {
           _this6["delete"]();
         }

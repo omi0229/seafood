@@ -71,6 +71,7 @@ mix.js('resources/js/freight.js', 'public/js')
 mix.sass('resources/scss/freight.scss', 'public/css')
 // coupon
 mix.js('resources/js/coupon.js', 'public/js')
+mix.sass('resources/scss/coupon.scss', 'public/css')
 // orders
 mix.js('resources/js/orders.js', 'public/js')
 mix.sass('resources/scss/orders.scss', 'public/css')

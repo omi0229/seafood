@@ -117,7 +117,7 @@ window.app = createApp({
             });
         },
         confirm() {
-            swal2Confirm('確定刪除選取的分類？').then(confirm => {
+            swal2Confirm('確定刪除選取的優惠代碼？').then(confirm => {
                 if (confirm) {
                     this.delete();
                 }

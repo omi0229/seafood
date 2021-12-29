@@ -26,6 +26,6 @@ class DiscountCode extends Model
 
     public function discount_records()
     {
-        return $this->hasMany('App\Models\DiscountRecord', 'discount_codes_id');
+        return $this->hasMany('App\Models\DiscountRecord', 'discount_codes_id')->where('type', 'discount_codes');
     }
 }

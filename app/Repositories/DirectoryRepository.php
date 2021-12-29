@@ -43,10 +43,16 @@ class DirectoryRepository extends Repository
     {
         $data = $this->model::with(['put_ons' => function ($query) {
             $query->where('status', 1);
+            $query->orWhere(function (Builder $query) {
+                $query->where('start_date', '<=', now()->format('Y-m-d H:i:s'));
+                $query->where('end_date', '>=', now()->format('Y-m-d H:i:s'));
+            });
             $query->skip(0)->take(12);
             $query->orderBy('created_at', 'DESC');
+            $query->orderBy('id', 'DESC');
             $query->with(['product']);
-        }, 'put_ons.product', 'put_ons.product.product_specification', 'put_ons.product.product_images'])->whereHas('put_ons', function (Builder $query) {
+        }, 'put_ons.product', 'put_ons.product.product_specification', 'put_ons.product.product_images'])
+        ->whereHas('put_ons', function (Builder $query) {
             $query->where('status', 1);
         })->withCount(['put_ons' => function ($query) {
             $query->where('status', 1);

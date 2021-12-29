@@ -15,6 +15,10 @@ class DiscountRecord extends Model
         'type',
         'discount_codes_id',
         'orders_id',
+        'member_id',
+        'cart_id',
+        'received_at',
+        'used_at',
     ];
 
     public function order()
@@ -25,5 +29,10 @@ class DiscountRecord extends Model
     public function discount_codes()
     {
         return $this->belongsTo('App\Models\DiscountCode');
+    }
+
+    public function coupon()
+    {
+        return $this->belongsTo('App\Models\Coupon', 'discount_codes_id');
     }
 }

@@ -72,6 +72,13 @@ class ProductSpecificationRepository extends Repository
 
     public function allData()
     {
-        return $this->model::with(['product'])->get();
+        $data = $this->model::with(['product'])->get();
+        $list = [];
+        foreach ($data as $key => $row) {
+            array_push($list, json_decode($row, true));
+            $list[$key]['id'] = $row->hash_id;
+        }
+
+        return $list;
     }
 }

@@ -19,4 +19,14 @@ class Coupon extends Model
         'start_date',
         'end_date',
     ];
+
+    public function product_specifications()
+    {
+        return $this->belongsToMany('App\Models\ProductSpecifications');
+    }
+
+    public function coupon_records()
+    {
+        return $this->hasMany('App\Models\DiscountRecord', 'discount_codes_id')->where('type', 'coupon');
+    }
 }

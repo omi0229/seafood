@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Member;
 use App\Repositories\MembersRepository;
 use App\Services\MemberServices;
+use App\Services\CouponServices;
 
 class MemberController extends Controller
 {
@@ -90,5 +91,33 @@ class MemberController extends Controller
         } else {
             return response()->json(['status' => false, 'message' => '取得訊息失敗']);
         }
+    }
+
+    public function getCoupon(CouponServices $coupon_services) {
+        $inputs = $this->request->all();
+        $coupon_id = data_get($inputs, 'coupon_id');
+        $member_id = data_get($inputs, 'member_id');
+        $cart_id = data_get($inputs, 'cart_id');
+        if ($coupon_id && $member_id && $coupon_services->getCoupon($coupon_id, $member_id, $cart_id)) {
+            return response()->json(['status' => true, 'message' => '領取成功']);
+        }
+
+        return response()->json(['status' => false, 'message' => '領取失敗']);
+    }
+
+    public function couponList($member_id, $used = null)
+    {
+        return response()->json(['status' => true, 'message' => '取得列表成功', 'data' => (new CouponServices)->couponList($member_id, $used, $this->request->all())]);
+    }
+
+    public function couponUse()
+    {
+        $inputs = $this->request->all();
+        $member_id = data_get($inputs, 'member_id');
+        if ($member_id) {
+            return response()->json(['status' => true, 'message' => '取得列表成功', 'data' => (new CouponServices)->couponList($member_id, 'false', $inputs)]);
+        }
+
+        return response()->json(['status' => false, 'message' => '取得列表失敗']);
     }
 }

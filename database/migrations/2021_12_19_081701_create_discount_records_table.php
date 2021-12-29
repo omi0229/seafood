@@ -17,7 +17,7 @@ class CreateDiscountRecordsTable extends Migration
             $table->id();
             $table->string('type', 20)->comment('優惠類型');
             $table->integer('discount_codes_id')->comment('優惠ID');
-            $table->integer('orders_id')->comment('訂單ID');
+            $table->integer('orders_id')->nullable()->comment('訂單ID');
             $table->timestamps();
             $table->softDeletes();
 

@@ -3,7 +3,7 @@
 @section('content')
     <link rel="stylesheet" href="plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
     <link rel="stylesheet" href="plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css">
-    <link rel="stylesheet" href="css/discount-codes.css">
+    <link rel="stylesheet" href="css/coupon.css">
     <div id="app" v-cloak>
         <div class="content-header px-4">
             <div class="container-fluid">
@@ -56,11 +56,11 @@
                                         <input type="checkbox" class="checkbox-size" v-model="checkAll">
                                     </th>
                                     <th>標題</th>
+                                    <th class="width-15">優惠券代碼</th>
                                     <th class="text-center">優惠金額</th>
                                     <th class="text-center">開始時間</th>
                                     <th class="text-center">結束時間</th>
                                     <th class="text-center">優惠開放數量</th>
-                                    <th class="text-center">使用此優惠訂單數量</th>
                                     <th class="text-center">功能</th>
                                 </tr>
                                 <tr v-else>
@@ -71,22 +71,22 @@
                                 <!-- v-for -->
                                 <tr v-for="item in list">
                                     <td class="align-middle">
-                                        <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check" v-if="item.discount_records_count <= 0">
+                                        <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check">
                                     </td>
-                                    <td class="align-middle">${item.title}</td>
-                                    <td class="align-middle text-center">${item.discount}</td>
-                                    <td class="align-middle text-center">${dateFormat(item.start_date)}</td>
-                                    <td class="align-middle text-center">${dateFormat(item.end_date)}</td>
-                                    <td class="align-middle text-center">${item.records}</td>
-                                    <td class="align-middle text-center">
-                                        <template v-if="item.discount_records_count > 0">
-                                            <button class="btn btn-link text-bold" data-toggle="modal" data-target="#set-show-items" @click="shotItems(item.id)">${item.discount_records_count}</button>
+                                    <td class="align-middle text-wrap text-break">${item.title}</td>
+                                    <td class="text-nowrap align-middle">${item.coupon}</td>
+                                    <td class="text-nowrap align-middle text-center">${item.discount}</td>
+                                    <td class="text-nowrap align-middle text-center">${dateFormat(item.start_date)}</td>
+                                    <td class="text-nowrap align-middle text-center">${dateFormat(item.end_date)}</td>
+                                    <td class="text-nowrap align-middle text-center">
+                                        <template v-if="item.coupon_records_count > 0">
+                                            <button class="btn btn-link text-bold" data-toggle="modal" data-target="#set-show-items" @click="shotItems(item.id)">${item.coupon_records_count}</button>
                                         </template>
                                         <template v-else>
-                                            ${item.discount_records_count}
+                                            ${item.coupon_records_count}
                                         </template>
                                     </td>
-                                    <td class="align-middle text-center">
+                                    <td class="text-nowrap align-middle text-center">
                                         <button type="button" class="btn btn-sm btn-info px-2" data-toggle="modal" data-target="#set-info" @click="modify(item.id)">
                                             <i class="fa fa-edit mr-1"></i> 編輯
                                         </button>
@@ -119,7 +119,7 @@
                         <div class="d-flex align-items-center">
                         本次即將產生
                         <div class="col-4">
-                            <input type="text" maxlength="11" class="form-control form-control-sm" id="records" placeholder="請輸入優惠筆數" v-model="info.records">
+                            <input type="text" maxlength="2" class="form-control form-control-sm" id="records" placeholder="請輸入優惠筆數" v-model="info.records">
                         </div>
                         組，請輸入數字
                         </div>
@@ -134,6 +134,10 @@
                         <template v-else>
                             <div> ${ info.title } </div>
                         </template>
+                    </div>
+                    <div class="form-group" v-if="mode === 'modify'">
+                        <label for="coupon">優惠券代碼</label><span class="text-danger" v-if="mode === 'create'">*</span>
+                        <div class="text-bold text-primary"> ${ coupon } </div>
                     </div>
                     <div class="form-group">
                         <label for="name">優惠內容</label><span class="text-danger" v-if="mode === 'create'">*</span>
@@ -192,10 +196,13 @@
                     </div>
                     <div class="mt-5 text-bold">可抵用產品</div>
                     <hr />
-                    <div class="form-group">
-                        <select class="duallistbox" multiple="multiple">
-                            <option v-for="item in product_specifications_list" :value="item.id">${item.product.title} - ${item.name}</option>
-                        </select>
+                    <div class="form-group d-flex align-items-center">
+                        <container :datas="product_specifications_list" :type="0"></container>
+                        <div id="btns">
+                            <input type="button" class="btn btn-sm btn-default" value=">" @click="change_type(0)" class="to"/>
+                            <input type="button" class="btn btn-sm btn-default" value="<" @click="change_type(1)" class="to"/>
+                        </div>
+                        <container :datas="product_specifications_list" :type="1"></container>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-end">
@@ -212,7 +219,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
-                        使用此優惠訂單項目
+                        優惠劵使用情形
                     </h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -251,31 +258,28 @@
                                 <th class="width-15 align-middle text-center">使用時間</th>
                                 <th class="width-15 align-middle text-center">功能</th>
                             </tr>
-                            <tr v-if="discount_records.length <= 0">
+                            <tr v-if="coupon_records.length <= 0">
                                 <th class="text-center" colspan="6"><span class="text-danger">沒有篩選資料</span></th>
                             </tr>
                             </thead>
                             <tbody>
                             <!-- v-for -->
-                            <tr v-for="item in discount_records">
+                            <tr v-for="item in coupon_records">
                                 <td class="align-middle">
-                                    <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check" v-if="item.order.payment_status !== 1">
+                                    <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check" v-if="item.order && item.order.payment_status !== 1">
                                 </td>
-                                <td class="align-middle">${discount_codes.title}</td>
-                                <td class="align-middle text-center">${discount_codes.discount}</td>
-                                <td class="align-middle text-center">${dateFormat(discount_codes.created_at)}</td>
+                                <td class="align-middle">${coupon_info.title}</td>
+                                <td class="align-middle text-center">${coupon_info.discount}</td>
                                 <td class="align-middle text-center">${dateFormat(item.created_at)}</td>
+                                <td class="align-middle text-center">${item.used_at ? dateFormat(item.used_at) : ''}</td>
                                 <td class="align-middle text-center">
-                                    <button type="button" class="btn btn-sm btn-default px-2 ml-2" @click="orders(item.order.merchant_trade_no)">
+                                    <button type="button" class="btn btn-sm btn-default px-2 ml-2" @click="orders(item.order.merchant_trade_no)" v-if="item.order">
                                         <i class="fa fa-list mr-1"></i> 訂單資料
                                     </button>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
-                    </div>
-                    <div class="text-right text-bold" v-if="discount_codes && discount_codes.revenue_share">
-                        付款成功訂單總金額為：<span class="text-danger">$ ${ orderSuccessTotal }</span>, 分潤為：<span class="text-danger">$ ${ revenueShare }</span>
                     </div>
                 </div>
             </div>

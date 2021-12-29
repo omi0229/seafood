@@ -56,15 +56,11 @@ class DiscountCodeRepository extends Repository
     {
         unset($inputs['id']);
 
-        if (data_get($inputs, 'parents_id')) {
-            $inputs['parents_id'] = $this->model::decodeSlug($inputs['parents_id']);
-        }
-
         if (data_get($inputs, 'end_date')) {
             $inputs['end_date'] = substr($inputs['end_date'], 0, 10) . ' 23:59:59';
         }
 
-        $model = $this->model::create($inputs);
+        $this->model::create($inputs);
 
         return true;
     }

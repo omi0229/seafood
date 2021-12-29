@@ -215,4 +215,6 @@ Route::middleware(['auth.web'])->group(function () {
     Route::get('coupon/count', [CouponController::class, 'count']);
     Route::get('coupon/list/{page}', [CouponController::class, 'list']);
     Route::post('coupon/insert', [CouponController::class, 'insert']);
+    Route::post('coupon/update', [CouponController::class, 'update']);
+    Route::delete('coupon/delete', [CouponController::class, 'delete']);
 });

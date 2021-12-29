@@ -62579,6 +62579,65 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
+var container = {
+  props: ['datas', 'type'],
+  data: function data() {
+    return {
+      search_word: ''
+    };
+  },
+  template: "\n        <div class=\"transfer-container\">\n        <div class=\"top\">\n            <input :id=\"'transfer-all' + type\" type=\"checkbox\" name=\"all\" @click=\"all\" :checked=\"filter_chosen === filter && filter\"/>\n            <label :for=\"'transfer-all' + type\"><span v-show=\"filter_chosen\">{{ filter_chosen }}/</span>{{ filter_search_word }}\u9805</label>\n        </div>\n        <input type=\"text\" placeholder=\"\u641C\u5C0B\" @keyup=\"change_search_word\" class=\"search form-control form-control-sm\"/>\n        <ul class=\"transfer-contents\">\n            <li class=\"transfer-content\" :class=\"content.chosen ? 'bg-primary' : ''\" v-for=\"(content, idx) in datas\" v-show=\"content.type === type && has_search_word(content.content)\">\n                <input :id=\"'transfer-content' + content.id\" class=\"d-none\" type=\"checkbox\" @click=\"change(idx)\" :checked=\"content.chosen\"/>\n                <label :for=\"'transfer-content' + content.id\">{{ content.content }}</label>\n            </li>\n        </ul>\n        </div>",
+  methods: {
+    change: function change(idx) {
+      this.datas[idx].chosen = !this.datas[idx].chosen;
+    },
+    all: function all() {
+      this.change_chosen(!(this.filter_chosen === this.filter));
+    },
+    change_chosen: function change_chosen(bool) {
+      var _this = this;
+
+      this.datas.map(function (x) {
+        if (x.type === _this.type) {
+          x.chosen = bool;
+        }
+      });
+    },
+    change_search_word: function change_search_word(e) {
+      this.search_word = e.target.value;
+    },
+    has_search_word: function has_search_word(content) {
+      if (this.search_word) {
+        return content.includes(this.search_word);
+      }
+
+      return true;
+    }
+  },
+  computed: {
+    filter: function filter() {
+      var _this2 = this;
+
+      return this.datas.filter(function (x) {
+        return x.type === _this2.type;
+      }).length;
+    },
+    filter_chosen: function filter_chosen() {
+      var _this3 = this;
+
+      return this.datas.filter(function (x) {
+        return x.type === _this3.type && x.chosen;
+      }).length;
+    },
+    filter_search_word: function filter_search_word() {
+      var _this4 = this;
+
+      return this.datas.filter(function (x) {
+        return x.type === _this4.type && _this4.has_search_word(x.content);
+      }).length;
+    }
+  }
+};
 window.app = createApp({
   components: {
     'components-search': _components_search_js__WEBPACK_IMPORTED_MODULE_3__.search,
@@ -62597,14 +62656,14 @@ window.app = createApp({
   delimiters: ["${", "}"],
   watch: {
     'checkAll': function checkAll(newData, oldData) {
-      var _this = this;
+      var _this5 = this;
 
       this.check = [];
 
       if (newData) {
         this.list.forEach(function (o) {
-          if (o.discount_records_count <= 0) {
-            _this.check.push(o.id);
+          if (o.coupon_records_count <= 0) {
+            _this5.check.push(o.id);
           }
         });
       }
@@ -62618,34 +62677,54 @@ window.app = createApp({
     }
   },
   mounted: function mounted() {
-    this.getCount();
-    this.getData(1);
+    var _this6 = this;
+
+    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.next = 2;
+              return _this6.getCount();
+
+            case 2:
+              _context.next = 4;
+              return _this6.getData(1);
+
+            case 4:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }))();
   },
   methods: {
     getCount: function getCount() {
-      var _this2 = this;
+      var _this7 = this;
 
       return new Promise(function (resolve) {
-        var url = !_this2.search_text ? '/coupon/count' : '/coupon/count?keywords=' + _this2.search_text;
+        var url = !_this7.search_text ? '/coupon/count' : '/coupon/count?keywords=' + _this7.search_text;
         axiosGetMethod(url).then(function (res) {
-          _this2.all_count = res.data.count;
-          _this2.page_count = res.data.page_count;
+          _this7.all_count = res.data.count;
+          _this7.page_count = res.data.page_count;
           resolve();
         });
       });
     },
     getData: function getData(page) {
-      var _this3 = this;
+      var _this8 = this;
 
       return new Promise(function (resolve) {
         var url = '/coupon/list/' + page;
 
-        if (_this3.search_text) {
-          url += '?keywords=' + _this3.search_text;
+        if (_this8.search_text) {
+          url += '?keywords=' + _this8.search_text;
         }
 
         axiosGetMethod(url).then(function (res) {
-          _this3.list = res.data.data;
+          console.log(res.data.data);
+          _this8.list = res.data.data;
 
           if (loading && loading.show) {
             loading.show = false;
@@ -62656,59 +62735,61 @@ window.app = createApp({
       });
     },
     create: function create() {
-      loading.show = true;
-      set_info.duallistbox = null;
-      set_info.product_specifications_list = [];
-      axiosGetMethod('product-specification/all').then(function (res) {
-        set_info.product_specifications_list = res.data.data;
-        setTimeout(function () {
-          set_info.duallistbox = $('.duallistbox').bootstrapDualListbox({
-            filterPlaceHolder: '搜尋',
-            infoText: false,
-            moveAllLabel: '全部選擇',
-            removeAllLabel: '全部刪除'
-          });
-        }, 1);
-
-        if (loading && loading.show) {
-          loading.show = false;
-        }
-      });
       set_info.dataInit();
       set_info.mode = 'create';
     },
     modify: function modify(id) {
-      set_info.dataInit();
-      set_info.mode = 'modify';
-      set_info.info.id = id;
+      var _this9 = this;
 
-      var info = _.find(this.list, {
-        'id': id
-      });
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+        var info;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return set_info.dataInit();
 
-      set_info.info.records = 0;
-      set_info.info.title = info.title;
-      set_info.info.full_amount = info.full_amount;
-      set_info.info.discount = info.discount;
-      set_info.info.is_fixed = info.is_fixed;
-      set_info.info.fixed_name = info.fixed_name;
-      set_info.info.start_date = info.start_date;
-      set_info.info.end_date = info.end_date;
-      set_info.info.revenue_share = info.revenue_share;
-      set_info.info.bookmark = info.bookmark;
+              case 2:
+                set_info.mode = 'modify';
+                set_info.info.id = id;
+                info = _.find(_this9.list, {
+                  'id': id
+                });
+                set_info.coupon = info.coupon;
+                set_info.info.records = 0;
+                set_info.info.title = info.title;
+                set_info.info.full_amount = info.full_amount;
+                set_info.info.discount = info.discount;
+                set_info.info.start_date = info.start_date;
+                set_info.info.end_date = info.end_date;
+                set_info.product_specifications_list.forEach(function (v) {
+                  if (info.product_specifications_list.includes(v.id)) {
+                    v.type = 1;
+                  }
+                });
+                set_info.info.product_specifications_list = info.product_specifications_list;
+
+              case 14:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
     },
     "delete": function _delete() {
-      var _this4 = this;
+      var _this10 = this;
 
       if (this.check.length > 0) {
         loading.show = true;
-        axios["delete"]('/discount-code/delete', {
+        axios["delete"]('/coupon/delete', {
           data: this.check
         }).then( /*#__PURE__*/function () {
-          var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(res) {
-            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+          var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(res) {
+            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
               while (1) {
-                switch (_context.prev = _context.next) {
+                switch (_context3.prev = _context3.next) {
                   case 0:
                     if (res.data.status) {
                       Toast.fire({
@@ -62716,15 +62797,15 @@ window.app = createApp({
                         title: '刪除成功'
                       });
 
-                      _this4.searchService('delete');
+                      _this10.searchService('delete');
                     }
 
                   case 1:
                   case "end":
-                    return _context.stop();
+                    return _context3.stop();
                 }
               }
-            }, _callee);
+            }, _callee3);
           }));
 
           return function (_x) {
@@ -62734,49 +62815,49 @@ window.app = createApp({
       }
     },
     searchService: function searchService() {
-      var _this5 = this;
+      var _this11 = this;
 
       var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       return new Promise( /*#__PURE__*/function () {
-        var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(resolve) {
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+        var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(resolve) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
             while (1) {
-              switch (_context2.prev = _context2.next) {
+              switch (_context4.prev = _context4.next) {
                 case 0:
-                  _context2.next = 2;
-                  return _this5.getCount();
+                  _context4.next = 2;
+                  return _this11.getCount();
 
                 case 2:
-                  _context2.next = 4;
-                  return _this5.getData(_this5.$refs.pagination.page);
+                  _context4.next = 4;
+                  return _this11.getData(_this11.$refs.pagination.page);
 
                 case 4:
-                  if (!(_this5.$refs.pagination.page > 1 && _this5.list.length === 0)) {
-                    _context2.next = 10;
+                  if (!(_this11.$refs.pagination.page > 1 && _this11.list.length === 0)) {
+                    _context4.next = 10;
                     break;
                   }
 
-                  if (!(type === 'delete' || _this5.search_text)) {
-                    _context2.next = 10;
+                  if (!(type === 'delete' || _this11.search_text)) {
+                    _context4.next = 10;
                     break;
                   }
 
                   loading.show = true;
-                  _context2.next = 9;
-                  return _this5.getData(1);
+                  _context4.next = 9;
+                  return _this11.getData(1);
 
                 case 9:
-                  _this5.$refs.pagination.setPage(1);
+                  _this11.$refs.pagination.setPage(1);
 
                 case 10:
                   resolve();
 
                 case 11:
                 case "end":
-                  return _context2.stop();
+                  return _context4.stop();
               }
             }
-          }, _callee2);
+          }, _callee4);
         }));
 
         return function (_x2) {
@@ -62785,11 +62866,11 @@ window.app = createApp({
       }());
     },
     confirm: function confirm() {
-      var _this6 = this;
+      var _this12 = this;
 
-      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)('確定刪除選取的分類？').then(function (confirm) {
+      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)('確定刪除選取的優惠劵？').then(function (confirm) {
         if (confirm) {
-          _this6["delete"]();
+          _this12["delete"]();
         }
       });
     },
@@ -62799,29 +62880,29 @@ window.app = createApp({
       });
 
       set_show_items.id = id;
-      set_show_items.discount_codes = items;
-      set_show_items.discount_records = set_show_items.original = items.discount_records;
+      set_show_items.coupon_info = items;
+      set_show_items.coupon_records = set_show_items.original = items.coupon_records;
     }
   }
 }).mount('#app');
 var set_info = createApp({
+  components: {
+    'container': container
+  },
   data: function data() {
     return {
       mode: 'create',
+      coupon: '',
       info: {
         id: null,
         records: null,
         title: '',
         full_amount: null,
         discount: null,
-        is_fixed: '0',
-        fixed_name: '',
         start_date: '',
         end_date: '',
-        revenue_share: 0,
-        bookmark: ''
+        product_specifications_list: []
       },
-      duallistbox: null,
       product_specifications_list: [],
       datetimepicker_obj: {
         locale: 'zh-tw',
@@ -62833,35 +62914,72 @@ var set_info = createApp({
     };
   },
   delimiters: ["${", "}"],
-  mounted: function mounted() {},
+  mounted: function mounted() {
+    var datetimepicker_obj = {
+      locale: 'zh-tw',
+      format: 'YYYY-MM-DD',
+      icons: {
+        time: 'far fa-clock'
+      }
+    };
+    $('#start_date').datetimepicker(datetimepicker_obj);
+    $('#end_date').datetimepicker(datetimepicker_obj);
+  },
   methods: {
+    change_type: function change_type(type) {
+      this.$data.product_specifications_list.forEach(function (content) {
+        if (content.chosen && content.type === type) {
+          content.chosen = false;
+          content.type = Number(!type);
+        }
+      });
+    },
     dataInit: function dataInit() {
-      this.info.id = null;
-      this.info.records = null;
-      this.info.title = '';
-      this.info.full_amount = null;
-      this.info.discount = null;
-      this.info.is_fixed = '0';
-      this.info.fixed_name = '';
-      this.info.start_date = '';
-      this.info.end_date = '';
-      this.info.revenue_share = '';
-      this.info.bookmark = '';
-      setTimeout(function () {
-        var datetimepicker_obj = {
-          locale: 'zh-tw',
-          format: 'YYYY-MM-DD',
-          icons: {
-            time: 'far fa-clock'
+      var _this13 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                loading.show = true;
+                _this13.product_specifications_list = [];
+                _context5.next = 4;
+                return axiosGetMethod('product-specification/all').then(function (res) {
+                  _this13.product_specifications_list = _.map(res.data.data, function (v) {
+                    return {
+                      content: v.product.title + ' - ' + v.name,
+                      type: 0,
+                      chosen: false,
+                      id: v.id
+                    };
+                  });
+
+                  if (loading && loading.show) {
+                    loading.show = false;
+                  }
+                });
+
+              case 4:
+                $('input[data-target="#start_date"]').datetimepicker('clear');
+                $('input[data-target="#end_date"]').datetimepicker('clear');
+                _this13.info.id = null;
+                _this13.info.records = null;
+                _this13.info.title = '';
+                _this13.info.full_amount = null;
+                _this13.info.discount = null;
+                _this13.info.start_date = '';
+                _this13.info.end_date = '';
+
+              case 13:
+              case "end":
+                return _context5.stop();
+            }
           }
-        };
-        $('#start_date').datetimepicker(datetimepicker_obj);
-        $('#end_date').datetimepicker(datetimepicker_obj);
-      }, 1);
+        }, _callee5);
+      }))();
     },
     auth: function auth(data) {
-      console.log(this.duallistbox.val());
-
       if (!data.records) {
         return {
           auth: false,
@@ -62918,15 +63036,6 @@ var set_info = createApp({
         };
       }
 
-      if (data.is_fixed === '1') {
-        if (!data.fixed_name) {
-          return {
-            auth: false,
-            message: '請輸入固定名稱！'
-          };
-        }
-      }
-
       var start_date = $('input[data-target="#start_date"]').val();
       var end_date = $('input[data-target="#end_date"]').val();
 
@@ -62953,23 +63062,6 @@ var set_info = createApp({
 
       data.start_date = start_date + ' 00:00:00';
       data.end_date = end_date + ' 23:59:59';
-
-      if (data.revenue_share) {
-        if (isNaN(data.revenue_share)) {
-          return {
-            auth: false,
-            message: '分潤需為數字！'
-          };
-        }
-
-        if (data.revenue_share <= 0) {
-          return {
-            auth: false,
-            message: '分潤需大為0！'
-          };
-        }
-      }
-
       return {
         auth: true,
         message: 'success'
@@ -62985,26 +63077,10 @@ var set_info = createApp({
           };
         }
 
-        if (data.records <= 0) {
+        if (data.records < 0) {
           return {
             auth: false,
-            message: '優惠筆數請 大於0！'
-          };
-        }
-      }
-
-      if (data.revenue_share) {
-        if (isNaN(data.revenue_share)) {
-          return {
-            auth: false,
-            message: '分潤需為數字！'
-          };
-        }
-
-        if (data.revenue_share <= 0) {
-          return {
-            auth: false,
-            message: '分潤需大為0！'
+            message: '優惠筆數不得為負數！'
           };
         }
       }
@@ -63015,7 +63091,7 @@ var set_info = createApp({
       };
     },
     confirm: function confirm() {
-      var _this7 = this;
+      var _this14 = this;
 
       var auth = this.mode === 'create' ? this.auth(this.info) : this.updateAuth(this.info);
 
@@ -63030,38 +63106,42 @@ var set_info = createApp({
       var text = this.mode === 'create' ? '新增' : '編輯';
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)("\u78BA\u5B9A".concat(text, "\u6B64\u512A\u60E0\u4EE3\u78BC\uFF1F")).then(function (confirm) {
         if (confirm) {
-          _this7.save();
+          _this14.save();
         }
       });
     },
     save: function save() {
-      var url = this.mode === 'create' ? '/discount-code/insert' : '/discount-code/update';
+      var url = this.mode === 'create' ? '/coupon/insert' : '/coupon/update';
       var info;
 
       if (this.mode === 'create') {
+        this.info.product_specifications_list = _.filter(this.product_specifications_list, function (v) {
+          return v.type === 1;
+        });
         info = this.info;
       } else {
         info = {
           id: this.info.id,
           records: this.info.records,
-          revenue_share: this.info.revenue_share,
-          bookmark: this.info.bookmark
+          product_specifications_list: _.filter(this.product_specifications_list, function (v) {
+            return v.type === 1;
+          })
         };
       }
 
       loading.show = true;
       axios.post(url, info).then( /*#__PURE__*/function () {
-        var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(res) {
+        var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6(res) {
           var icon;
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
             while (1) {
-              switch (_context3.prev = _context3.next) {
+              switch (_context6.prev = _context6.next) {
                 case 0:
                   if (res.data.status) {
                     $('#set-info').modal('hide');
                   }
 
-                  _context3.next = 3;
+                  _context6.next = 3;
                   return app.searchService();
 
                 case 3:
@@ -63073,10 +63153,10 @@ var set_info = createApp({
 
                 case 5:
                 case "end":
-                  return _context3.stop();
+                  return _context6.stop();
               }
             }
-          }, _callee3);
+          }, _callee6);
         }));
 
         return function (_x3) {
@@ -63090,8 +63170,8 @@ var set_show_items = createApp({
   data: function data() {
     return {
       id: null,
-      discount_codes: null,
-      discount_records: [],
+      coupon_info: null,
+      coupon_records: [],
       original: [],
       check: [],
       checkAll: false,
@@ -63106,45 +63186,18 @@ var set_show_items = createApp({
       return function (datetime) {
         return moment__WEBPACK_IMPORTED_MODULE_1___default()(datetime).format('Y-MM-DD HH:mm');
       };
-    },
-    orderSuccessTotal: function orderSuccessTotal() {
-      var _this8 = this;
-
-      var total = 0;
-      this.original.forEach(function (v) {
-        if (v.order.payment_status === 1) {
-          var price = 0;
-          v.order.order_products.forEach(function (v) {
-            price += v.price * v.count;
-          }); // 有使用優惠代碼
-
-          if (_this8.discount_codes) {
-            if (price >= _this8.discount_codes.full_amount) {
-              price -= _this8.discount_codes.discount;
-            }
-          }
-
-          price += v.order.freight;
-          total += price;
-        }
-      });
-      return total;
-    },
-    revenueShare: function revenueShare() {
-      return (this.orderSuccessTotal * this.discount_codes.revenue_share / 100).toFixed(0);
-      ;
     }
   },
   watch: {
     'checkAll': function checkAll(newData, oldData) {
-      var _this9 = this;
+      var _this15 = this;
 
       this.check = [];
 
       if (newData) {
-        this.discount_records.forEach(function (o) {
+        this.coupon_records.forEach(function (o) {
           if (o.order.payment_status !== 1) {
-            _this9.check.push(o.id);
+            _this15.check.push(o.id);
           }
         });
       }
@@ -63152,51 +63205,51 @@ var set_show_items = createApp({
   },
   methods: {
     recordFilter: function recordFilter() {
-      var _this10 = this;
+      var _this16 = this;
 
       this.checkAll = false;
 
       if (this.value.payment_status || this.value.payment_status === 0) {
-        this.discount_records = _.filter(this.original, function (o) {
-          return o.order.payment_status === Number(_this10.value.payment_status);
+        this.coupon_records = _.filter(this.original, function (o) {
+          return o.order.payment_status === Number(_this16.value.payment_status);
         });
       } else {
-        this.discount_records = this.original;
+        this.coupon_records = this.original;
       }
     },
     confirm: function confirm() {
-      var _this11 = this;
+      var _this17 = this;
 
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)('確定刪除此紀錄？').then(function (confirm) {
         if (confirm) {
-          _this11["delete"]();
+          _this17["delete"]();
         }
       });
     },
     "delete": function _delete() {
-      var _this12 = this;
+      var _this18 = this;
 
       if (this.check.length > 0) {
         loading.show = true;
         axiosDeleteMethod('/discount-code/record-delete', {
           data: this.check
         }).then( /*#__PURE__*/function () {
-          var _ref4 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4(res) {
-            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
+          var _ref4 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7(res) {
+            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee7$(_context7) {
               while (1) {
-                switch (_context4.prev = _context4.next) {
+                switch (_context7.prev = _context7.next) {
                   case 0:
                     if (!res.data.status) {
-                      _context4.next = 6;
+                      _context7.next = 6;
                       break;
                     }
 
                     loading.show = false;
-                    _context4.next = 4;
+                    _context7.next = 4;
                     return app.searchService();
 
                   case 4:
-                    app.shotItems(_this12.id);
+                    app.shotItems(_this18.id);
                     Toast.fire({
                       icon: 'success',
                       title: '刪除成功'
@@ -63204,10 +63257,10 @@ var set_show_items = createApp({
 
                   case 6:
                   case "end":
-                    return _context4.stop();
+                    return _context7.stop();
                 }
               }
-            }, _callee4);
+            }, _callee7);
           }));
 
           return function (_x4) {

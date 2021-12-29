@@ -1,7 +1,65 @@
 import moment from 'moment';
-import { swal2Confirm } from './bootstrap';
-import { search } from './components/search.js';
-import { pagination } from './components/pagination.js';
+import {swal2Confirm} from './bootstrap';
+import {search} from './components/search.js';
+import {pagination} from './components/pagination.js';
+
+const container = {
+    props: ['datas', 'type'],
+    data() {
+        return {
+            search_word: ''
+        }
+    },
+    template: `
+        <div class="transfer-container">
+        <div class="top">
+            <input :id="'transfer-all' + type" type="checkbox" name="all" @click="all" :checked="filter_chosen === filter && filter"/>
+            <label :for="'transfer-all' + type"><span v-show="filter_chosen">{{ filter_chosen }}/</span>{{ filter_search_word }}項</label>
+        </div>
+        <input type="text" placeholder="搜尋" @keyup="change_search_word" class="search form-control form-control-sm"/>
+        <ul class="transfer-contents">
+            <li class="transfer-content" :class="content.chosen ? 'bg-primary' : ''" v-for="(content, idx) in datas" v-show="content.type === type && has_search_word(content.content)">
+                <input :id="'transfer-content' + content.id" class="d-none" type="checkbox" @click="change(idx)" :checked="content.chosen"/>
+                <label :for="'transfer-content' + content.id">{{ content.content }}</label>
+            </li>
+        </ul>
+        </div>`,
+    methods: {
+        change(idx) {
+            this.datas[idx].chosen = !this.datas[idx].chosen;
+        },
+        all() {
+            this.change_chosen(!(this.filter_chosen === this.filter));
+        },
+        change_chosen(bool) {
+            this.datas.map(x => {
+                if (x.type === this.type) {
+                    x.chosen = bool;
+                }
+            });
+        },
+        change_search_word(e) {
+            this.search_word = e.target.value;
+        },
+        has_search_word(content) {
+            if (this.search_word) {
+                return content.includes(this.search_word);
+            }
+            return true;
+        }
+    },
+    computed: {
+        filter() {
+            return this.datas.filter(x => x.type === this.type).length;
+        },
+        filter_chosen() {
+            return this.datas.filter(x => x.type === this.type && x.chosen).length;
+        },
+        filter_search_word() {
+            return this.datas.filter(x => x.type === this.type && this.has_search_word(x.content)).length;
+        }
+    }
+};
 
 window.app = createApp({
     components: {
@@ -24,7 +82,7 @@ window.app = createApp({
             this.check = [];
             if (newData) {
                 this.list.forEach(o => {
-                    if (o.discount_records_count <= 0) {
+                    if (o.coupon_records_count <= 0) {
                         this.check.push(o.id);
                     }
                 });
@@ -38,9 +96,9 @@ window.app = createApp({
             }
         },
     },
-    mounted() {
-        this.getCount();
-        this.getData(1);
+    async mounted() {
+        await this.getCount();
+        await this.getData(1);
     },
     methods: {
         getCount() {
@@ -62,6 +120,9 @@ window.app = createApp({
                 }
 
                 axiosGetMethod(url).then(res => {
+
+                    console.log(res.data.data);
+
                     this.list = res.data.data;
                     if (loading && loading.show) {
                         loading.show = false;
@@ -71,48 +132,34 @@ window.app = createApp({
             });
         },
         create() {
-            loading.show = true;
-            set_info.duallistbox = null
-            set_info.product_specifications_list = [];
-            axiosGetMethod('product-specification/all').then(res => {
-                set_info.product_specifications_list = res.data.data;
-                setTimeout(() => {
-                    set_info.duallistbox = $('.duallistbox').bootstrapDualListbox({
-                        filterPlaceHolder: '搜尋',
-                        infoText: false,
-                        moveAllLabel: '全部選擇',
-                        removeAllLabel: '全部刪除',
-                    });
-                }, 1);
-
-                if (loading && loading.show) {
-                    loading.show = false;
-                }
-            });
-
             set_info.dataInit();
             set_info.mode = 'create';
         },
-        modify(id) {
-            set_info.dataInit();
+        async modify(id) {
+            await set_info.dataInit();
             set_info.mode = 'modify';
             set_info.info.id = id;
             let info = _.find(this.list, {'id': id});
+            set_info.coupon = info.coupon;
             set_info.info.records = 0;
             set_info.info.title = info.title;
             set_info.info.full_amount = info.full_amount;
             set_info.info.discount = info.discount;
-            set_info.info.is_fixed = info.is_fixed;
-            set_info.info.fixed_name = info.fixed_name;
             set_info.info.start_date = info.start_date;
             set_info.info.end_date = info.end_date;
-            set_info.info.revenue_share = info.revenue_share;
-            set_info.info.bookmark = info.bookmark;
+
+            set_info.product_specifications_list.forEach(v => {
+                if (info.product_specifications_list.includes(v.id)) {
+                    v.type = 1;
+                }
+            })
+
+            set_info.info.product_specifications_list = info.product_specifications_list;
         },
         delete() {
             if(this.check.length > 0) {
                 loading.show = true;
-                axios.delete('/discount-code/delete', {data: this.check}).then(async res => {
+                axios.delete('/coupon/delete', {data: this.check}).then(async res => {
                     if (res.data.status) {
                         Toast.fire({icon: 'success', title: '刪除成功'});
                         this.searchService('delete');
@@ -136,7 +183,7 @@ window.app = createApp({
             });
         },
         confirm() {
-            swal2Confirm('確定刪除選取的分類？').then(confirm => {
+            swal2Confirm('確定刪除選取的優惠劵？').then(confirm => {
                 if (confirm) {
                     this.delete();
                 }
@@ -145,30 +192,30 @@ window.app = createApp({
         shotItems(id) {
             let items = _.find(this.list, {'id': id});
             set_show_items.id = id;
-            set_show_items.discount_codes = items;
-            set_show_items.discount_records = set_show_items.original = items.discount_records;
+            set_show_items.coupon_info = items;
+            set_show_items.coupon_records = set_show_items.original = items.coupon_records;
         },
     },
 }).mount('#app');
 
 let set_info = createApp({
+    components: {
+        'container': container,
+    },
     data() {
         return {
             mode: 'create',
+            coupon: '',
             info: {
                 id: null,
                 records: null,
                 title: '',
                 full_amount: null,
                 discount: null,
-                is_fixed: '0',
-                fixed_name: '',
                 start_date: '',
                 end_date: '',
-                revenue_share: 0,
-                bookmark: '',
+                product_specifications_list: [],
             },
-            duallistbox: null,
             product_specifications_list: [],
             datetimepicker_obj: {
                 locale: 'zh-tw',
@@ -179,36 +226,54 @@ let set_info = createApp({
     },
     delimiters: ["${", "}"],
     mounted() {
+        let datetimepicker_obj = {
+            locale: 'zh-tw',
+            format: 'YYYY-MM-DD',
+            icons: {time: 'far fa-clock'},
+        };
 
+        $('#start_date').datetimepicker(datetimepicker_obj);
+        $('#end_date').datetimepicker(datetimepicker_obj);
     },
     methods: {
-        dataInit() {
+        change_type(type) {
+            this.$data.product_specifications_list.forEach(content => {
+                if (content.chosen && content.type === type) {
+                    content.chosen = false;
+                    content.type = Number(!type);
+                }
+            });
+        },
+        async dataInit() {
+            loading.show = true;
+            this.product_specifications_list = [];
+            await axiosGetMethod('product-specification/all').then(res => {
+                this.product_specifications_list = _.map(res.data.data, v => {
+                    return {
+                        content: v.product.title + ' - ' + v.name,
+                        type: 0,
+                        chosen: false,
+                        id: v.id,
+                    };
+                })
+
+                if (loading && loading.show) {
+                    loading.show = false;
+                }
+            });
+
+            $('input[data-target="#start_date"]').datetimepicker('clear');
+            $('input[data-target="#end_date"]').datetimepicker('clear');
+
             this.info.id = null;
             this.info.records = null;
             this.info.title = '';
             this.info.full_amount = null;
             this.info.discount = null;
-            this.info.is_fixed = '0';
-            this.info.fixed_name = '';
             this.info.start_date = '';
             this.info.end_date = '';
-            this.info.revenue_share = '';
-            this.info.bookmark = '';
-
-            setTimeout(() => {
-                let datetimepicker_obj = {
-                    locale: 'zh-tw',
-                    format: 'YYYY-MM-DD',
-                    icons: {time: 'far fa-clock'},
-                };
-                $('#start_date').datetimepicker(datetimepicker_obj);
-                $('#end_date').datetimepicker(datetimepicker_obj);
-            }, 1)
         },
         auth(data) {
-
-            console.log(this.duallistbox.val());
-
             if (!data.records) {
                 return {auth: false, message: '請輸入優惠筆數！'};
             }
@@ -241,12 +306,6 @@ let set_info = createApp({
                 return {auth: false, message: '優惠金額請 輸入數字！'};
             }
 
-            if(data.is_fixed === '1') {
-                if (!data.fixed_name) {
-                    return {auth: false, message: '請輸入固定名稱！'};
-                }
-            }
-
             let start_date = $('input[data-target="#start_date"]').val();
             let end_date = $('input[data-target="#end_date"]').val();
 
@@ -265,16 +324,6 @@ let set_info = createApp({
             data.start_date = start_date + ' 00:00:00';
             data.end_date = end_date + ' 23:59:59';
 
-            if (data.revenue_share) {
-                if(isNaN(data.revenue_share)) {
-                    return {auth: false, message: '分潤需為數字！'};
-                }
-
-                if(data.revenue_share <= 0) {
-                    return {auth: false, message: '分潤需大為0！'};
-                }
-            }
-
             return {auth: true, message: 'success'};
         },
         updateAuth(data) { // 編輯時用這個驗證
@@ -283,18 +332,8 @@ let set_info = createApp({
                     return {auth: false, message: '優惠筆數請 輸入數字！'};
                 }
 
-                if (data.records <= 0) {
-                    return {auth: false, message: '優惠筆數請 大於0！'};
-                }
-            }
-
-            if (data.revenue_share) {
-                if (isNaN(data.revenue_share)) {
-                    return {auth: false, message: '分潤需為數字！'};
-                }
-
-                if (data.revenue_share <= 0) {
-                    return {auth: false, message: '分潤需大為0！'};
+                if (data.records < 0) {
+                    return {auth: false, message: '優惠筆數不得為負數！'};
                 }
             }
 
@@ -316,17 +355,17 @@ let set_info = createApp({
             });
         },
         save() {
-            let url = this.mode === 'create' ? '/discount-code/insert' : '/discount-code/update';
+            let url = this.mode === 'create' ? '/coupon/insert' : '/coupon/update';
 
             let info;
             if (this.mode === 'create') {
+                this.info.product_specifications_list = _.filter(this.product_specifications_list, v => { return v.type === 1 });
                 info = this.info;
             } else {
                 info = {
                     id: this.info.id,
                     records: this.info.records,
-                    revenue_share: this.info.revenue_share,
-                    bookmark: this.info.bookmark,
+                    product_specifications_list: _.filter(this.product_specifications_list, v => { return v.type === 1 }),
                 };
             }
 
@@ -351,8 +390,8 @@ let set_show_items = createApp({
     data() {
         return {
             id: null,
-            discount_codes: null,
-            discount_records: [],
+            coupon_info: null,
+            coupon_records: [],
             original: [],
             check: [],
             checkAll: false,
@@ -368,37 +407,12 @@ let set_show_items = createApp({
                 return moment(datetime).format('Y-MM-DD HH:mm');
             }
         },
-        orderSuccessTotal() {
-            let total = 0;
-            this.original.forEach(v => {
-                if(v.order.payment_status === 1) {
-                    let price = 0;
-                    v.order.order_products.forEach(v => { price += v.price * v.count });
-
-                    // 有使用優惠代碼
-                    if (this.discount_codes) {
-                        if (price >= this.discount_codes.full_amount) {
-                            price -= this.discount_codes.discount;
-                        }
-                    }
-
-                    price += v.order.freight;
-
-                    total += price;
-                }
-            });
-
-            return total;
-        },
-        revenueShare() {
-            return ((this.orderSuccessTotal * this.discount_codes.revenue_share) / 100).toFixed(0); ;
-        },
     },
     watch: {
         'checkAll'(newData, oldData) {
             this.check = [];
             if(newData) {
-                this.discount_records.forEach(o => {
+                this.coupon_records.forEach(o => {
                     if(o.order.payment_status !== 1) {
                         this.check.push(o.id);
                     }
@@ -410,9 +424,9 @@ let set_show_items = createApp({
         recordFilter() {
             this.checkAll = false;
             if(this.value.payment_status || this.value.payment_status === 0){
-                this.discount_records = _.filter(this.original, o => { return o.order.payment_status === Number(this.value.payment_status); })
+                this.coupon_records = _.filter(this.original, o => { return o.order.payment_status === Number(this.value.payment_status); })
             } else {
-                this.discount_records = this.original;
+                this.coupon_records = this.original;
             }
         },
         confirm() {

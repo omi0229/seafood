@@ -15,7 +15,7 @@ use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PagesController;
 use App\Http\Controllers\Api\DiscountCodeController;
-
+use App\Http\Controllers\Api\CouponController;
 
 /*
 |--------------------------------------------------------------------------
@@ -109,8 +109,10 @@ Route::get('directory/list/{page}', [DirectoryController::class, 'list']);
 Route::get('product/{type_id}/{page?}', [PutOnController::class, 'list']);
 Route::get('product-info/{id}', [PutOnController::class, 'info']);
 
-Route::middleware(['auth:member_api'])->group(function () {
+# 前台首頁顯示一筆優惠劵
+Route::get('coupon/get/{cart_id}/{member_id?}', [CouponController::class, 'get']);
 
+Route::middleware(['auth:member_api'])->group(function () {
     ### 購物車
     # 取得購物車資料
     Route::post('cart/show-cart', [CartController::class, 'showCart']);
@@ -144,4 +146,10 @@ Route::middleware(['auth:member_api'])->group(function () {
     Route::post('member/change-password', [MemberController::class, 'changePassword']);
     # 取得會員通知
     Route::get('member/notification/{member_id}', [MemberController::class, 'notification']);
+    # 前台首頁優惠劵領取
+    Route::post('member/get-coupon', [MemberController::class, 'getCoupon']);
+    # 前台首頁優惠劵領取
+    Route::get('member/coupon-list/{member_id}/{used?}', [MemberController::class, 'couponList']);
+    # 這次購物可使用的優惠劵
+    Route::post('member/coupon-use', [MemberController::class, 'couponUse']);
 });

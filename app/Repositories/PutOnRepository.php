@@ -90,7 +90,14 @@ class PutOnRepository extends Repository
                 case 'sales_high':
                     $data = $data->orderByDesc(OrderProducts::selectRaw('sum(count)')->whereColumn('product_id', 'put_ons.product_id'));
                     break;
+                default:
+                    $data->orderBy('created_at', 'DESC');
+                    $data->orderBy('id', 'DESC');
+                    break;
             }
+        } else {
+            $data->orderBy('created_at', 'DESC');
+            $data->orderBy('id', 'DESC');
         }
 
         # 是否分頁顯示

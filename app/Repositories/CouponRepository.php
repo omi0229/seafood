@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\ProductSpecifications;
 
 class CouponRepository extends Repository
 {
@@ -16,7 +17,12 @@ class CouponRepository extends Repository
     {
         $keywords = data_get($params, 'keywords');
 
-        $data = $this->model;
+        $data = $this->model::with([
+            'coupon_records' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            },
+            'coupon_records.order',
+        ])->withCount(['coupon_records']);
 
         $data = !$keywords ? $data : $data->where('title', 'LIKE', '%' . $keywords . '%')->orWhere('fixed_name', 'LIKE', '%' . $keywords . '%');
 
@@ -28,6 +34,9 @@ class CouponRepository extends Repository
         foreach ($data as $key => $row) {
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
+            $list[$key]['product_specifications_list'] = $row->product_specifications->map(function($v) {
+                return $v->hash_id;
+            })->toArray();
         }
 
         return $list;
@@ -45,15 +54,52 @@ class CouponRepository extends Repository
     {
         unset($inputs['id']);
 
-        if (data_get($inputs, 'parents_id')) {
-            $inputs['parents_id'] = $this->model::decodeSlug($inputs['parents_id']);
-        }
-
-        if (data_get($inputs, 'end_date')) {
-            $inputs['end_date'] = substr($inputs['end_date'], 0, 10) . ' 23:59:59';
-        }
-
         $model = $this->model::create($inputs);
+
+        if ($model) {
+            $data = [];
+            for ($r = 0; $r < $inputs['records']; $r++) {
+                array_push($data, ['type' => 'coupon', 'discount_codes_id' => $model->id, 'created_at' => now()]);
+            }
+
+            if (count($data) > 0) {
+                $model->coupon_records()->insert($data);
+            }
+
+            # 同步已選擇產品資料
+            $product_specifications_list = collect($inputs['product_specifications_list'])->map(function($v) {
+                return ProductSpecifications::decodeSlug($v['id']);
+            })->toArray();
+
+            $model->product_specifications()->sync($product_specifications_list);
+        }
+
+        return true;
+    }
+
+    public function updateData($inputs)
+    {
+        $id = data_get($inputs, 'id');
+        $records = data_get($inputs, 'records');
+        $product_specifications_list = data_get($inputs, 'product_specifications_list');
+
+        $model = $this->find($this->model::decodeSlug($id));
+        if ($model) {
+            $data = [];
+            for ($r = 0; $r < $records; $r++) {
+                array_push($data, ['type' => 'coupon', 'discount_codes_id' => $model->id, 'created_at' => now()]);
+            }
+
+            if (count($data) > 0) {
+                $model->coupon_records()->insert($data);
+            }
+
+            $product_specifications_list = collect($product_specifications_list)->map(function ($v) {
+                return ProductSpecifications::decodeSlug($v['id']);
+            })->toArray();
+
+            $model->product_specifications()->sync($product_specifications_list);
+        }
 
         return true;
     }

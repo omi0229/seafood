@@ -25,7 +25,7 @@ class OrderRepository extends Repository
         $start_date = data_get($params, 'start_date');
         $end_date = data_get($params, 'end_date');
         if ($start_date && $end_date) {
-            $data = $data->where('created_at', '>=', $start_date . ' 00:00:00')->where('created_at', '<=', $end_date . ' 23:59:59');
+            $data->whereBetween('created_at', [$start_date . ' 00:00:00', $end_date . ' 23:59:59']);
         }
 
         # 是否分頁顯示
@@ -58,7 +58,7 @@ class OrderRepository extends Repository
         $start_date = data_get($params, 'start_date');
         $end_date = data_get($params, 'end_date');
         if ($start_date && $end_date) {
-            $data = $data->where('created_at', '>=', $start_date . ' 00:00:00')->where('created_at', '<=', $end_date . ' 23:59:59');
+            $data->whereBetween('created_at', [$start_date . ' 00:00:00', $end_date . ' 23:59:59']);
         }
 
         # 是否分頁顯示
