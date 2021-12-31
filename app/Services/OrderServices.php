@@ -60,7 +60,7 @@ class OrderServices
 
         # 如果有優惠代碼
         $discount = null;
-        $discount_codes = data_get($params, 'discount_codes') ? data_get($params, 'discount_codes') : null;
+        $discount_codes = data_get($params, 'discount_codes');
         if ($discount_codes) {
             if ($mode === 'make_up') { # 補付款
                 $discount_result = DiscountCode::firstWhere('fixed_name', $discount_codes);
@@ -76,18 +76,29 @@ class OrderServices
             }
         }
 
+        # 如果有優惠劵
+        $coupon_discount = null;
+        $coupon_record_id = data_get($params, 'coupon_record_id');
+        if ($coupon_record_id) {
+            $record = DiscountRecord::with(['coupon'])->find(DiscountRecord::decodeSlug($coupon_record_id));
+            if ($record) {
+                $coupon_discount = $record->coupon->discount;
+            }
+        }
+
         $array = [
             'MerchantID' => $MerchantID,
             'MerchantTradeNo' => $order_no,
             'MerchantTradeDate' => $time->format('Y/m/d H:i:s'),
             'PaymentType' => 'aio',
-            'TotalAmount' => self::listTotalAmount($list, $freight, $mode, 'all_total', $discount),
+            'TotalAmount' => self::listTotalAmount($list, $freight, $mode, 'all_total', $discount, $coupon_discount),
             'TradeDesc' => '海龍王商城購物',
-            'ItemName' => self::listItemName($list, $freight, $mode, $discount),
+            'ItemName' => self::listItemName($list, $freight, $mode, $discount, $coupon_discount),
             'ReturnURL' => env('APP_URL') . '/ecpay-return',
             'ChoosePayment' => $ChoosePayment,
             'EncryptType' => 1,
             'CustomField1' => $order_id,
+            'CustomField2' => null,
         ];
 
         switch ($payment_method) {
@@ -98,6 +109,11 @@ class OrderServices
             default:
                 $array['OrderResultURL'] = env('APP_URL') . '/ecpay-result';
 
+        }
+
+        # 如果有選優惠劵
+        if ($coupon_record_id && $record) {
+            $array['CustomField2'] = $coupon_record_id;
         }
 
         $CheckMacValueService = new CheckMacValueService($HashKey, $HashIV, env('ECPAY.PAYMENT_METHOD', 'sha256'));
@@ -268,7 +284,7 @@ class OrderServices
         return $sMacValue;
     }
 
-    static function listTotalAmount($list, $freight = 0, $mode = null, $get_type = null, $discount = null)
+    static function listTotalAmount($list, $freight = 0, $mode = null, $get_type = null, $discount = null, $coupon_discount = null)
     {
         $total = 0;
         foreach ($list as $row) {
@@ -279,12 +295,17 @@ class OrderServices
             }
         }
 
-        # 扣優惠代碼折扣
-        if ($get_type === 'all_total' && $discount && is_numeric($discount)) {
-            $total -= $discount;
-        }
-
         if ($get_type === 'all_total') {
+            # 扣優惠代碼折扣
+            if ($discount && is_numeric($discount)) {
+                $total -= $discount;
+            }
+
+            # 扣優惠劵折扣
+            if ($coupon_discount && is_numeric($coupon_discount)) {
+                $total -= $coupon_discount;
+            }
+
             # 加運費
             $total += $freight;
         }
@@ -292,7 +313,7 @@ class OrderServices
         return $total;
     }
 
-    static function listItemName($list, $freight = 0, $mode = null, $discount = null)
+    static function listItemName($list, $freight = 0, $mode = null, $discount = null, $coupon_discount = null)
     {
         $item_name = '';
         foreach ($list as $row) {
@@ -308,6 +329,11 @@ class OrderServices
         # 優惠代碼名稱
         if ($discount) {
             $item_name .= '#優惠代碼折扣 -' . $discount . '元';
+        }
+
+        # 優惠劵名稱
+        if ($coupon_discount) {
+            $item_name .= '#優惠劵折扣 -' . $coupon_discount . '元';
         }
 
         $item_name .= '#運費 ' . $freight . '元';

@@ -35,6 +35,13 @@ class OrderResource extends JsonResource
             $order_products[$key]['img'] = $img;
         }
 
+        $coupon_record = null;
+        $record = $this->discount_record->where('type', 'coupon')->first();
+        if ($record) {
+            $coupon_record = $record->toArray();
+            $coupon_record['id'] = $record->hash_id;
+        }
+
         return [
             'id' => $this->hash_id,
             'merchant_trade_no' => $this->merchant_trade_no,
@@ -67,7 +74,8 @@ class OrderResource extends JsonResource
             'created_at' => $this->created_at,
             'member' => $this->member,
             'order_products' => $order_products,
-            'discount_record' => $this->discount_record,
+            'discount_record' => $this->discount_record->where('type', 'discount_codes')->first(),
+            'coupon_record' => $coupon_record,
         ];
     }
 }

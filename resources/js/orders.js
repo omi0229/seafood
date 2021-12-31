@@ -120,7 +120,7 @@ window.app = createApp({
             }
         },
         orderTotal() {
-              return (freight, list, discount_record = null) => {
+              return (freight, list, discount_record = null, coupon_record = null) => {
                   let price = 0;
                   list.forEach(v => { price += v.price * v.count });
 
@@ -131,7 +131,15 @@ window.app = createApp({
                       }
                   }
 
+                  // 有使用優惠劵
+                  if (coupon_record && coupon_record.coupon) {
+                      if (price >= coupon_record.coupon.full_amount) {
+                          price -= coupon_record.coupon.discount;
+                      }
+                  }
+
                   price += freight;
+
                   return price.toLocaleString();
               }
         },
@@ -229,6 +237,7 @@ window.app = createApp({
 
             detailed_content.info.order_products = info.order_products;
             detailed_content.info.discount_record = info.discount_record;
+            detailed_content.info.coupon_record = info.coupon_record;
         },
         // delete() {
         //     if(this.check.length > 0) {
@@ -303,7 +312,7 @@ window.app = createApp({
                 if (info) {
                     let obj = {
                         order_id: this.check[0],
-                        order_total: this.orderTotal(info.freight, info.order_products, info.discount_record),
+                        order_total: this.orderTotal(info.freight, info.order_products, info.discount_record, info.coupon_record),
                         Specification: this.value.specification,
                     };
 
@@ -386,6 +395,7 @@ let detailed_content = createApp({
                 created_at: '',
                 order_products: [],
                 discount_record: null,
+                coupon_record: null,
             },
             value: {
                 keyword: '',
@@ -419,7 +429,7 @@ let detailed_content = createApp({
             }
         },
         orderTotal() {
-            return (freight, list, discount_record = null) => {
+            return (freight, list, discount_record = null, coupon_record = null) => {
                 let price = 0;
                 list.forEach(v => { price += v.price * v.count });
 
@@ -427,6 +437,13 @@ let detailed_content = createApp({
                 if (discount_record && discount_record.discount_codes) {
                     if (price >= discount_record.discount_codes.full_amount) {
                         price -= discount_record.discount_codes.discount;
+                    }
+                }
+
+                // 有使用優惠劵
+                if (coupon_record && coupon_record.coupon) {
+                    if (price >= coupon_record.coupon.full_amount) {
+                        price -= coupon_record.coupon.discount;
                     }
                 }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Traits\General;
 use App\Models\Orders;
+use App\Models\DiscountRecord;
 use App\Repositories\OrderRepository;
 use App\Services\OrderServices;
 
@@ -71,6 +72,17 @@ class OrderController extends Controller
             $order = $this->repository->find($order_id);
             if ((int)$inputs['RtnCode'] === 1) {
                 $this->repository->update($order_id, ['payment_status' => 1]);
+
+                # 如果有用優惠劵並且付款成功
+                if (data_get($inputs, 'CustomField2')) {
+                    $coupon_record_id = $inputs['CustomField2'];
+                    $record = DiscountRecord::find(DiscountRecord::decodeSlug($coupon_record_id));
+                    if ($record) {
+                        $record->used_at = now();
+                        $record->save();
+                    }
+                }
+
             } else {
                 $this->repository->update($order_id, ['payment_status' => -2]);
             }
@@ -92,6 +104,7 @@ class OrderController extends Controller
         return "1|OK";
     }
 
+    # 信用卡繳費回傳結果
     public function ecpayResult()
     {
         $inputs = $this->request->all();
@@ -106,6 +119,17 @@ class OrderController extends Controller
                 'vAccount' => null,
                 'ExpireDate' => null,
             ]);
+
+            # 如果有用優惠劵並且付款成功
+            if (data_get($inputs, 'CustomField2')) {
+                $coupon_record_id = $inputs['CustomField2'];
+                $record = DiscountRecord::find(DiscountRecord::decodeSlug($coupon_record_id));
+                if($record) {
+                    $record->orders_id = $order_id;
+                    $record->used_at = now();
+                    $record->save();
+                }
+            }
 
             \AppLog::record([
                 'type' => 'payment',
@@ -185,6 +209,16 @@ class OrderController extends Controller
                 'vAccount' => $inputs['vAccount'],
                 'ExpireDate' => $inputs['ExpireDate'],
             ]);
+
+            # 如果有用優惠劵
+            if (data_get($inputs, 'CustomField2')) {
+                $coupon_record_id = $inputs['CustomField2'];
+                $record = DiscountRecord::find(DiscountRecord::decodeSlug($coupon_record_id));
+                if($record) {
+                    $record->orders_id = $order_id;
+                    $record->save();
+                }
+            }
 
             \AppLog::record([
                 'type' => 'payment_get_vAccount',

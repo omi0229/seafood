@@ -195,6 +195,7 @@
                         </template>
                     </div>
                     <div class="mt-5 text-bold">可抵用產品</div>
+                    <div class="text-danger s-14">如無選擇商品，則此劵可使用於所有訂單，不需選擇指定商品</div>
                     <hr />
                     <div class="form-group d-flex align-items-center">
                         <container :datas="product_specifications_list" :type="0"></container>
@@ -231,11 +232,10 @@
                     </div>
                     <div class="row justify-content-between align-items-center">
                         <div class="col-2">
-                            <select class="form-control form-control-sm" v-model="value.payment_status" @change="recordFilter">
+                            <select class="form-control form-control-sm" v-model="value.used" @change="recordFilter">
                                 <option value="">所有資料</option>
-                                <option value="1">付款成功</option>
-                                <option value="-2">付款失敗</option>
-                                <option value="0">尚未收款</option>
+                                <option value="1">已使用</option>
+                                <option value="0">未使用</option>
                             </select>
                         </div>
                         <div>
@@ -266,7 +266,7 @@
                             <!-- v-for -->
                             <tr v-for="item in coupon_records">
                                 <td class="align-middle">
-                                    <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check" v-if="item.order && item.order.payment_status !== 1">
+                                    <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check" v-if="!item.used_at">
                                 </td>
                                 <td class="align-middle">${coupon_info.title}</td>
                                 <td class="align-middle text-center">${coupon_info.discount}</td>

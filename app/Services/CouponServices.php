@@ -4,6 +4,7 @@
 namespace App\Services;
 
 use Validator;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\Member;
@@ -107,7 +108,7 @@ class CouponServices
     # 此會員擁有的優惠劵列表
     public function couponList($member_id, $used = null, $inputs = [])
     {
-        $data = DiscountRecord::with(['coupon', 'coupon.product_specifications'])->where('type', 'coupon')->where('member_id', Member::decodeSlug($member_id))->orderBy('updated_at', 'DESC');
+        $data = DiscountRecord::with(['coupon', 'coupon.product_specifications', 'coupon.product_specifications.product'])->where('type', 'coupon')->where('member_id', Member::decodeSlug($member_id))->orderBy('updated_at', 'DESC');
 
         if ($used === 'true') {
             $data->whereNotNull('used_at');
@@ -118,7 +119,16 @@ class CouponServices
         $start_date = data_get($inputs, 'start_date');
         $end_date = data_get($inputs, 'end_date');
         if ($start_date && $end_date) {
-            $data->whereBetween('received_at', [$start_date . ' 00:00:00', $end_date . ' 23:59:59']);
+            $data->whereHas('coupon', function ($query) use ($start_date, $end_date) {
+                $query->where(function ($query) use ($start_date, $end_date) {
+                    $query->where('start_date', '<', $start_date);
+                    $query->where('end_date', '>=', $start_date);
+                });
+                $query->orWhere(function ($query) use ($start_date, $end_date) {
+                    $query->where('start_date', '>=', $start_date);
+                    $query->where('start_date', '<=', $end_date);
+                });
+            });
         }
 
         $all_total = data_get($inputs, 'all_total');
@@ -138,6 +148,8 @@ class CouponServices
             });
         }
 
+        $data->whereNull('orders_id');
+
         $list = [];
         foreach ($data->get() as $key => $row) {
             array_push($list, json_decode($row, true));
@@ -145,5 +157,19 @@ class CouponServices
         }
 
         return $list;
+    }
+
+    # 釋放所有過期的優惠劵
+    public function couponRecordAuth($member_id)
+    {
+        $member = Member::with(['orders', 'orders.discount_record'])->find($member_id);
+        foreach ($member->orders as $row) {
+            if ($row->payment_status !== 1 && $row->payment_method === 2 && now() > Carbon::parse($row->ExpireDate . ' 23:59:59')) {
+                foreach ($row->discount_record->where('type', 'coupon') as $record) {
+                    $record->orders_id = null;
+                    $record->save();
+                }
+            }
+        }
     }
 }

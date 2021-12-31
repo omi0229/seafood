@@ -62586,7 +62586,7 @@ var container = {
       search_word: ''
     };
   },
-  template: "\n        <div class=\"transfer-container\">\n        <div class=\"top\">\n            <input :id=\"'transfer-all' + type\" type=\"checkbox\" name=\"all\" @click=\"all\" :checked=\"filter_chosen === filter && filter\"/>\n            <label :for=\"'transfer-all' + type\"><span v-show=\"filter_chosen\">{{ filter_chosen }}/</span>{{ filter_search_word }}\u9805</label>\n        </div>\n        <input type=\"text\" placeholder=\"\u641C\u5C0B\" @keyup=\"change_search_word\" class=\"search form-control form-control-sm\"/>\n        <ul class=\"transfer-contents\">\n            <li class=\"transfer-content\" :class=\"content.chosen ? 'bg-primary' : ''\" v-for=\"(content, idx) in datas\" v-show=\"content.type === type && has_search_word(content.content)\">\n                <input :id=\"'transfer-content' + content.id\" class=\"d-none\" type=\"checkbox\" @click=\"change(idx)\" :checked=\"content.chosen\"/>\n                <label :for=\"'transfer-content' + content.id\">{{ content.content }}</label>\n            </li>\n        </ul>\n        </div>",
+  template: "\n        <div class=\"transfer-container\">\n        <div>{{ type === 0 ? '\u8ACB\u9078\u64C7\u7522\u54C1' : '\u53EF\u62B5\u7528\u7522\u54C1'}}</div>\n        <div class=\"top\">\n            <input :id=\"'transfer-all' + type\" type=\"checkbox\" name=\"all\" @click=\"all\" :checked=\"filter_chosen === filter && filter\"/>\n            <label :for=\"'transfer-all' + type\"><span v-show=\"filter_chosen\">{{ filter_chosen }}/</span>{{ filter_search_word }}\u9805</label>\n        </div>\n        <input type=\"text\" placeholder=\"\u641C\u5C0B\" @keyup=\"change_search_word\" class=\"search form-control form-control-sm\"/>\n        <ul class=\"transfer-contents\">\n            <li class=\"transfer-content\" :class=\"content.chosen ? 'bg-primary' : ''\" v-for=\"(content, idx) in datas\" v-show=\"content.type === type && has_search_word(content.content)\">\n                <input :id=\"'transfer-content' + content.id\" class=\"d-none\" type=\"checkbox\" @click=\"change(idx)\" :checked=\"content.chosen\"/>\n                <label :for=\"'transfer-content' + content.id\">{{ content.content }}</label>\n            </li>\n        </ul>\n        </div>",
   methods: {
     change: function change(idx) {
       this.datas[idx].chosen = !this.datas[idx].chosen;
@@ -62723,7 +62723,6 @@ window.app = createApp({
         }
 
         axiosGetMethod(url).then(function (res) {
-          console.log(res.data.data);
           _this8.list = res.data.data;
 
           if (loading && loading.show) {
@@ -62875,6 +62874,8 @@ window.app = createApp({
       });
     },
     shotItems: function shotItems(id) {
+      set_show_items.value.used = '';
+
       var items = _.find(this.list, {
         'id': id
       });
@@ -63176,7 +63177,7 @@ var set_show_items = createApp({
       check: [],
       checkAll: false,
       value: {
-        payment_status: ''
+        used: ''
       }
     };
   },
@@ -63196,7 +63197,7 @@ var set_show_items = createApp({
 
       if (newData) {
         this.coupon_records.forEach(function (o) {
-          if (o.order.payment_status !== 1) {
+          if (!o.used_at) {
             _this15.check.push(o.id);
           }
         });
@@ -63205,29 +63206,36 @@ var set_show_items = createApp({
   },
   methods: {
     recordFilter: function recordFilter() {
-      var _this16 = this;
-
       this.checkAll = false;
 
-      if (this.value.payment_status || this.value.payment_status === 0) {
-        this.coupon_records = _.filter(this.original, function (o) {
-          return o.order.payment_status === Number(_this16.value.payment_status);
-        });
-      } else {
-        this.coupon_records = this.original;
+      switch (this.value.used) {
+        case '0':
+          this.coupon_records = _.filter(this.original, function (o) {
+            return !o.used_at;
+          });
+          break;
+
+        case '1':
+          this.coupon_records = _.filter(this.original, function (o) {
+            return o.used_at;
+          });
+          break;
+
+        default:
+          this.coupon_records = this.original;
       }
     },
     confirm: function confirm() {
-      var _this17 = this;
+      var _this16 = this;
 
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)('確定刪除此紀錄？').then(function (confirm) {
         if (confirm) {
-          _this17["delete"]();
+          _this16["delete"]();
         }
       });
     },
     "delete": function _delete() {
-      var _this18 = this;
+      var _this17 = this;
 
       if (this.check.length > 0) {
         loading.show = true;
@@ -63249,7 +63257,7 @@ var set_show_items = createApp({
                     return app.searchService();
 
                   case 4:
-                    app.shotItems(_this18.id);
+                    app.shotItems(_this17.id);
                     Toast.fire({
                       icon: 'success',
                       title: '刪除成功'

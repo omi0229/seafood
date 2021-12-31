@@ -12,6 +12,7 @@ const container = {
     },
     template: `
         <div class="transfer-container">
+        <div>{{ type === 0 ? '請選擇產品' : '可抵用產品'}}</div>
         <div class="top">
             <input :id="'transfer-all' + type" type="checkbox" name="all" @click="all" :checked="filter_chosen === filter && filter"/>
             <label :for="'transfer-all' + type"><span v-show="filter_chosen">{{ filter_chosen }}/</span>{{ filter_search_word }}項</label>
@@ -120,9 +121,6 @@ window.app = createApp({
                 }
 
                 axiosGetMethod(url).then(res => {
-
-                    console.log(res.data.data);
-
                     this.list = res.data.data;
                     if (loading && loading.show) {
                         loading.show = false;
@@ -190,6 +188,8 @@ window.app = createApp({
             });
         },
         shotItems(id) {
+            set_show_items.value.used = '';
+
             let items = _.find(this.list, {'id': id});
             set_show_items.id = id;
             set_show_items.coupon_info = items;
@@ -396,7 +396,7 @@ let set_show_items = createApp({
             check: [],
             checkAll: false,
             value: {
-                payment_status: '',
+                used: '',
             }
         }
     },
@@ -413,7 +413,7 @@ let set_show_items = createApp({
             this.check = [];
             if(newData) {
                 this.coupon_records.forEach(o => {
-                    if(o.order.payment_status !== 1) {
+                    if(!o.used_at) {
                         this.check.push(o.id);
                     }
                 });
@@ -423,10 +423,15 @@ let set_show_items = createApp({
     methods: {
         recordFilter() {
             this.checkAll = false;
-            if(this.value.payment_status || this.value.payment_status === 0){
-                this.coupon_records = _.filter(this.original, o => { return o.order.payment_status === Number(this.value.payment_status); })
-            } else {
-                this.coupon_records = this.original;
+            switch (this.value.used) {
+                case '0':
+                    this.coupon_records = _.filter(this.original, o => { return !o.used_at })
+                    break;
+                case '1':
+                    this.coupon_records = _.filter(this.original, o => { return o.used_at })
+                    break;
+                default:
+                    this.coupon_records = this.original;
             }
         },
         confirm() {

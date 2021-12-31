@@ -20,7 +20,7 @@ class OrderRepository extends Repository
     public function recordList($page, array $params = [])
     {
         $member_id = data_get($params, 'member_id');
-        $data = !$member_id ? $this->model::with(['order_products', 'discount_record.discount_codes']) : $this->model::with(['order_products', 'discount_record.discount_codes'])->where('member_id', Member::decodeSlug($member_id));
+        $data = !$member_id ? $this->model::with(['order_products', 'discount_record.discount_codes', 'discount_record.coupon']) : $this->model::with(['order_products', 'discount_record.discount_codes', 'discount_record.coupon'])->where('member_id', Member::decodeSlug($member_id));
 
         $start_date = data_get($params, 'start_date');
         $end_date = data_get($params, 'end_date');
@@ -47,7 +47,9 @@ class OrderRepository extends Repository
             'order_products.product.product_images',
             'order_products.product_specifications',
             'member',
-            'discount_record.discount_codes'
+            'discount_record',
+            'discount_record.discount_codes',
+            'discount_record.coupon'
         ]);
 
         $data = !$keywords ? $data : $data->where('merchant_trade_no', 'LIKE', '%' . $keywords . '%')->orWhere('name', 'LIKE', '%' . $keywords . '%');
@@ -72,7 +74,7 @@ class OrderRepository extends Repository
 
     public function info($order_id)
     {
-        $data = $this->model::with(['order_products', 'discount_record.discount_codes'])->find($this->model::decodeSlug($order_id));
+        $data = $this->model::with(['order_products', 'discount_record', 'discount_record.discount_codes', 'discount_record.coupon'])->find($this->model::decodeSlug($order_id));
 
         return $data ? new OrderResource($data) : null;
     }

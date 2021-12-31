@@ -24,7 +24,8 @@ class RecordListResource extends JsonResource
             'order_status' => $this->order_status,
             'created_at' => $this->created_at,
             'order_products' => $this->order_products,
-            'discount_record' => $this->discount_record,
+            'discount_record' => $this->discount_record->where('type', 'discount_codes')->first(),
+            'coupon_record' => $this->discount_record->where('type', 'coupon')->first(),
         ];
     }
 }

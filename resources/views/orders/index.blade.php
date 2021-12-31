@@ -97,7 +97,7 @@
                                     <td class="text-center">${dateFormat(item.created_at)}</td>
                                     <td class="text-center" :class="item.payment_status === 0 ? 'text-danger' : ''">${paymentStatusFormat(item.payment_status)}</td>
                                     <td class="text-center" :class="orderStatusColor(item.order_status)">${orderStatusFormat(item.order_status)}</td>
-                                    <td class="text-center text-danger">${orderTotal(item.freight, item.order_products, item.discount_record)}</td>
+                                    <td class="text-center text-danger">${orderTotal(item.freight, item.order_products, item.discount_record, item.coupon_record)}</td>
                                     <td class="text-center" :class="item.AllPayLogisticsID ? 'text-success text-bold' : ''">
                                         ${item.AllPayLogisticsID ? '已取號' : '未取號'}
                                     </td>
@@ -324,6 +324,14 @@
                                     </div>
                                     <div class="row mt-3">
                                         <div class="col-3">
+                                            優惠劵
+                                        </div>
+                                        <div class="col-9 text-bold">
+                                            ${ info.coupon_record && info.coupon_record.coupon ? info.coupon_record.coupon.title : '無'}
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-3">
                                             物流取號狀態
                                         </div>
                                         <div class="col-9 text-bold" :class="info.AllPayLogisticsID ? 'text-success' : ''">
@@ -480,6 +488,13 @@
                                         <div class="col-3 text-right text-danger">
                                             - $ ${ info.discount_record.discount_codes.discount.toLocaleString() }</div>
                                     </div>
+                                    <!-- v-if -->
+                                    <div class="row align-middle justify-content-end" v-if="info.coupon_record && info.coupon_record.coupon">
+                                        <div class="col-9 text-right">優惠劵折扣：
+                                        </div>
+                                        <div class="col-3 text-right text-danger">
+                                            - $ ${ info.coupon_record.coupon.discount.toLocaleString() }</div>
+                                    </div>
                                     <div class="row align-middle justify-content-end">
                                         <div class="col-9 text-right">運費<span v-if="info.freight_name">(${ info.freight_name })</span>：
                                         </div>
@@ -489,7 +504,7 @@
                                     <div class="row align-middle justify-content-end">
                                         <div class="col-9 text-right">本訂單需付款總金額：</div>
                                         <div class="col-3 text-right text-danger">
-                                            $ ${ orderTotal(info.freight, info.order_products, info.discount_record).toLocaleString() }
+                                            $ ${ orderTotal(info.freight, info.order_products, info.discount_record, info.coupon_record).toLocaleString() }
                                         </div>
                                     </div>
                                 </div>

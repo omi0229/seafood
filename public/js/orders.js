@@ -67273,6 +67273,7 @@ window.app = createApp({
     orderTotal: function orderTotal() {
       return function (freight, list) {
         var discount_record = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+        var coupon_record = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
         var price = 0;
         list.forEach(function (v) {
           price += v.price * v.count;
@@ -67281,6 +67282,13 @@ window.app = createApp({
         if (discount_record && discount_record.discount_codes) {
           if (price >= discount_record.discount_codes.full_amount) {
             price -= discount_record.discount_codes.discount;
+          }
+        } // 有使用優惠劵
+
+
+        if (coupon_record && coupon_record.coupon) {
+          if (price >= coupon_record.coupon.full_amount) {
+            price -= coupon_record.coupon.discount;
           }
         }
 
@@ -67405,6 +67413,8 @@ window.app = createApp({
       detailed_content.info.receiver.address = info.address;
       detailed_content.info.order_products = info.order_products;
       detailed_content.info.discount_record = info.discount_record;
+      detailed_content.info.coupon_record = info.coupon_record;
+      console.log(detailed_content.info);
     },
     // delete() {
     //     if(this.check.length > 0) {
@@ -67528,7 +67538,7 @@ window.app = createApp({
         if (info) {
           var obj = {
             order_id: this.check[0],
-            order_total: this.orderTotal(info.freight, info.order_products, info.discount_record),
+            order_total: this.orderTotal(info.freight, info.order_products, info.discount_record, info.coupon_record),
             Specification: this.value.specification
           };
           axiosPostMethod('/orders/form-data/logistics', obj).then(function (res) {
@@ -67623,7 +67633,8 @@ var detailed_content = createApp({
         bookmark: '',
         created_at: '',
         order_products: [],
-        discount_record: null
+        discount_record: null,
+        coupon_record: null
       },
       value: {
         keyword: ''
@@ -67661,6 +67672,7 @@ var detailed_content = createApp({
     orderTotal: function orderTotal() {
       return function (freight, list) {
         var discount_record = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+        var coupon_record = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
         var price = 0;
         list.forEach(function (v) {
           price += v.price * v.count;
@@ -67669,6 +67681,13 @@ var detailed_content = createApp({
         if (discount_record && discount_record.discount_codes) {
           if (price >= discount_record.discount_codes.full_amount) {
             price -= discount_record.discount_codes.discount;
+          }
+        } // 有使用優惠劵
+
+
+        if (coupon_record && coupon_record.coupon) {
+          if (price >= coupon_record.coupon.full_amount) {
+            price -= coupon_record.coupon.discount;
           }
         }
 

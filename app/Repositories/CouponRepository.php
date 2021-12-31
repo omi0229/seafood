@@ -18,8 +18,10 @@ class CouponRepository extends Repository
         $keywords = data_get($params, 'keywords');
 
         $data = $this->model::with([
+            'product_specifications',
             'coupon_records' => function ($query) {
                 $query->orderBy('created_at', 'desc');
+                $query->orderBy('id', 'desc');
             },
             'coupon_records.order',
         ])->withCount(['coupon_records']);
@@ -36,6 +38,18 @@ class CouponRepository extends Repository
             $list[$key]['id'] = $row->hash_id;
             $list[$key]['product_specifications_list'] = $row->product_specifications->map(function($v) {
                 return $v->hash_id;
+            })->toArray();
+            $list[$key]['coupon_records'] = $row->coupon_records->map(function($v) use ($row) {
+                return
+                    [
+                        'id' => $v->hash_id,
+                        'title' => $row->title,
+                        'full_amount' => $row->full_amount,
+                        'discount' => $row->discount,
+                        'used_at' => $v->used_at,
+                        'created_at' => $v->created_at,
+                        'order' => $v->order,
+                    ];
             })->toArray();
         }
 
