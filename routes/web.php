@@ -54,6 +54,9 @@ Route::post('ecpay-redirect', [OrderController::class, 'ecpayRedirect']);
 # 物流訂單產生 II(宅配)
 Route::post('ecpay-server-reply', [OrderController::class, 'ecpayServerReply']);
 
+# LinePay 繳費結果寫入
+Route::get('linepay-result', [OrderController::class, 'linepayResult']);
+
 Route::middleware(['auth.web'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
 

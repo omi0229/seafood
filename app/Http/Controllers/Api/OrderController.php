@@ -54,7 +54,15 @@ class OrderController extends Controller
             ProductSpecificationServices::inventoryCalculation($list);
             \AppLog::record(['type' => 'inventory-reduction', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => json_encode($list)]);
 
-            return response()->Json(['status' => true, 'message' => '訂單新增成功', 'ecpay' => OrderServices::ecpayForm($order_no, $time, $order->payment_method, $list, $order->hash_id, $receiver['freight'], null, $this->request->all())]);
+            $ecpay = null;
+            $linepay = null;
+            if((int)$order->payment_method === 3) { # line pay
+                $linepay = OrderServices::linepayInit($order_no, $time, $order->payment_method, $list, $order->hash_id, $receiver['freight'], null, $this->request->all());
+            } else {
+                $ecpay = OrderServices::ecpayForm($order_no, $time, $order->payment_method, $list, $order->hash_id, $receiver['freight'], null, $this->request->all());
+            }
+
+            return response()->Json(['status' => true, 'message' => '訂單新增成功', 'ecpay' => $ecpay, 'linepay' => $linepay]);
         }
         return response()->Json(['status' => false, 'message' => '訂單新增失敗']);
     }

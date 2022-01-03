@@ -28,7 +28,7 @@ class CreateOrdersTable extends Migration
             $table->string('freight_name', 200)->nullable()->comment('運費名稱');
             $table->integer('freight')->unsigned()->default(0)->comment('運費');
             $table->tinyInteger('delivery_method')->comment('配送方式(1 => 宅配到府)')->default(1)->unsigned();
-            $table->tinyInteger('payment_method')->comment('付款方式(1 => 信用卡, 2 => ATM)')->default(1)->unsigned();
+            $table->tinyInteger('payment_method')->comment('付款方式(1 => 信用卡, 2 => ATM, 3 => LinePay)')->default(1)->unsigned();
             $table->tinyInteger('invoice_method')->comment('發票資訊(1 => 個人發票, 2 => 公司用三聯式發票)')->default(1)->unsigned();
             $table->string('invoice_tax_id_number', 20)->nullable()->comment('統一編號');
             $table->string('invoice_name', 100)->nullable()->comment('發票抬頭');

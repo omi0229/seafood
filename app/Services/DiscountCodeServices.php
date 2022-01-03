@@ -6,6 +6,9 @@ namespace App\Services;
 use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Models\Orders;
+use App\Models\DiscountRecord;
+use App\Services\OrderServices;
 
 class DiscountCodeServices
 {
@@ -84,5 +87,27 @@ class DiscountCodeServices
         }
 
         return ['status' => false, 'message' => '無此優惠代碼'];
+    }
+
+    static function setDiscountCode($order_id, $mode, $params, $list, $freight) {
+        $model = app()->make(self::$model);
+        $discount = null;
+        $discount_codes = data_get($params, 'discount_codes');
+        if ($discount_codes) {
+            if ($mode === 'make_up') { # 補付款
+                $discount_result = $model::firstWhere('fixed_name', $discount_codes);
+                if ($discount_result) {
+                    $discount = $discount_result->discount;
+                }
+            } else {
+                $discount_result = (new self)->search($discount_codes);
+                if ($discount_result['status'] && OrderServices::listTotalAmount($list, $freight, $mode, 'list_total') >= $discount_result['data']['full_amount']) {
+                    $discount = $discount_result['data']['discount'];
+                    DiscountRecord::create(['type' => 'discount_codes', 'discount_codes_id' => $discount_result['data']['id'], 'orders_id' => Orders::decodeSlug($order_id)]);
+                }
+            }
+        }
+
+        return $discount;
     }
 }

@@ -172,4 +172,18 @@ class CouponServices
             }
         }
     }
+
+    static function setCoupon($params)
+    {
+        $coupon_discount = null;
+        $coupon_record_id = data_get($params, 'coupon_record_id');
+        if ($coupon_record_id) {
+            $record = DiscountRecord::with(['coupon'])->find(DiscountRecord::decodeSlug($coupon_record_id));
+            if ($record) {
+                $coupon_discount = $record->coupon->discount;
+            }
+        }
+
+        return $coupon_discount;
+    }
 }

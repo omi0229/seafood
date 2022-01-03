@@ -11,6 +11,8 @@ use App\Models\ProductSpecifications;
 use App\Models\OrderProducts;
 use App\Models\DiscountCode;
 use App\Models\DiscountRecord;
+use App\Services\DiscountCodeServices;
+use App\Services\CouponServices;
 use Ecpay\Sdk\Services\CheckMacValueService;
 
 class OrderServices
@@ -59,32 +61,11 @@ class OrderServices
         }
 
         # 如果有優惠代碼
-        $discount = null;
-        $discount_codes = data_get($params, 'discount_codes');
-        if ($discount_codes) {
-            if ($mode === 'make_up') { # 補付款
-                $discount_result = DiscountCode::firstWhere('fixed_name', $discount_codes);
-                if ($discount_result) {
-                    $discount = $discount_result->discount;
-                }
-            } else {
-                $discount_result = (new DiscountCodeServices)->search($discount_codes);
-                if ($discount_result['status'] && self::listTotalAmount($list, $freight, $mode, 'list_total') >= $discount_result['data']['full_amount']) {
-                    $discount = $discount_result['data']['discount'];
-                    DiscountRecord::create(['type' => 'discount_codes', 'discount_codes_id' => $discount_result['data']['id'], 'orders_id' => $order_model::decodeSlug($order_id)]);
-                }
-            }
-        }
+        $discount = DiscountCodeServices::setDiscountCode($order_id, $mode, $params, $list, $freight);
 
         # 如果有優惠劵
-        $coupon_discount = null;
         $coupon_record_id = data_get($params, 'coupon_record_id');
-        if ($coupon_record_id) {
-            $record = DiscountRecord::with(['coupon'])->find(DiscountRecord::decodeSlug($coupon_record_id));
-            if ($record) {
-                $coupon_discount = $record->coupon->discount;
-            }
-        }
+        $coupon_discount = CouponServices::setCoupon($params);
 
         $array = [
             'MerchantID' => $MerchantID,
@@ -112,7 +93,7 @@ class OrderServices
         }
 
         # 如果有選優惠劵
-        if ($coupon_record_id && $record) {
+        if ($coupon_record_id && $coupon_discount) {
             $array['CustomField2'] = $coupon_record_id;
         }
 
@@ -343,6 +324,78 @@ class OrderServices
         $item_name .= '#運費 ' . $freight . '元';
 
         return $item_name;
+    }
+
+    # line pay
+    static function linepayInit($order_no, $time, $payment_method, $list, $order_id, $freight, $mode = null, array $params = [])
+    {
+        $model = \App\Models\Config::where('config_name', 'line_channel_id')->orWhere('config_name', 'line_secret_key')->get();
+        $channelId = $model->find('line_channel_id') ? $model->find('line_channel_id')->config_value : null;
+        $channelSecret = $model->find('line_secret_key') ? $model->find('line_secret_key')->config_value : null;
+
+        if ($channelId && $channelSecret) {
+            $Nonce = date('c') . uniqid('-');
+            $uri = '/v3/payments/request';
+
+            # 如果有優惠代碼
+            $discount = DiscountCodeServices::setDiscountCode($order_id, $mode, $params, $list, $freight);
+
+            # 如果有優惠劵
+            $coupon_discount = CouponServices::setCoupon($params);
+
+            $content = [
+                'amount' => self::listTotalAmount($list, $freight, $mode, 'all_total', $discount, $coupon_discount),
+                'currency' => 'TWD',
+                'orderId' => $order_no,
+                'packages' => [
+                    [
+                        'id' => $order_no,
+                        'amount' => self::listTotalAmount($list, $freight, $mode, 'all_total', $discount, $coupon_discount),
+                        'name' => '海龍王商城購物',
+                        'products' => [
+                            [
+                                'name' => '海龍王商品',
+                                'quantity' => 1,
+                                'price' => self::listTotalAmount($list, $freight, $mode, 'all_total', $discount, $coupon_discount)
+                            ],
+                        ],
+                    ]
+                ],
+                'redirectUrls' => [
+                    'confirmUrl' => env('APP_URL') . '/linepay-result',
+                ],
+            ];
+
+            $authMacText = $channelSecret . $uri . json_encode($content) . $Nonce;
+            $Authorization = base64_encode(hash_hmac('sha256', $authMacText, $channelSecret, true));
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => env('LINEPAY.API_URL') . '/v3/payments/request',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($content),
+                CURLOPT_HTTPHEADER => [
+                    'Content-Type: application/json',
+                    'X-LINE-ChannelId: ' . $channelId,
+                    'X-LINE-Authorization-Nonce: ' . $Nonce,
+                    'X-LINE-Authorization: ' . $Authorization
+                ],
+            ));
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+            return json_decode($response);
+        }
+
+        return false;
     }
 
     # 匯出

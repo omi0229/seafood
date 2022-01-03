@@ -8,6 +8,7 @@ use App\Models\Orders;
 use App\Models\DiscountRecord;
 use App\Repositories\OrderRepository;
 use App\Services\OrderServices;
+use function PHPUnit\Framework\throwException;
 
 class OrderController extends Controller
 {
@@ -277,5 +278,63 @@ class OrderController extends Controller
     public function logisticsPrint()
     {
         return response()->json(['status' => true, 'message' => 'form data 建立成功', 'ecpay' => OrderServices::ecpayLogisticsPrint($this->request->all())]);
+    }
+
+    public function linepayResult()
+    {
+        $transactionId = data_get($this->request->all(), 'transactionId');
+        $orderId = data_get($this->request->all(), 'orderId');
+
+        if ($transactionId && $orderId) {
+
+            $model = \App\Models\Config::where('config_name', 'line_channel_id')->orWhere('config_name', 'line_secret_key')->get();
+            $channelId = $model->find('line_channel_id') ? $model->find('line_channel_id')->config_value : null;
+            $channelSecret = $model->find('line_secret_key') ? $model->find('line_secret_key')->config_value : null;
+
+            if ($channelId && $channelSecret) {
+                $uri = '/v3/payments/' . $transactionId . '/confirm';
+
+                $content = [
+                    'amount' => 0,
+                    'currency' => 'TWD',
+                ];
+
+                $Nonce = date('c') . uniqid('-');
+                $authMacText = $channelSecret . $uri . json_encode($content) . $Nonce;
+                $Authorization = base64_encode(hash_hmac('sha256', $authMacText, $channelSecret, true));
+
+                $curl = curl_init();
+
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => env('LINEPAY.API_URL') . '/v3/payments/request',
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'POST',
+                    CURLOPT_POSTFIELDS => json_encode($content),
+                    CURLOPT_HTTPHEADER => [
+                        'Content-Type: application/json',
+                        'X-LINE-ChannelId: ' . $channelId,
+                        'X-LINE-Authorization-Nonce: ' . $Nonce,
+                        'X-LINE-Authorization: ' . $Authorization
+                    ],
+                ));
+
+                //array:2 [▼
+                //  "transactionId" => "2022010300700286410"
+                //  "orderId" => "o220102230117000083"
+                //]
+
+                $response = curl_exec($curl);
+
+                curl_close($curl);
+                return json_decode($response);
+            }
+        }
+
+        return response()->json(['error' => 'Not authorized.'], 403);
     }
 }
