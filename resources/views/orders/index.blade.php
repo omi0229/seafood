@@ -273,6 +273,50 @@
                                     </div>
                                     <div class="row mt-3">
                                         <div class="col-3">
+                                            物流取號狀態
+                                        </div>
+                                        <div class="col-9 text-bold" :class="info.AllPayLogisticsID ? 'text-success' : ''">
+                                            ${info.AllPayLogisticsID ? '已取號' : '未取號'}
+                                        </div>
+                                    </div>
+                                    <!-- v-if -->
+                                    <div class="row mt-3" v-if="info.MerchantTradeNo">
+                                        <div class="col-3">
+                                            廠商交易編號
+                                        </div>
+                                        <div class="col-9 text-bold">
+                                            ${info.MerchantTradeNo}
+                                        </div>
+                                    </div>
+                                    <!-- v-if -->
+                                    <div class="row mt-3" v-if="info.AllPayLogisticsID">
+                                        <div class="col-3">
+                                            物流交易編號
+                                        </div>
+                                        <div class="col-9 text-bold">
+                                            ${info.AllPayLogisticsID}
+                                        </div>
+                                    </div>
+                                    <!-- v-if -->
+                                    <div class="row mt-3" v-if="info.BookingNote">
+                                        <div class="col-3">
+                                            托運單號
+                                        </div>
+                                        <div class="col-9 text-bold">
+                                            ${info.BookingNote}
+                                        </div>
+                                    </div>
+                                    <!-- v-if -->
+                                    <div class="row mt-3" v-if="info.AllPayLogisticsID">
+                                        <div class="col-3">
+                                            物流狀態
+                                        </div>
+                                        <div class="col-9 text-bold">
+                                            ${info.RtnCode} ${info.RtnMsg}
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-3">
                                             訂購時間
                                         </div>
                                         <div class="col-9 text-bold">
@@ -328,23 +372,6 @@
                                         </div>
                                         <div class="col-9 text-bold">
                                             ${ info.coupon_record && info.coupon_record.coupon ? info.coupon_record.coupon.title : '無'}
-                                        </div>
-                                    </div>
-                                    <div class="row mt-3">
-                                        <div class="col-3">
-                                            物流取號狀態
-                                        </div>
-                                        <div class="col-9 text-bold" :class="info.AllPayLogisticsID ? 'text-success' : ''">
-                                            ${info.AllPayLogisticsID ? '已取號' : '未取號'}
-                                        </div>
-                                    </div>
-                                    <!-- v-if -->
-                                    <div class="row mt-3" v-if="info.AllPayLogisticsID">
-                                        <div class="col-3">
-                                            物流狀態
-                                        </div>
-                                        <div class="col-9 text-bold">
-                                            ${info.RtnCode} ${info.RtnMsg}
                                         </div>
                                     </div>
                                     <div class="row mt-3">

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use App\Traits\General;
 use App\Models\ProductSpecifications;
 use App\Repositories\ProductSpecificationRepository;
@@ -72,6 +74,9 @@ class ProductSpecificationController extends Controller
 
     public function all()
     {
-        return response()->json(['status' => true, 'message' => '取得資料成功', 'data' => $this->repository->allData()]);
+        $cache = Cache::remember('coupon_specifications_list', Carbon::now()->addMinutes(15), function () {
+            return $this->repository->allData();
+        });
+        return response()->json(['status' => true, 'message' => '取得資料成功', 'data' => $cache]);
     }
 }

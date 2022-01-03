@@ -214,7 +214,9 @@ window.app = createApp({
                 $('input[data-target="#shipment_date"]').val(info.shipment_at.substr(0, 10));
             }
 
+            detailed_content.info.MerchantTradeNo = info.MerchantTradeNo;
             detailed_content.info.AllPayLogisticsID = info.AllPayLogisticsID;
+            detailed_content.info.BookingNote = info.BookingNote;
             detailed_content.info.RtnCode = info.RtnCode;
             detailed_content.info.RtnMsg = info.RtnMsg;
             detailed_content.info.bookmark = info.bookmark;
@@ -367,7 +369,9 @@ let detailed_content = createApp({
                 freight: 0,
                 freight_name: '',
                 shipment_at: '',
+                MerchantTradeNo: '',
                 AllPayLogisticsID: '',
+                BookingNote: '',
                 RtnCode: '',
                 RtnMsg: '',
                 admin_bookmark: '',
