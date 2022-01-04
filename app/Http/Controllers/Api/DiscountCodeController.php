@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Member;
 use App\Repositories\DiscountCodeRepository;
 use App\Services\DiscountCodeServices;
 
@@ -20,6 +21,7 @@ class DiscountCodeController extends Controller
 
     public function search(Request $request)
     {
-        return response()->json($this->services->search(data_get($request->all(), 'discount_codes'), data_get($request->all(), 'member_id')));
+        $member_id = data_get($request->all(), 'member_id') ? Member::decodeSlug(data_get($request->all(), 'member_id')) : null;
+        return response()->json($this->services->search(data_get($request->all(), 'discount_codes'), $member_id));
     }
 }

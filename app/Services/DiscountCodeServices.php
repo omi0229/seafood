@@ -6,7 +6,6 @@ namespace App\Services;
 use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use App\Models\Member;
 use App\Models\Orders;
 use App\Models\DiscountRecord;
 use App\Services\OrderServices;
@@ -77,7 +76,7 @@ class DiscountCodeServices
             $auth = $auth->where('fixed_name', $fixed_name)
                 ->whereHas('discount_records', function ($query) use ($member_id) {
                     $query->where('type', 'discount_codes');
-                    $query->where('member_id', Member::decodeSlug($member_id));
+                    $query->where('member_id', $member_id);
                 });
 
             if ($auth->count() > 0) {
@@ -115,12 +114,13 @@ class DiscountCodeServices
                     $discount = $discount_result->discount;
                 }
             } else {
-                $order = Orders::find(Orders::decodeSlug($order_id));
+                $order_id = Orders::decodeSlug($order_id);
+                $order = Orders::find($order_id);
                 if ($order) {
                     $discount_result = (new self)->search($discount_codes, $order->member_id);
                     if ($discount_result['status'] && OrderServices::listTotalAmount($list, $freight, $mode, 'list_total') >= $discount_result['data']['full_amount']) {
                         $discount = $discount_result['data']['discount'];
-                        DiscountRecord::create(['type' => 'discount_codes', 'discount_codes_id' => $discount_result['data']['id'], 'orders_id' => Orders::decodeSlug($order_id)]);
+                        DiscountRecord::create(['type' => 'discount_codes', 'discount_codes_id' => $discount_result['data']['id'], 'orders_id' => $order_id]);
                     }
                 }
             }
