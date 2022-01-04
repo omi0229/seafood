@@ -63105,7 +63105,7 @@ var set_info = createApp({
       }
 
       var text = this.mode === 'create' ? '新增' : '編輯';
-      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)("\u78BA\u5B9A".concat(text, "\u6B64\u512A\u60E0\u4EE3\u78BC\uFF1F")).then(function (confirm) {
+      (0,_bootstrap__WEBPACK_IMPORTED_MODULE_2__.swal2Confirm)("\u78BA\u5B9A".concat(text, "\u6B64\u512A\u60E0\u52B5\uFF1F")).then(function (confirm) {
         if (confirm) {
           _this14.save();
         }

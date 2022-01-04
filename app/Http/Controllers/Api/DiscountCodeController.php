@@ -20,7 +20,6 @@ class DiscountCodeController extends Controller
 
     public function search(Request $request)
     {
-        $fixed_name = data_get($request->all(), 'discount_codes') ?? '';
-        return response()->json($this->services->search($fixed_name));
+        return response()->json($this->services->search(data_get($request->all(), 'discount_codes'), data_get($request->all(), 'member_id')));
     }
 }

@@ -33,7 +33,13 @@ class CouponController extends Controller
             }]);
         }
 
-        $coupon->where('start_date', '<=', now())->where('end_date', '>=', now())->orderBy('created_at', 'DESC')->orderBy('id', 'DESC');
+        $coupon->whereHas('coupon_records', function ($query) {
+            $query->whereNull(['member_id', 'cart_id']);
+        })
+        ->where('start_date', '<=', now())
+        ->where('end_date', '>=', now())
+        ->orderBy('created_at', 'DESC')
+        ->orderBy('id', 'DESC');
 
         $coupon = $coupon->first();
 

@@ -6,6 +6,7 @@ namespace App\Services;
 use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Models\Member;
 use App\Models\Orders;
 use App\Models\DiscountRecord;
 use App\Services\OrderServices;
@@ -63,19 +64,33 @@ class DiscountCodeServices
         return Validator::make($inputs, $auth, $tip);
     }
 
-    public function search($fixed_name)
+    public function search($fixed_name, $member_id = null)
     {
         if (!$fixed_name) {
             return ['status' => false, 'message' => '無此優惠代碼'];
         }
 
-        $data = app()->make(self::$model)
-            ->with(['discount_records'])
+        $model = app()->make(self::$model);
+
+        if ($member_id) {
+            $auth = clone $model;
+            $auth = $auth->where('fixed_name', $fixed_name)
+                ->whereHas('discount_records', function ($query) use ($member_id) {
+                    $query->where('type', 'discount_codes');
+                    $query->where('member_id', Member::decodeSlug($member_id));
+                });
+
+            if ($auth->count() > 0) {
+                return ['status' => false, 'message' => '已使用過此優惠代碼'];
+            }
+        }
+
+        $model->with(['discount_records'])
             ->where('start_date', '<=', now()->format('Y-m-d H:i:s'))
             ->where('end_date', '>=', now()->format('Y-m-d H:i:s'))
             ->where('records', '>', 0);
 
-        $info = $data->firstWhere('fixed_name', $fixed_name);
+        $info = $model->firstWhere('fixed_name', $fixed_name);
 
         if ($info) {
 
@@ -100,10 +115,13 @@ class DiscountCodeServices
                     $discount = $discount_result->discount;
                 }
             } else {
-                $discount_result = (new self)->search($discount_codes);
-                if ($discount_result['status'] && OrderServices::listTotalAmount($list, $freight, $mode, 'list_total') >= $discount_result['data']['full_amount']) {
-                    $discount = $discount_result['data']['discount'];
-                    DiscountRecord::create(['type' => 'discount_codes', 'discount_codes_id' => $discount_result['data']['id'], 'orders_id' => Orders::decodeSlug($order_id)]);
+                $order = Orders::find(Orders::decodeSlug($order_id));
+                if ($order) {
+                    $discount_result = (new self)->search($discount_codes, $order->member_id);
+                    if ($discount_result['status'] && OrderServices::listTotalAmount($list, $freight, $mode, 'list_total') >= $discount_result['data']['full_amount']) {
+                        $discount = $discount_result['data']['discount'];
+                        DiscountRecord::create(['type' => 'discount_codes', 'discount_codes_id' => $discount_result['data']['id'], 'orders_id' => Orders::decodeSlug($order_id)]);
+                    }
                 }
             }
         }

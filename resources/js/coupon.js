@@ -348,7 +348,7 @@ let set_info = createApp({
 
             let text = this.mode === 'create' ? '新增' : '編輯';
 
-            swal2Confirm(`確定${text}此優惠代碼？`).then(confirm => {
+            swal2Confirm(`確定${text}此優惠劵？`).then(confirm => {
                 if (confirm) {
                     this.save();
                 }

@@ -79,6 +79,18 @@ window.app = createApp({
                 }
             }
         },
+        paymentStatusColor() {
+            return status => {
+                switch (Number(status)) {
+                    case 0:
+                        return 'text-danger';
+                    case 1:
+                        return 'text-primary';
+                    default:
+                        return 'text-default';
+                }
+            }
+        },
         orderStatusFormat() {
             return status => {
                 switch (Number(status)) {
@@ -427,6 +439,8 @@ let detailed_content = createApp({
                         return '信用卡';
                     case 2:
                         return 'ATM';
+                    case 3:
+                        return 'Line Pay';
                     default:
                         return '';
                 }

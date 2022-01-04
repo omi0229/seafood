@@ -57,7 +57,7 @@ class OrderController extends Controller
             $ecpay = null;
             $linepay = null;
             if((int)$order->payment_method === 3) { # line pay
-                $linepay = OrderServices::linepayInit($order_no, $time, $order->payment_method, $list, $order->hash_id, $receiver['freight'], null, $this->request->all());
+                $linepay = OrderServices::linepayInit($order_no, $list, $order->hash_id, $receiver['freight'], null, $this->request->all());
             } else {
                 $ecpay = OrderServices::ecpayForm($order_no, $time, $order->payment_method, $list, $order->hash_id, $receiver['freight'], null, $this->request->all());
             }

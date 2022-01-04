@@ -8,7 +8,8 @@ use App\Models\Orders;
 use App\Models\DiscountRecord;
 use App\Repositories\OrderRepository;
 use App\Services\OrderServices;
-use function PHPUnit\Framework\throwException;
+use App\Services\DiscountCodeServices;
+use App\Services\CouponServices;
 
 class OrderController extends Controller
 {
@@ -79,6 +80,7 @@ class OrderController extends Controller
                     $coupon_record_id = $inputs['CustomField2'];
                     $record = DiscountRecord::find(DiscountRecord::decodeSlug($coupon_record_id));
                     if ($record) {
+                        $record->member_id = $order->member_id;
                         $record->used_at = now();
                         $record->save();
                     }
@@ -125,8 +127,9 @@ class OrderController extends Controller
             if (data_get($inputs, 'CustomField2')) {
                 $coupon_record_id = $inputs['CustomField2'];
                 $record = DiscountRecord::find(DiscountRecord::decodeSlug($coupon_record_id));
-                if($record) {
+                if ($record) {
                     $record->orders_id = $order_id;
+                    $record->member_id = $order->member_id;
                     $record->used_at = now();
                     $record->save();
                 }
@@ -284,54 +287,86 @@ class OrderController extends Controller
     {
         $transactionId = data_get($this->request->all(), 'transactionId');
         $orderId = data_get($this->request->all(), 'orderId');
+        $order = $this->model::with(['order_products', 'discount_record', 'discount_record.discount_codes', 'discount_record.coupon'])->firstWhere('merchant_trade_no', $orderId);
 
-        if ($transactionId && $orderId) {
+        if ($transactionId && $orderId && $order) {
 
             $model = \App\Models\Config::where('config_name', 'line_channel_id')->orWhere('config_name', 'line_secret_key')->get();
             $channelId = $model->find('line_channel_id') ? $model->find('line_channel_id')->config_value : null;
             $channelSecret = $model->find('line_secret_key') ? $model->find('line_secret_key')->config_value : null;
 
             if ($channelId && $channelSecret) {
-                $uri = '/v3/payments/' . $transactionId . '/confirm';
+                # 如果有優惠代碼
+                $discount = null;
+                $discount_record = $order->discount_record->where('type', 'discount_codes')->first();
+                if ($discount_record) {
+                    $discount = DiscountCodeServices::setDiscountCode($order->id, 'make_up', ['discount_codes' => $discount_record->discount_codes->fixed_name], $order->order_products, $order->freight);
+                }
+
+                # 如果有優惠劵
+                $coupon_discount = null;
+                $coupon_record = $order->discount_record->where('type', 'coupon')->first();
+                if ($coupon_record) {
+                    $coupon_discount = CouponServices::setCoupon(['coupon_record_id' => $coupon_record->hash_id]);
+                }
 
                 $content = [
-                    'amount' => 0,
+                    'amount' => OrderServices::listTotalAmount($order->order_products, $order->freight, 'make_up', 'all_total', $discount, $coupon_discount),
                     'currency' => 'TWD',
                 ];
 
-                $Nonce = date('c') . uniqid('-');
-                $authMacText = $channelSecret . $uri . json_encode($content) . $Nonce;
-                $Authorization = base64_encode(hash_hmac('sha256', $authMacText, $channelSecret, true));
+                $uri = '/v3/payments/' . $transactionId . '/confirm';
+                $response = json_decode($this->services->linePayApi($channelId, $channelSecret, $uri, $content), true);
 
-                $curl = curl_init();
+                # 付款成功 更改相關狀態
+                if($response['returnCode'] === '0000' && $response['returnMessage'] === 'Success.') {
 
-                curl_setopt_array($curl, array(
-                    CURLOPT_URL => env('LINEPAY.API_URL') . '/v3/payments/request',
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_ENCODING => '',
-                    CURLOPT_MAXREDIRS => 10,
-                    CURLOPT_TIMEOUT => 0,
-                    CURLOPT_FOLLOWLOCATION => true,
-                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                    CURLOPT_CUSTOMREQUEST => 'POST',
-                    CURLOPT_POSTFIELDS => json_encode($content),
-                    CURLOPT_HTTPHEADER => [
-                        'Content-Type: application/json',
-                        'X-LINE-ChannelId: ' . $channelId,
-                        'X-LINE-Authorization-Nonce: ' . $Nonce,
-                        'X-LINE-Authorization: ' . $Authorization
-                    ],
-                ));
+                    # 補上優惠代碼使用會員 and 使用時間
+                    if ($discount_record) {
+                        $discount_record->member_id = $order->member_id;
+                        $discount_record->used_at = now();
+                        $discount_record->save();
+                    }
 
-                //array:2 [▼
-                //  "transactionId" => "2022010300700286410"
-                //  "orderId" => "o220102230117000083"
-                //]
+                    # 補上優惠劵使用的訂單 and 使用時間
+                    if ($coupon_record) {
+                        $coupon_record->orders_id = $order->id;
+                        $coupon_record->used_at = now();
+                        $coupon_record->save();
+                    }
 
-                $response = curl_exec($curl);
+                    # 修改訂單付款狀態
+                    $order->payment_status = 1;
+                    $order->save();
 
-                curl_close($curl);
-                return json_decode($response);
+                } else {
+
+                    ### line 付款失敗 執行以下
+                    # 金額錯誤 (scale)
+                    if ($response['returnCode'] === '1124') {
+                        $order->payment_status = -1;
+                        $order->save();
+                    } else {
+                        # 其他付款失敗
+                        $order->payment_status = -2;
+                        $order->save();
+                    }
+
+                    # 歸還優惠代碼
+                    if ($discount_record) {
+                        $discount_record->delete();
+                    }
+
+                    # 歸還優惠劵
+                    if ($coupon_record) {
+                        $coupon_record->orders_id = null;
+                        $coupon_record->save();
+                    }
+
+                }
+
+                header("Location: " . env('FRONT_PAGE_URL') . 'account/order/' . $order->hash_id);
+                exit;
             }
         }
 

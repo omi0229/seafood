@@ -115,7 +115,7 @@ class MemberController extends Controller
         $inputs = $this->request->all();
         $member_id = data_get($inputs, 'member_id');
         if ($member_id) {
-            return response()->json(['status' => true, 'message' => '取得列表成功', 'data' => (new CouponServices)->couponList($member_id, 'false', $inputs)]);
+            return response()->json(['status' => true, 'message' => '取得列表成功', 'data' => (new CouponServices)->couponList($member_id, 'false', $inputs, true)]);
         }
 
         return response()->json(['status' => false, 'message' => '取得列表失敗']);

@@ -67218,6 +67218,20 @@ window.app = createApp({
         }
       };
     },
+    paymentStatusColor: function paymentStatusColor() {
+      return function (status) {
+        switch (Number(status)) {
+          case 0:
+            return 'text-danger';
+
+          case 1:
+            return 'text-primary';
+
+          default:
+            return 'text-default';
+        }
+      };
+    },
     orderStatusFormat: function orderStatusFormat() {
       return function (status) {
         switch (Number(status)) {
@@ -67666,6 +67680,9 @@ var detailed_content = createApp({
 
           case 2:
             return 'ATM';
+
+          case 3:
+            return 'Line Pay';
 
           default:
             return '';

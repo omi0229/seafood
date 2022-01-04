@@ -106,7 +106,7 @@ class CouponServices
     }
 
     # 此會員擁有的優惠劵列表
-    public function couponList($member_id, $used = null, $inputs = [])
+    public function couponList($member_id, $used = null, $inputs = [], $no_order_use = false)
     {
         $data = DiscountRecord::with(['coupon', 'coupon.product_specifications', 'coupon.product_specifications.product'])->where('type', 'coupon')->where('member_id', Member::decodeSlug($member_id))->orderBy('updated_at', 'DESC');
 
@@ -148,7 +148,9 @@ class CouponServices
             });
         }
 
-        $data->whereNull('orders_id');
+        if ($no_order_use) {
+            $data->whereNull('orders_id');
+        }
 
         $list = [];
         foreach ($data->get() as $key => $row) {

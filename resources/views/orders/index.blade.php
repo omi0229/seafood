@@ -95,7 +95,7 @@
                                     <td>${item.merchant_trade_no}</td>
                                     <td class="text-center">${item.member.name}</td>
                                     <td class="text-center">${dateFormat(item.created_at)}</td>
-                                    <td class="text-center" :class="item.payment_status === 0 ? 'text-danger' : ''">${paymentStatusFormat(item.payment_status)}</td>
+                                    <td class="text-center" :class="paymentStatusColor(item.payment_status)">${paymentStatusFormat(item.payment_status)}</td>
                                     <td class="text-center" :class="orderStatusColor(item.order_status)">${orderStatusFormat(item.order_status)}</td>
                                     <td class="text-center text-danger">${orderTotal(item.freight, item.order_products, item.discount_record, item.coupon_record)}</td>
                                     <td class="text-center" :class="item.AllPayLogisticsID ? 'text-success text-bold' : ''">

@@ -327,36 +327,46 @@ class OrderServices
     }
 
     # line pay
-    static function linepayInit($order_no, $time, $payment_method, $list, $order_id, $freight, $mode = null, array $params = [])
+    static function linepayInit($order_no, $list, $order_id, $freight, $mode = null, array $params = [])
     {
         $model = \App\Models\Config::where('config_name', 'line_channel_id')->orWhere('config_name', 'line_secret_key')->get();
         $channelId = $model->find('line_channel_id') ? $model->find('line_channel_id')->config_value : null;
         $channelSecret = $model->find('line_secret_key') ? $model->find('line_secret_key')->config_value : null;
 
         if ($channelId && $channelSecret) {
-            $Nonce = date('c') . uniqid('-');
-            $uri = '/v3/payments/request';
-
             # 如果有優惠代碼
             $discount = DiscountCodeServices::setDiscountCode($order_id, $mode, $params, $list, $freight);
 
             # 如果有優惠劵
             $coupon_discount = CouponServices::setCoupon($params);
+            if ($coupon_discount) {
+                $coupon_record_id = data_get($params, 'coupon_record_id');
+                if ($coupon_record_id) {
+                    $record = DiscountRecord::find(DiscountRecord::decodeSlug($coupon_record_id));
+                    if ($record) {
+                        $record->orders_id = app()->make(self::$model)::decodeSlug($order_id);
+                        $record->save();
+                    }
+                }
+            }
+
+            # 總額
+            $amount = self::listTotalAmount($list, $freight, $mode, 'all_total', $discount, $coupon_discount);
 
             $content = [
-                'amount' => self::listTotalAmount($list, $freight, $mode, 'all_total', $discount, $coupon_discount),
+                'amount' => $amount,
                 'currency' => 'TWD',
                 'orderId' => $order_no,
                 'packages' => [
                     [
                         'id' => $order_no,
-                        'amount' => self::listTotalAmount($list, $freight, $mode, 'all_total', $discount, $coupon_discount),
+                        'amount' => $amount,
                         'name' => '海龍王商城購物',
                         'products' => [
                             [
                                 'name' => '海龍王商品',
                                 'quantity' => 1,
-                                'price' => self::listTotalAmount($list, $freight, $mode, 'all_total', $discount, $coupon_discount)
+                                'price' => $amount
                             ],
                         ],
                     ]
@@ -366,36 +376,46 @@ class OrderServices
                 ],
             ];
 
-            $authMacText = $channelSecret . $uri . json_encode($content) . $Nonce;
-            $Authorization = base64_encode(hash_hmac('sha256', $authMacText, $channelSecret, true));
+            $uri = '/v3/payments/request';
+            $response = (new self)->linePayApi($channelId, $channelSecret, $uri, $content);
 
-            $curl = curl_init();
-
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => env('LINEPAY.API_URL') . '/v3/payments/request',
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_POSTFIELDS => json_encode($content),
-                CURLOPT_HTTPHEADER => [
-                    'Content-Type: application/json',
-                    'X-LINE-ChannelId: ' . $channelId,
-                    'X-LINE-Authorization-Nonce: ' . $Nonce,
-                    'X-LINE-Authorization: ' . $Authorization
-                ],
-            ));
-
-            $response = curl_exec($curl);
-
-            curl_close($curl);
             return json_decode($response);
         }
 
         return false;
+    }
+
+    public function linePayApi($channelId, $channelSecret, $uri, $content)
+    {
+        $Nonce = date('c') . uniqid('-');
+        $authMacText = $channelSecret . $uri . json_encode($content) . $Nonce;
+        $Authorization = base64_encode(hash_hmac('sha256', $authMacText, $channelSecret, true));
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => env('LINEPAY.API_URL') . $uri,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode($content),
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'X-LINE-ChannelId: ' . $channelId,
+                'X-LINE-Authorization-Nonce: ' . $Nonce,
+                'X-LINE-Authorization: ' . $Authorization
+            ],
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        return $response;
     }
 
     # 匯出
