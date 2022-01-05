@@ -85,9 +85,10 @@ class UserController extends Controller
         $line_notify_info = $this->services->getLineNotifyToken($inputs);
 
         if ($line_notify_info['status'] === 200 && $line_notify_info['access_token']) {
-            $this->services->pushLineNotifyToken($line_notify_info, '推播綁定成功' . date('Y-m-d H:i:s'));
+            $this->services->pushLineNotify($line_notify_info, '推播綁定成功' . date('Y-m-d H:i:s'));
         }
 
         header('Location: ' . env('APP_URL'));
+        exit;
     }
 }

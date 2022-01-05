@@ -70,7 +70,7 @@ class UserServices
         return json_decode($response, true);
     }
 
-    public function pushLineNotifyToken(array $line_notify_info, $message)
+    public function pushLineNotify(array $line_notify_info, $message)
     {
         $curl = curl_init();
 
