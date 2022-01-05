@@ -42,4 +42,55 @@ class UserServices
 
         return Validator::make($inputs, $auth, $tip);
     }
+
+    public function getLineNotifyToken($inputs)
+    {
+		$curl = curl_init();
+		curl_setopt_array($curl, array(
+			CURLOPT_URL => "https://notify-bot.line.me/oauth/token",
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => "",
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 0,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => "POST",
+			CURLOPT_POSTFIELDS => array(
+				'grant_type' => 'authorization_code',
+				'redirect_uri' => env('APP_URL') . '/user/line-notify',
+				'client_id' => env('LINE.NOTIFY.CLIENT_ID'),
+				'client_secret' => env('LINE.NOTIFY.CLIENT_SECRET'),
+				'code' => $inputs['code']
+			),
+		));
+		$response = curl_exec($curl);
+
+		curl_close($curl);
+
+        return json_decode($response, true);
+    }
+
+    public function pushLineNotifyToken(array $line_notify_info, $message)
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, [
+            CURLOPT_URL => "https://notify-api.line.me/api/notify",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => ['message' => $message],
+            CURLOPT_HTTPHEADER => [
+                "Authorization: Bearer " . $line_notify_info['access_token']
+            ],
+        ]);
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+    }
 }
