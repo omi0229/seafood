@@ -16,6 +16,6 @@ class VerifyCsrfToken extends Middleware
         'ecpay-result',
         'ecpay-redirect',
         'ecpay-server-reply',
-        'line-notify/*',
+        'user/line-notify',
     ];
 }

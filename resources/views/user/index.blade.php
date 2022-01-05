@@ -85,7 +85,7 @@
                                         </button>
                                     </td>
                                     <td class="text-center">
-                                        <a :href="'https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&response_mode=form_post&client_id=fgjkCQlDWsplFA7vRwHGkL&redirect_uri={{ env('APP_URL')  }}/line-notify/{{ \Session::get('seafood_user')->hash_id }}&state=' + now" class="btn btn-sm btn-secondary px-2">
+                                        <a :href="'https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&response_mode=form_post&client_id=fgjkCQlDWsplFA7vRwHGkL&redirect_uri={{ env('APP_URL')  }}/user/line-notify?user_id={{ \Session::get('seafood_user')->hash_id }}&state=' + now" class="btn btn-sm btn-secondary px-2">
                                             <i class="fas fa-bell mr-1"></i> 取得連動
                                         </a>
                                     </td>

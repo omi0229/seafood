@@ -58,7 +58,7 @@ Route::post('ecpay-server-reply', [OrderController::class, 'ecpayServerReply']);
 Route::get('linepay-result', [OrderController::class, 'linepayResult']);
 
 # 取得line notify token
-Route::post('line-notify/{user_id}', [UserController::class, 'lineNotify']);
+Route::post('user/line-notify', [UserController::class, 'lineNotify']);
 
 Route::middleware(['auth.web'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
