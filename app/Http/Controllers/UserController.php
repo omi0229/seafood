@@ -82,8 +82,6 @@ class UserController extends Controller
     {
         $inputs = $request->all();
 
-        dump($inputs);
-
 		$curl = curl_init();
 		curl_setopt_array($curl, array(
 			CURLOPT_URL => "https://notify-bot.line.me/oauth/token",
@@ -106,6 +104,26 @@ class UserController extends Controller
 		curl_close($curl);
 		$array = json_decode($response, true);
 
-        dd($array);
+        if ($array['status'] === 200 && $array['access_token']) {
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => "https://notify-api.line.me/api/notify",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => array('message' => '海龍王推播綁定成功' . date('Y-m-d H:i:s')),
+                CURLOPT_HTTPHEADER => array(
+                    "Authorization: Bearer " . $array['access_token']
+                ),
+            ));
+            $response = curl_exec($curl);
+            curl_close($curl);
+
+            header('Location: ' . env('APP_URL'));
+        }
     }
 }
