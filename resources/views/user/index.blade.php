@@ -85,7 +85,11 @@
                                         </button>
                                     </td>
                                     <td class="text-center">
-                                        <a href="https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&response_mode=form_post&client_id={{ env('LINE.NOTIFY.CLIENT_ID') }}&redirect_uri={{ env('APP_URL') }}/user/line-notify&state={{ \Session::get('seafood_user')->hash_id }}" class="btn btn-sm btn-secondary px-2">
+                                        <!-- v-if -->
+                                        <a href="https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&response_mode=form_post&client_id={{ env('LINE.NOTIFY.CLIENT_ID') }}&redirect_uri={{ env('APP_URL') }}/user/line-notify&state={{ \Session::get('seafood_user')->hash_id }}" class="btn btn-sm btn-danger px-2" v-if="item.line_notify_token">
+                                            <i class="fas fa-bell mr-1"></i> 重取連動
+                                        </a>
+                                        <a href="https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&response_mode=form_post&client_id={{ env('LINE.NOTIFY.CLIENT_ID') }}&redirect_uri={{ env('APP_URL') }}/user/line-notify&state={{ \Session::get('seafood_user')->hash_id }}" class="btn btn-sm btn-secondary px-2" v-else>
                                             <i class="fas fa-bell mr-1"></i> 取得連動
                                         </a>
                                     </td>

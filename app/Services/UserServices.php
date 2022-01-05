@@ -92,5 +92,8 @@ class UserServices
         $response = curl_exec($curl);
 
         curl_close($curl);
+
+        #example return ["status":200, "message":"ok"]
+        return json_decode($response, true);
     }
 }

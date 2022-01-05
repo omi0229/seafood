@@ -81,14 +81,17 @@ class UserController extends Controller
     public function lineNotify(Request $request)
     {
         $inputs = $request->all();
-
         $line_notify_info = $this->services->getLineNotifyToken($inputs);
-
         if ($line_notify_info['status'] === 200 && $line_notify_info['access_token']) {
-            $this->services->pushLineNotify($line_notify_info, '推播綁定成功' . date('Y-m-d H:i:s'));
+            $user = $this->repository->find($this->model::decodeSlug($inputs['state']));
+            if ($user) {
+                $user->line_notify_token = $line_notify_info['access_token'];
+                $user->save();
+                $this->services->pushLineNotify($line_notify_info, '推播綁定成功' . date('Y-m-d H:i:s'));
+            }
         }
 
-        header('Location: ' . env('APP_URL'));
+        header('Location: ' . env('APP_URL') . '/user');
         exit;
     }
 }
