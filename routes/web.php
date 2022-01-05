@@ -57,6 +57,9 @@ Route::post('ecpay-server-reply', [OrderController::class, 'ecpayServerReply']);
 # LinePay 繳費結果寫入
 Route::get('linepay-result', [OrderController::class, 'linepayResult']);
 
+# 取得line notify token
+Route::post('line-notify/{user_id}', [UserController::class, 'lineNotify']);
+
 Route::middleware(['auth.web'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
 
@@ -86,8 +89,6 @@ Route::middleware(['auth.web'])->group(function () {
     Route::post('user/insert', [UserController::class, 'insert']);
     Route::post('user/update', [UserController::class, 'update']);
     Route::delete('user/delete', [UserController::class, 'delete']);
-    # 取得line notify token
-    Route::post('user/line-notify', [UserController::class, 'lineNotify']);
 
     # 簡訊設定
     Route::get('sms', [SmsController::class, 'index']);
