@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { passwordRule, emailRule, swal2Confirm, getRoles } from './bootstrap';
 import { search } from './components/search.js';
 import { pagination } from './components/pagination.js';
@@ -25,6 +26,11 @@ window.app = createApp({
         'checkAll'(newData, oldData) {
             this.check = newData ? _.map(this.list, 'id') : [];
         },
+    },
+    computed: {
+        now() {
+            return moment().valueOf().toString().substr(0, 10);
+        }
     },
     mounted() {
         this.getCount();

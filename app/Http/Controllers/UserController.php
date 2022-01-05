@@ -77,4 +77,9 @@ class UserController extends Controller
             return response()->json(['status' => false, 'message' => '無此人員資料']);
         }
     }
+
+    public function lineNotify(Request $request)
+    {
+        dd($request->all());
+    }
 }

@@ -58,6 +58,7 @@
                                     <th class="text-center">權限</th>
                                     <th class="text-center">狀態</th>
                                     <th class="text-center">功能</th>
+                                    <th class="text-center">line notify</th>
                                 </tr>
                                 <tr v-else>
                                     <th class="text-center" colspan="7"><span class="text-danger">無管理員資料</span></th>
@@ -82,6 +83,11 @@
                                         <button type="button" class="btn btn-sm btn-info px-2" data-toggle="modal" data-target="#set-user" @click="modify(item.id)">
                                             <i class="fa fa-edit mr-1"></i> 編輯
                                         </button>
+                                    </td>
+                                    <td class="text-center">
+                                        <a :href="'https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&response_mode=form_post&client_id=fgjkCQlDWsplFA7vRwHGkL&redirect_uri={{ env('APP_URL')  }}/user/line-notify&state=' + now" class="btn btn-sm btn-secondary px-2">
+                                            <i class="fas fa-bell mr-1"></i> 取得連動
+                                        </a>
                                     </td>
                                 </tr>
                                 </tbody>

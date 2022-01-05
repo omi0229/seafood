@@ -86,6 +86,8 @@ Route::middleware(['auth.web'])->group(function () {
     Route::post('user/insert', [UserController::class, 'insert']);
     Route::post('user/update', [UserController::class, 'update']);
     Route::delete('user/delete', [UserController::class, 'delete']);
+    # 取得line notify token
+    Route::post('user/line-notify', [UserController::class, 'lineNotify']);
 
     # 簡訊設定
     Route::get('sms', [SmsController::class, 'index']);
