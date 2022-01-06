@@ -365,6 +365,7 @@ class OrderServices
                         'products' => [
                             [
                                 'name' => '海龍王商品',
+                                'imageUrl' => env('APP_URL') . '/images/logo/S__111558660.jpg',
                                 'quantity' => 1,
                                 'price' => $amount
                             ],
