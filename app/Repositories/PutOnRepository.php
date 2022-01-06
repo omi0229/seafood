@@ -328,4 +328,37 @@ class PutOnRepository extends Repository
 
         return true;
     }
+
+    public function relationRandomProduct($directories_id, $count, $params = [])
+    {
+        $data = $this->model::with([
+            'product' => function ($query) {
+                $query->select(['id', 'title', 'product_front_cover_image_id', 'product_mobile_front_cover_image_id']);
+            },
+            'product.product_images'
+        ])
+        ->where('directories_id', Directory::decodeSlug($directories_id))
+        ->where(function ($query) {
+            $query->where('status', 1);
+            $query->orWhere(function (Builder $query) {
+                $query->where('start_date', '<=', now());
+                $query->where('end_date', '>=', now());
+            });
+        });
+
+        $put_ons_id = data_get($params, 'put_ons_id') ? data_get($params, 'put_ons_id') : null;
+        if ($put_ons_id) {
+            $data->where('id', '!=', $this->model::decodeSlug($put_ons_id));
+        }
+
+        $data = $data->inRandomOrder()->limit($count)->get();
+
+        $list = [];
+        foreach ($data as $key => $row) {
+            array_push($list, $row->toArray());
+            $list[$key]['id'] = $row->hash_id;
+        }
+
+        return $list;
+    }
 }

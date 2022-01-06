@@ -24,4 +24,9 @@ class PutOnController extends Controller
     {
         return response()->json($this->repository->apiInfo($id));
     }
+
+    public function putOnRandom($id, $count = 4, Request $request)
+    {
+        return response()->json($this->repository->relationRandomProduct($id, $count, $request->all()));
+    }
 }
