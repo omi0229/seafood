@@ -7,6 +7,7 @@ use App\Traits\General;
 use App\Models\Orders;
 use App\Models\DiscountRecord;
 use App\Repositories\OrderRepository;
+use App\Services\UserServices;
 use App\Services\OrderServices;
 use App\Services\DiscountCodeServices;
 use App\Services\CouponServices;
@@ -65,7 +66,8 @@ class OrderController extends Controller
         return $this->services->exportOrders($type);
     }
 
-    public function ecpayReturn()
+    # ATM繳費回傳結果
+    public function ecpayReturn(UserServices $userServices)
     {
         $inputs = $this->request->all();
         # 用ATM付款
@@ -85,6 +87,9 @@ class OrderController extends Controller
                         $record->save();
                     }
                 }
+
+                # line notify 推播
+                $userServices->pushAdminNotify('訂單編號：' . $order->merchant_trade_no . ' 訂單成立(已成功付款)');
 
             } else {
                 $this->repository->update($order_id, ['payment_status' => -2]);
@@ -108,7 +113,7 @@ class OrderController extends Controller
     }
 
     # 信用卡繳費回傳結果
-    public function ecpayResult()
+    public function ecpayResult(UserServices $userServices)
     {
         $inputs = $this->request->all();
         if (data_get($inputs, 'CustomField1')) {
@@ -135,6 +140,10 @@ class OrderController extends Controller
                 }
             }
 
+            # line notify 推播
+            $userServices->pushAdminNotify('訂單編號：' . $order->merchant_trade_no . ' 訂單成立(已成功付款)');
+
+            # 付款成功紀錄
             \AppLog::record([
                 'type' => 'payment',
                 'user_id' => $order->member_id,
@@ -145,59 +154,10 @@ class OrderController extends Controller
                     'PaymentDate' => $inputs['PaymentDate'],
                 ]),
             ]);
-
-//            $this->mxp_line_notify('testtest');
         }
 
         header("Location: " . env('FRONT_PAGE_URL') . 'account/record');
         exit;
-    }
-
-    public function mxp_line_notify($msg)
-    {
-        if ($msg == "") {
-            return;
-        }
-
-        $token = 'O5lWvABYgyYCU7TXI5B1iZ';
-
-        $body = array(
-            'message' => PHP_EOL . $msg, //先斷行，避免跟 Bot 稱呼黏在一起
-        );
-        // 授權方式
-        $headers = array(
-            'Content-Type: application/x-www-form-urlencoded',
-            'Authorization: Bearer ' . $token,
-        );
-        $url = 'https://notify-api.line.me/api/notify';
-
-        $ch = curl_init();
-
-        $params = array(
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => TRUE,
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_SSL_VERIFYPEER => TRUE,
-            CURLOPT_CONNECTTIMEOUT => 3,
-            CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13',
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => http_build_query($body),
-        );
-
-        curl_setopt_array($ch, $params);
-
-        if (!$result = curl_exec($ch)) {
-            if ($errno = curl_errno($ch)) {
-                $error_message = curl_strerror($errno);
-
-                // echo "cURL error ({$errno}):\n {$error_message}";
-                curl_close($ch);
-                return FALSE;
-            }
-        } else {
-            curl_close($ch);
-            return TRUE;
-        }
     }
 
     public function ecpayRedirect()
@@ -283,6 +243,7 @@ class OrderController extends Controller
         return response()->json(['status' => true, 'message' => 'form data 建立成功', 'ecpay' => OrderServices::ecpayLogisticsPrint($this->request->all())]);
     }
 
+    # Line pay繳費回傳結果
     public function linepayResult()
     {
         $transactionId = data_get($this->request->all(), 'transactionId');
@@ -338,6 +299,10 @@ class OrderController extends Controller
                     # 修改訂單付款狀態
                     $order->payment_status = 1;
                     $order->save();
+
+                    # line notify 推播
+                    $userServices = new UserServices;
+                    $userServices->pushAdminNotify('訂單編號：' . $order->merchant_trade_no . ' 訂單成立(已成功付款)');
 
                 } else {
 

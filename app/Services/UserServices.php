@@ -96,4 +96,22 @@ class UserServices
         #example return ["status":200, "message":"ok"]
         return json_decode($response, true);
     }
+
+    # 發送推播給Line notify連動的管理員帳號
+    public function pushAdminNotify($message)
+    {
+        $model = app()->make(self::$model)->select(['id', 'line_notify_token'])->whereNotNull('line_notify_token');
+        foreach ($model->get() as $row) {
+            $response = $this->pushLineNotify(['access_token' => $row->line_notify_token], $message);
+            # 發送失敗則做紀錄
+            if ($response['status'] !== 200) {
+                \AppLog::record([
+                    'type' => 'line_notify',
+                    'user_id' => null,
+                    'data_id' => $row->id,
+                    'content' => json_encode($response),
+                ]);
+            }
+        }
+    }
 }

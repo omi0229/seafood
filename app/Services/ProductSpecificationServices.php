@@ -6,6 +6,7 @@ namespace App\Services;
 use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Services\UserServices;
 
 class ProductSpecificationServices
 {
@@ -49,10 +50,18 @@ class ProductSpecificationServices
         if (is_array($list)) {
             $model = app()->make(self::$model);
             foreach ($list as $row) {
-                $item = $model::find($model::decodeSlug($row['specifications_id']));
+                $item = $model::with(['product'])->find($model::decodeSlug($row['specifications_id']));
                 if ($item) {
                     $item->inventory -= $row['count'];
                     $item->save();
+
+                    $item->refresh();
+                    # 如庫存為0則發送推播通知
+                    if ($item->inventory === 0) {
+                        # line notify 推播
+                        $userServices = new UserServices;
+                        $userServices->pushAdminNotify('【產品：' . $item->product->title . ' 規格：' . $item->name . ' 】請檢查庫存');
+                    }
                 }
             }
         }
