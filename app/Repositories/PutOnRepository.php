@@ -218,7 +218,7 @@ class PutOnRepository extends Repository
                 $item['img'] = $web_img_list->first()['path'];
             }
 
-            if (!$info->product->product_mobile_front_cover_image_id && $web_img_list->count() > 0) {
+            if (!$info->product->product_mobile_front_cover_image_id && $mobile_img_list->count() > 0) {
                 $item['mobile_img'] = $mobile_img_list->first()['path'];
             }
 
