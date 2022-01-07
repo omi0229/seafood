@@ -219,7 +219,7 @@ class PutOnRepository extends Repository
             }
 
             if (!$info->product->product_mobile_front_cover_image_id && $web_img_list->count() > 0) {
-                $item['mobile_img'] = $web_img_list->first()['path'];
+                $item['mobile_img'] = $mobile_img_list->first()['path'];
             }
 
             unset($item['product']['product_front_cover_image_id']);
@@ -355,8 +355,26 @@ class PutOnRepository extends Repository
 
         $list = [];
         foreach ($data as $key => $row) {
+
+            $web_img_path = null;
+            $mobile_img_path = null;
+            if ($row->product->product_images->count() > 0) {
+                # web版
+                $web_image_id = $row->product->product_front_cover_image_id;
+                $image = $web_image_id ? $row->product->product_images->where('id', $web_image_id)->first() : $row->product->product_images->where('type', 'web')->first();
+                $web_img_path = $image && Storage::disk('s3')->exists($image->path) ? env('CDN_URL') . $image->path : null;
+
+                # mobile版
+                $mobile_image_id = $row->product->product_mobile_front_cover_image_id;
+                $mobile_image = $mobile_image_id ? $row->product->product_images->where('id', $mobile_image_id)->first() : $row->product->product_images->where('type', 'mobile')->first();
+                $mobile_img_path = $mobile_image && Storage::disk('s3')->exists($mobile_image->path) ? env('CDN_URL') . $mobile_image->path : null;
+            }
+
             array_push($list, $row->toArray());
             $list[$key]['id'] = $row->hash_id;
+            $list[$key]['web_img_path'] = $web_img_path;
+            $list[$key]['mobile_img_path'] = $mobile_img_path;
+            unset($list[$key]['product']['id']);
         }
 
         return $list;
