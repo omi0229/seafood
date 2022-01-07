@@ -41,21 +41,43 @@ class DirectoryRepository extends Repository
 
     public function apiList($page, array $params = [])
     {
-        $data = $this->model::with(['put_ons' => function ($query) {
+//        $data = $this->model::with(['put_ons' => function ($query) {
+//            $query->where('status', 1);
+//            $query->orWhere(function (Builder $query) {
+//                $query->where('start_date', '<=', now()->format('Y-m-d H:i:s'));
+//                $query->where('end_date', '>=', now()->format('Y-m-d H:i:s'));
+//            });
+//            $query->skip(0)->take(12);
+//            $query->orderBy('created_at', 'DESC');
+//            $query->orderBy('id', 'DESC');
+//            $query->with(['product']);
+//        }, 'put_ons.product', 'put_ons.product.product_specification', 'put_ons.product.product_images'])
+//        ->whereHas('put_ons', function (Builder $query) {
+//            $query->where('status', 1);
+//            $query->orWhere(function (Builder $query) {
+//                $query->where('start_date', '<=', now()->format('Y-m-d H:i:s'));
+//                $query->where('end_date', '>=', now()->format('Y-m-d H:i:s'));
+//            });
+//        })->withCount(['put_ons' => function ($query) {
+//            $query->where('status', 1);
+//            $query->orWhere(function (Builder $query) {
+//                $query->where('start_date', '<=', now()->format('Y-m-d H:i:s'));
+//                $query->where('end_date', '>=', now()->format('Y-m-d H:i:s'));
+//            });
+//        }]);
+
+        $data = $this->model::whereHas('put_ons', function (Builder $query) {
             $query->where('status', 1);
             $query->orWhere(function (Builder $query) {
                 $query->where('start_date', '<=', now()->format('Y-m-d H:i:s'));
                 $query->where('end_date', '>=', now()->format('Y-m-d H:i:s'));
             });
-            $query->skip(0)->take(12);
-            $query->orderBy('created_at', 'DESC');
-            $query->orderBy('id', 'DESC');
-            $query->with(['product']);
-        }, 'put_ons.product', 'put_ons.product.product_specification', 'put_ons.product.product_images'])
-        ->whereHas('put_ons', function (Builder $query) {
-            $query->where('status', 1);
         })->withCount(['put_ons' => function ($query) {
             $query->where('status', 1);
+            $query->orWhere(function (Builder $query) {
+                $query->where('start_date', '<=', now()->format('Y-m-d H:i:s'));
+                $query->where('end_date', '>=', now()->format('Y-m-d H:i:s'));
+            });
         }]);
 
         # 是否有關鍵字
@@ -75,6 +97,19 @@ class DirectoryRepository extends Repository
 
         $list = [];
         foreach ($data as $key => $row) {
+
+            $row->load(['put_ons' => function ($query) {
+                $query->where('status', 1);
+                $query->orWhere(function (Builder $query) {
+                    $query->where('start_date', '<=', now()->format('Y-m-d H:i:s'));
+                    $query->where('end_date', '>=', now()->format('Y-m-d H:i:s'));
+                });
+                $query->skip(0)->take(12);
+                $query->orderBy('created_at', 'DESC');
+                $query->orderBy('id', 'DESC');
+                $query->with(['product']);
+            }, 'put_ons.product', 'put_ons.product.product_specification', 'put_ons.product.product_images']);
+
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
             $list[$key]['all_count'] = $row->put_ons_count;
@@ -91,7 +126,7 @@ class DirectoryRepository extends Repository
                 $list[$key]['put_ons'][$product_key]['mobile_img'] = null;
                 foreach ($product_row->product->product_images as $img_key => $img_row) {
                     $type = $img_row->type === 'web' ? 'web_img_list' : 'mobile_img_list';
-                    $list[$key]['put_ons'][$product_key][$type][$img_key]['path'] = Storage::disk('s3')->exists($img_row->path) ? env('CDN_URL') . $img_row->path : null;
+                    $list[$key]['put_ons'][$product_key][$type][$img_key]['path'] = env('CDN_URL') . $img_row->path;
 
                     if ($product_row->product->product_front_cover_image_id === $img_row->id) {
                         $list[$key]['put_ons'][$product_key]['img'] = $list[$key]['put_ons'][$product_key][$type][$img_key]['path'];

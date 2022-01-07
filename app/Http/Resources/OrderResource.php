@@ -19,14 +19,14 @@ class OrderResource extends JsonResource
         foreach ($this->order_products as $key => $order_product) {
             $img = null;
             foreach ($order_product->product->product_images as $image_row) {
-                if ($order_product->product->product_front_cover_image_id === $image_row->id && Storage::disk('s3')->exists($image_row->path)) {
+                if ($order_product->product->product_front_cover_image_id === $image_row->id && $image_row->path) {
                     $img = env('CDN_URL') . $image_row->path;
                 }
             }
 
             if (!$img && $order_product->product->product_images->count() > 0) {
                 $item = $order_product->product->product_images->first();
-                $img = Storage::disk('s3')->exists($item->path) ? env('CDN_URL') . $item->path : null;
+                $img = $item->path ? env('CDN_URL') . $item->path : null;
             }
 
             array_push($order_products, $order_product);

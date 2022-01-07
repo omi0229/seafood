@@ -17,14 +17,14 @@ class CartResource extends JsonResource
     {
         $img = null;
         foreach ($this->product_specification->product->product_images as $key => $row) {
-            if ($this->product_specification->product->product_front_cover_image_id === $row->id && Storage::disk('s3')->exists($row->path)) {
+            if ($this->product_specification->product->product_front_cover_image_id === $row->id && $row->path) {
                 $img = env('CDN_URL') . $row->path;
             }
         }
 
         if (!$img && $this->product_specification->product->product_images->count() > 0) {
             $item = $this->product_specification->product->product_images->first();
-            $img = Storage::disk('s3')->exists($item->path) ? env('CDN_URL') . $item->path : null;
+            $img = $item->path ? env('CDN_URL') . $item->path : null;
         }
 
         $product_specification = $this->product_specification->toArray();

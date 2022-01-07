@@ -117,7 +117,7 @@ class PutOnRepository extends Repository
             $list[$key]['img'] = null;
             foreach ($row->product->product_images as $img_key => $img_row) {
                 $type = $img_row->type === 'web' ? 'web_img_list' : 'mobile_img_list';
-                $list[$key][$type][$img_key]['path'] = Storage::disk('s3')->exists($img_row->path) ? env('CDN_URL') . $img_row->path : null;
+                $list[$key][$type][$img_key]['path'] = $img_row->path ? env('CDN_URL') . $img_row->path : null;
 
                 if ($row->product->product_front_cover_image_id === $img_row->id) {
                     $list[$key]['img'] = $list[$key][$type][$img_key]['path'];
@@ -197,7 +197,7 @@ class PutOnRepository extends Repository
             $item['mobile_img'] = null;
             foreach ($info->product->product_images as $key => $row) {
                 $type = $row->type === 'web' ? 'web_img_list' : 'mobile_img_list';
-                $item[$type][$key]['path'] = Storage::disk('s3')->exists($row->path) ? env('CDN_URL') . $row->path : null;
+                $item[$type][$key]['path'] = $row->path ? env('CDN_URL') . $row->path : null;
 
                 if ($info->product->product_front_cover_image_id === $row->id) {
                     $item['img'] = $item[$type][$key]['path'];
@@ -362,12 +362,12 @@ class PutOnRepository extends Repository
                 # web版
                 $web_image_id = $row->product->product_front_cover_image_id;
                 $image = $web_image_id ? $row->product->product_images->where('id', $web_image_id)->first() : $row->product->product_images->where('type', 'web')->first();
-                $web_img_path = $image && Storage::disk('s3')->exists($image->path) ? env('CDN_URL') . $image->path : null;
+                $web_img_path = $image && $image->path ? env('CDN_URL') . $image->path : null;
 
                 # mobile版
                 $mobile_image_id = $row->product->product_mobile_front_cover_image_id;
                 $mobile_image = $mobile_image_id ? $row->product->product_images->where('id', $mobile_image_id)->first() : $row->product->product_images->where('type', 'mobile')->first();
-                $mobile_img_path = $mobile_image && Storage::disk('s3')->exists($mobile_image->path) ? env('CDN_URL') . $mobile_image->path : null;
+                $mobile_img_path = $mobile_image && $mobile_image->path ? env('CDN_URL') . $mobile_image->path : null;
             }
 
             array_push($list, $row->toArray());
