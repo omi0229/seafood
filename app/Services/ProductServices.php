@@ -21,12 +21,14 @@ class ProductServices
                 'required',
                 Rule::unique('products')->ignore($model::find($model::decodeSlug($inputs['id'])))->whereNull('deleted_at')
             ],
+            'number_of_visits' => 'numeric',
         ];
 
         $tip = [
             'product_types_id.required' => '請選擇分類',
             'title.required' => '請填寫消息名稱',
             'title.unique' => '已有重複產品名稱',
+            'number_of_visits.numeric' => '瀏覽人數必需為數字',
         ];
 
         return Validator::make($inputs, $auth, $tip);

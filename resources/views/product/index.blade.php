@@ -55,6 +55,7 @@
                                     </th>
                                     <th>標題</th>
                                     <th>分類</th>
+                                    <th class="text-center">瀏覽人數</th>
                                     <th class="text-center">銷售狀態</th>
                                     <th class="text-center">上架管理顯示</th>
                                     <th class="text-center">功能</th>
@@ -71,6 +72,7 @@
                                     </td>
                                     <td> ${item.title} </td>
                                     <td> ${item.product_types_name} </td>
+                                    <td class="text-center"> ${item.number_of_visits} </td>
                                     <td class="text-center">
                                         <!-- v-if -->
                                         <span class="right badge badge-success" v-if="item.sales_status == '1'">開放</span>
@@ -172,6 +174,10 @@
                     <div class="form-group">
                         <label for="description">描述</label>
                         <textarea id="description" class="form-control" placeholder="描述" v-model="info.description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="number_of_visits">瀏覽人數</label>
+                        <input type="text" maxlength="11" class="form-control form-control-sm" id="number_of_visits" placeholder="請輸入標題" v-model="info.number_of_visits">
                     </div>
                     <div class="form-group">
                         <div class="d-flex align-items-center">

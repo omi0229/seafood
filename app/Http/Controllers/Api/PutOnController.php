@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Providers\EventServiceProvider;
 use Illuminate\Http\Request;
 use App\Repositories\PutOnRepository;
+use App\Services\EventServices;
 
 class PutOnController extends Controller
 {
@@ -22,6 +24,10 @@ class PutOnController extends Controller
 
     public function info($id)
     {
+        # 增加一筆此產品瀏覽人數
+        $event = new EventServices;
+        $event->addProductVisits($id);
+
         return response()->json($this->repository->apiInfo($id));
     }
 

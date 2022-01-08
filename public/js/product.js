@@ -63110,6 +63110,7 @@ window.app = createApp({
       set_info.info.description = info.description;
       set_info.info.product_front_cover_image_id = info.product_front_cover_image_id;
       set_info.info.product_mobile_front_cover_image_id = info.product_mobile_front_cover_image_id;
+      set_info.info.number_of_visits = info.number_of_visits;
       info.web_img_list.forEach(function (v) {
         v["delete"] = 0;
       });
@@ -63271,6 +63272,7 @@ var set_info = createApp({
         description: '',
         product_front_cover_image_id: '',
         product_mobile_front_cover_image_id: '',
+        number_of_visits: 0,
         web_img_list: [],
         web_new_img_list: [],
         mobile_img_list: [],
@@ -63368,6 +63370,7 @@ var set_info = createApp({
       this.info.description = '';
       this.info.product_front_cover_image_id = '';
       this.info.product_mobile_front_cover_image_id;
+      this.info.number_of_visits = 0;
       this.$refs.web_img.value = null;
       this.info.web_img_list = [];
       this.info.web_new_img_list = [];
@@ -63464,6 +63467,13 @@ var set_info = createApp({
         };
       }
 
+      if (isNaN(data.number_of_visits)) {
+        return {
+          auth: false,
+          message: '瀏覽人數必需為數字！'
+        };
+      }
+
       return {
         auth: true,
         message: 'success'
@@ -63499,6 +63509,7 @@ var set_info = createApp({
       formData.append("content", CKEDITOR.instances["content"].getData());
       formData.append("keywords", this.info.keywords);
       formData.append("description", this.info.description);
+      formData.append("number_of_visits", this.info.number_of_visits);
       formData.append("product_front_cover_image_id", this.info.product_front_cover_image_id);
       formData.append("product_mobile_front_cover_image_id", this.info.product_mobile_front_cover_image_id);
       var delete_list = '';
