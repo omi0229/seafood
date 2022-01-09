@@ -41013,7 +41013,8 @@ window.app = createApp({
           basic_company: '',
           basic_phone: '',
           basic_address: '',
-          basic_email: ''
+          basic_email: '',
+          basic_all_discount: null
         },
         goldflow: {
           goldflow_MerchantID: '',
@@ -41034,11 +41035,18 @@ window.app = createApp({
     };
   },
   delimiters: ["${", "}"],
+  watch: {
+    'config.basic.basic_all_discount': function configBasicBasic_all_discount(new_data, old_data) {
+      if (Number(new_data) === 0) {
+        this.config.basic.basic_all_discount = null;
+      }
+    }
+  },
   mounted: function mounted() {
     var _this = this;
 
     this.getConfig().then(function (res) {
-      _.forEach(res.data.data, function (v, k) {
+      _.forEach(res.data.data, function (v) {
         switch (v.config_name) {
           case 'basic_title':
             _this.config.basic.basic_title = v.config_value;
@@ -41058,6 +41066,10 @@ window.app = createApp({
 
           case 'basic_email':
             _this.config.basic.basic_email = v.config_value;
+            break;
+
+          case 'basic_all_discount':
+            _this.config.basic.basic_all_discount = v.config_value;
             break;
 
           case 'goldflow_MerchantID':
@@ -41112,8 +41124,38 @@ window.app = createApp({
     setMode: function setMode(mode) {
       this.mode = mode;
     },
+    auth: function auth(data) {
+      if (isNaN(data.basic.basic_all_discount)) {
+        return {
+          auth: false,
+          message: '全館折扣欄位請輸入數字！'
+        };
+      }
+
+      if (data.basic.basic_all_discount < 0) {
+        return {
+          auth: false,
+          message: '全館折扣欄位不得為負數！'
+        };
+      }
+
+      return {
+        auth: true,
+        message: 'success'
+      };
+    },
     confirm: function confirm() {
       var _this2 = this;
+
+      var auth = this.auth(this.config);
+
+      if (!auth.auth) {
+        Toast.fire({
+          icon: 'error',
+          title: auth.message
+        });
+        return false;
+      }
 
       (0,_bootstrap__WEBPACK_IMPORTED_MODULE_1__.swal2Confirm)('儲存設定？').then(function (confirm) {
         if (confirm) {

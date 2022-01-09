@@ -11,6 +11,7 @@ window.app = createApp({
                     basic_phone: '',
                     basic_address: '',
                     basic_email: '',
+                    basic_all_discount: null,
                 },
                 goldflow: {
                     goldflow_MerchantID: '',
@@ -31,9 +32,16 @@ window.app = createApp({
         }
     },
     delimiters: ["${", "}"],
+    watch: {
+        'config.basic.basic_all_discount'(new_data, old_data) {
+            if (Number(new_data) === 0) {
+                this.config.basic.basic_all_discount = null;
+            }
+        },
+    },
     mounted() {
         this.getConfig().then(res => {
-            _.forEach(res.data.data, (v, k) => {
+            _.forEach(res.data.data, v => {
                 switch (v.config_name) {
                     case 'basic_title':
                         this.config.basic.basic_title = v.config_value;
@@ -49,6 +57,9 @@ window.app = createApp({
                         break;
                     case 'basic_email':
                         this.config.basic.basic_email = v.config_value;
+                        break;
+                    case 'basic_all_discount':
+                        this.config.basic.basic_all_discount = v.config_value;
                         break;
                     case 'goldflow_MerchantID':
                         this.config.goldflow.goldflow_MerchantID = v.config_value;
@@ -93,7 +104,24 @@ window.app = createApp({
         setMode(mode) {
             this.mode = mode;
         },
+        auth(data) {
+            if (isNaN(data.basic.basic_all_discount)) {
+                return {auth: false, message: '全館折扣欄位請輸入數字！'};
+            }
+
+            if (data.basic.basic_all_discount < 0) {
+                return {auth: false, message: '全館折扣欄位不得為負數！'};
+            }
+
+            return {auth: true, message: 'success'};
+        },
         confirm() {
+            let auth = this.auth(this.config);
+            if (!auth.auth) {
+                Toast.fire({icon: 'error', title: auth.message});
+                return false;
+            }
+
             swal2Confirm('儲存設定？').then(confirm => {
                 if (confirm) {
                     this.save();

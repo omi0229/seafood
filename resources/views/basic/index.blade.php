@@ -80,6 +80,14 @@
                                             <input type="text" maxlength="50" class="form-control form-control-sm" id="web_email" placeholder="請輸入電子郵件" v-model="config.basic.basic_email">
                                         </div>
                                     </div>
+                                    <div class="form-group row">
+                                        <div class="col-12 col-sm-6">
+                                            <label for="web_all_discount">全館折扣(0-99%，請輸入數字)</label>
+                                            <div class="d-flex align-items-center">
+                                                <input type="text" maxlength="2" class="form-control form-control-sm mr-1" id="web_all_discount" placeholder="請輸入折扣" v-model.number="config.basic.basic_all_discount">%
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="custom-tabs-goldflow" role="tabpanel" aria-labelledby="custom-tabs-four-goldflow-tab">
