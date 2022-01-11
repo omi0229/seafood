@@ -88,6 +88,12 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="form-group row">
+                                        <div class="col-12 col-sm-6">
+                                            <label for="web_admin_notification">Email通知管理員名單(請輸入Email，多個Email請用,號做分隔)</label>
+                                            <textarea id="web_admin_notification" class="form-control form-control-sm" rows="4" placeholder="請輸入Email名單並用,號分隔" v-model="config.basic.basic_admin_notification"></textarea>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="custom-tabs-goldflow" role="tabpanel" aria-labelledby="custom-tabs-four-goldflow-tab">

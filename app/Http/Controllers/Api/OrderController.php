@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Member;
 use App\Models\Orders;
 use App\Models\Freight;
@@ -13,6 +14,7 @@ use App\Repositories\MembersRepository;
 use App\Services\OrderServices;
 use App\Services\FreightServices;
 use App\Services\ProductSpecificationServices;
+use App\Mail\OrderEstablishment;
 
 class OrderController extends Controller
 {
@@ -60,6 +62,13 @@ class OrderController extends Controller
                 $linepay = OrderServices::linepayInit($order_no, $list, $order->hash_id, $receiver['freight'], null, $this->request->all());
             } else {
                 $ecpay = OrderServices::ecpayForm($order_no, $time, $order->payment_method, $list, $order->hash_id, $receiver['freight'], null, $this->request->all());
+            }
+
+            # 訂單成立發送mail
+            try {
+                Mail::to($order->email)->send(new OrderEstablishment($order));
+            } catch (\Exception $e) {
+                \AppLog::record(['type' => 'error_mail', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => $e->getMessage()]);
             }
 
             return response()->Json(['status' => true, 'message' => '訂單新增成功', 'ecpay' => $ecpay, 'linepay' => $linepay]);

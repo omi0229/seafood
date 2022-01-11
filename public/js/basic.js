@@ -41014,7 +41014,8 @@ window.app = createApp({
           basic_phone: '',
           basic_address: '',
           basic_email: '',
-          basic_all_discount: null
+          basic_all_discount: null,
+          basic_admin_notification: ''
         },
         goldflow: {
           goldflow_MerchantID: '',
@@ -41070,6 +41071,10 @@ window.app = createApp({
 
           case 'basic_all_discount':
             _this.config.basic.basic_all_discount = v.config_value;
+            break;
+
+          case 'basic_admin_notification':
+            _this.config.basic.basic_admin_notification = v.config_value;
             break;
 
           case 'goldflow_MerchantID':
