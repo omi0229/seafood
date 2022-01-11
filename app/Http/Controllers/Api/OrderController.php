@@ -51,6 +51,7 @@ class OrderController extends Controller
             $time = now();
             $order_no = 'o' . substr($time->format('YmdHis'), 2) . str_pad($order->id,6,"0",STR_PAD_LEFT);
             $this->repository->update($order->id, ['merchant_trade_no' => $order_no]);
+            $order->refresh();
 
             #扣掉庫存
             ProductSpecificationServices::inventoryCalculation($list);

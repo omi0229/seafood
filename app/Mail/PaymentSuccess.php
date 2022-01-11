@@ -9,7 +9,7 @@ use Illuminate\Queue\SerializesModels;
 use App\Traits\MailConfig;
 use App\Models\Orders;
 
-class OrderEstablishment extends Mailable
+class PaymentSuccess extends Mailable
 {
     use Queueable, SerializesModels, MailConfig;
 
@@ -18,7 +18,7 @@ class OrderEstablishment extends Mailable
     /**
      * Create a new message instance.
      *
-     * @param Orders $order
+     * @return void
      */
     public function __construct(Orders $order)
     {
@@ -31,10 +31,10 @@ class OrderEstablishment extends Mailable
      *
      * @return $this
      */
-    public function build(): OrderEstablishment
+    public function build(): PaymentSuccess
     {
-        return $this->view('email.order_establishment')
-            ->subject(env('SENDER_NAME') . ' - 訂單成立')
+        return $this->view('email.payment_success')
+            ->subject(env('SENDER_NAME') . ' - 訂單付款成功')
             ->bcc($this->getBccList()) # 密件副本
             ->with([
                 'order' => $this->order,
