@@ -93,15 +93,17 @@ class OrderController extends Controller
                 # line notify 推播
                 $userServices->pushAdminNotify('訂單編號：' . $order->merchant_trade_no . ' 訂單成立(已成功付款)');
 
-                # mail 通知
-                try {
-                    Mail::to($order->email)->send(new PaymentSuccess($order));
-                } catch (\Exception $e) {
-                    \AppLog::record(['type' => 'error_mail', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => $e->getMessage()]);
-                }
-
             } else {
                 $this->repository->update($order_id, ['payment_status' => -2]);
+            }
+
+            $order->refresh();
+
+            # mail 通知
+            try {
+                Mail::to($order->email)->send(new PaymentSuccess($order));
+            } catch (\Exception $e) {
+                \AppLog::record(['type' => 'error_mail', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => $e->getMessage()]);
             }
 
             \AppLog::record([
@@ -136,6 +138,8 @@ class OrderController extends Controller
                 'vAccount' => null,
                 'ExpireDate' => null,
             ]);
+
+            $order->refresh();
 
             # 如果有用優惠劵並且付款成功
             if (data_get($inputs, 'CustomField2')) {
@@ -320,13 +324,6 @@ class OrderController extends Controller
                     $userServices = new UserServices;
                     $userServices->pushAdminNotify('訂單編號：' . $order->merchant_trade_no . ' 訂單成立(已成功付款)');
 
-                    # mail 通知
-                    try {
-                        Mail::to($order->email)->send(new PaymentSuccess($order));
-                    } catch (\Exception $e) {
-                        \AppLog::record(['type' => 'error_mail', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => $e->getMessage()]);
-                    }
-
                 } else {
 
                     ### line 付款失敗 執行以下
@@ -352,6 +349,20 @@ class OrderController extends Controller
                     }
 
                 }
+
+                # mail 通知
+                try {
+                    Mail::to($order->email)->send(new PaymentSuccess($order));
+                } catch (\Exception $e) {
+                    \AppLog::record(['type' => 'error_mail', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => $e->getMessage()]);
+                }
+
+                \AppLog::record([
+                    'type' => 'payment',
+                    'user_id' => $order->member_id,
+                    'data_id' => $order->jd,
+                    'content' => json_encode($response),
+                ]);
 
                 header("Location: " . env('FRONT_PAGE_URL') . 'account/order/' . $order->hash_id);
                 exit;

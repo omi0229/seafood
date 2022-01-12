@@ -22,7 +22,7 @@ class PaymentSuccess extends Mailable
      */
     public function __construct(Orders $order)
     {
-        $this->order = $order;
+        $this->order = $order->load(['order_products', 'discount_record', 'discount_record.discount_codes', 'discount_record.coupon']);
         $this->config = $this->getConfig();
     }
 
