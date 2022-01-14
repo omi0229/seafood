@@ -60,7 +60,7 @@ Route::get('linepay-result', [OrderController::class, 'linepayResult']);
 # 取得line notify token
 Route::post('user/line-notify', [UserController::class, 'lineNotify']);
 
-Route::middleware(['auth.web'])->group(function () {
+Route::middleware(['auth:api', 'auth.web'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
 
     # 基本設定
