@@ -102,9 +102,16 @@ window.app = createApp({
             });
         },
         confirm() {
-            swal2Confirm('確定刪除選取的分類？').then(confirm => {
-                if (confirm) {
-                    this.delete();
+            axiosPostMethod('/directory/check-delete', {data: this.check}).then(async res => {
+                if (res.data.count > 0) {
+                    Toast.fire({icon: 'error', title: '以下目錄 ' + res.data.message + ' 於「上架管理」功能內尚有產品，不得刪除'});
+                    return false;
+                } else {
+                    swal2Confirm('確定刪除選取的目錄？').then(confirm => {
+                        if (confirm) {
+                            this.delete();
+                        }
+                    });
                 }
             });
         },

@@ -21,4 +21,9 @@ class DirectoryController extends Controller
         $this->repository = $repository;
         $this->services = $services;
     }
+
+    public function checkDelete(Request $request)
+    {
+        return response()->json($this->services->checkDelete((array)$request->all()['data']));
+    }
 }

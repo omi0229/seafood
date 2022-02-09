@@ -270,7 +270,10 @@ class PutOnRepository extends Repository
         # 有 目錄ID
         $data = $directories_id ? $this->model->where('directories_id', Directory::decodeSlug($directories_id)) : $this->model;
 
-        $data = !$keywords ? $data : $data->where('name', 'LIKE', '%' . $keywords . '%');
+        # 有 關鍵字
+        $data = !$keywords ? $data : $data->whereHas('product', function (Builder $query) use ($keywords) {
+            $query->where('title', 'LIKE', '%' . $keywords . '%');
+        });
 
         return $data->count();
     }

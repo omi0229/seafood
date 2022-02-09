@@ -156,6 +156,12 @@ class CouponServices
         foreach ($data->get() as $key => $row) {
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
+            $list[$key]['coupon'] = $row->coupon->toArray();
+            $list[$key]['coupon']['id'] = $row->coupon->hash_id;
+            $list[$key]['coupon']['product_specifications'] = $row->coupon->product_specifications->toArray();
+            foreach ($row->coupon->product_specifications as $specification_key => $specification) {
+                $list[$key]['coupon']['product_specifications'][$specification_key]['id'] = $specification->hash_id;
+            }
         }
 
         return $list;
@@ -180,7 +186,7 @@ class CouponServices
         $coupon_discount = null;
         $coupon_record_id = data_get($params, 'coupon_record_id');
         if ($coupon_record_id) {
-            $record = DiscountRecord::with(['coupon'])->find(DiscountRecord::decodeSlug($coupon_record_id));
+            $record = DiscountRecord::with(['coupon'])->where('id', DiscountRecord::decodeSlug($coupon_record_id))->whereNull('used_at')->first();
             if ($record) {
                 $coupon_discount = $record->coupon->discount;
             }

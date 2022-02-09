@@ -85,6 +85,7 @@ window.app = createApp({
                     app.check = [];
                     app.checkAll = false;
                     app.list = res.data.data;
+                    this.$refs.pagination.setPage(1);
                     loading.show = false;
                 });
             });

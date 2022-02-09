@@ -167,6 +167,7 @@ Route::middleware(['auth:api', 'auth.web'])->group(function () {
     Route::post('directory/insert', [DirectoryController::class, 'insert']);
     Route::post('directory/update', [DirectoryController::class, 'update']);
     Route::delete('directory/delete', [DirectoryController::class, 'delete']);
+    Route::post('directory/check-delete', [DirectoryController::class, 'checkDelete']);
 
     # 上架管理
     Route::get('put-on', [PutOnController::class, 'index']);

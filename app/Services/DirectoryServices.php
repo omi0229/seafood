@@ -31,4 +31,23 @@ class DirectoryServices
 
         return Validator::make($inputs, $auth, $tip);
     }
+
+    /*
+     * 檢查此產品是否已設定於上架管理，如有則不能刪除
+     */
+    public function checkDelete($id_array)
+    {
+        $model = app()->make(self::$model);
+        $count = 0;
+        $str = '';
+        $data = $model::withCount('put_ons')->whereIn('id', array_map([$model, 'decodeSlug'], $id_array))->get();
+        foreach ($data as $row) {
+            if ($row->put_ons_count > 0) {
+                $str .= $str ? ', ' . $row->name : $row->name;
+            }
+            $count += $row->put_ons_count;
+        }
+
+        return ['count' => $count, 'message' => $str];
+    }
 }
