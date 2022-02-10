@@ -43,6 +43,6 @@ class ProductSpecifications extends Model
 
     public function product()
     {
-        return $this->belongsTo('App\Models\Products');
+        return $this->belongsTo('App\Models\Products')->withTrashed();
     }
 }
