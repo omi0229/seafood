@@ -57,7 +57,8 @@ class SmsServices
             $ActivateDateTime = str_replace(array('/', '+', ':'), '', date('YmdHi', strtotime('+1 minute')));
             $ActivateDateTime = (strlen($ActivateDateTime) < 14 && $ActivateDateTime) ? $ActivateDateTime . "00" : $ActivateDateTime;
 
-            $message = $type == 'forget_password' ? '您的密碼為' . $code : '海龍王註冊訊息：您的註冊碼為 ' . $code;
+            // $message = $type == 'forget_password' ? '您的密碼為' . $code : '海龍王註冊訊息：您的註冊碼為 ' . $code;
+            $message = $type == 'forget_password' ? '您於海龍王水產市集點選忘記密碼功能為您提供臨時密碼:' . $code . ' 登入後可至會員中心自行變更密碼 https://reurl.cc/mGY8jM *此為系統發送信，請勿直接回覆*' : '歡迎您註冊成為海龍王水產市集會員您的註冊驗證碼: ' . $code . ' 請回填此資訊，以利於後續註冊 https://reurl.cc/mGY8jM *此為系統發送信，請勿直接回覆*';
 
             $body = '<?xml version="1.0" encoding="UTF-8"?>
                 <sms>
