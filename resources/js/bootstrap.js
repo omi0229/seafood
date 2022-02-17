@@ -40,7 +40,7 @@ window.Toast = Swal.mixin({
     timer: 3000
 });
 
-// 全域性axios post方法封裝
+// 全域性axios get方法封裝
 window.axiosGetMethod = url => {
     return new Promise(resolve => {
         axios.get(url).then(res => {

@@ -108,8 +108,8 @@ class PutOnRepository extends Repository
         foreach ($data as $key => $row) {
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
-            $list[$key]['product']['id'] = $row->product->hash_id;
-            $list[$key]['product']['title'] = $row->product->title;
+            $list[$key]['product']['id'] = $row->product->hash_id ?? null;
+            $list[$key]['product']['title'] = $row->product->title ?? null;
 
             $list[$key]['product_specification'] = ProductSpecificationResource::collection($row->product->product_specification)->toResponse(app('request'))->getData(true);
 
