@@ -1,5 +1,5 @@
 import { ref, reactive, watch } from 'vue'
-import { filter } from 'lodash'
+import { map } from 'lodash'
 import moment from 'moment';
 import { swal2Confirm, checkAllFunction } from './bootstrap';
 import { search } from './components/search.js';
@@ -202,7 +202,7 @@ let set_info = createApp({
 
             let form_data = {
                 directories_id: app.value.directory,
-                check_list: this.check_list,
+                check_list: this.check_list.map(v => { return {id: v.id} }),
             };
 
             axiosPostMethod(url, form_data).then(async res => {
