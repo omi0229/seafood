@@ -117,6 +117,8 @@ class DirectoryRepository extends Repository
             $list[$key]['page_item_count'] = (int)$page_item_count;
 
             foreach ($row['put_ons'] as $product_key => $product_row) {
+                unset($list[$key]['put_ons'][$product_key]['product']['content']);
+
                 $list[$key]['put_ons'][$product_key]['id'] = $product_row->hash_id;
 
                 $list[$key]['put_ons'][$product_key]['product_specification'] = ProductSpecificationResource::collection($product_row->product->product_specification)->toResponse(app('request'))->getData(true);

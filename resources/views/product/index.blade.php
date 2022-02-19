@@ -389,7 +389,6 @@
             </div>
         </div>
     </div>
-
     <script src="plugins/ckeditor/ckeditor.js"></script>
     <script src="js/product.js"></script>
 @endsection
