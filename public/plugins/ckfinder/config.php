@@ -1,5 +1,4 @@
 <?php
-include_once($_SERVER['DOCUMENT_ROOT']."/control/includes/init.php");
 /*
  * CKFinder Configuration File
  *
@@ -49,14 +48,17 @@ $config['privateDir'] = array(
 // https://ckeditor.com/docs/ckfinder/ckfinder3-php/configuration.html#configuration_options_images
 
 $config['images'] = array(
-    'maxWidth'  => 1600,
-    'maxHeight' => 1200,
-    'quality'   => 80,
-    'sizes' => array(
-        'small'  => array('width' => 480, 'height' => 320, 'quality' => 80),
-        'medium' => array('width' => 600, 'height' => 480, 'quality' => 80),
-        'large'  => array('width' => 800, 'height' => 600, 'quality' => 80)
-    )
+//    'maxWidth'  => 1600,
+//    'maxHeight' => 1200,
+//    'quality'   => 80,
+//    'sizes' => array(
+//        'small'  => array('width' => 480, 'height' => 320, 'quality' => 80),
+//        'medium' => array('width' => 600, 'height' => 480, 'quality' => 80),
+//        'large'  => array('width' => 800, 'height' => 600, 'quality' => 80)
+//    )
+    'maxWidth'  => 0,
+    'maxHeight' => 0,
+    'quality'   => 100,
 );
 
 /*=================================== Backends ========================================*/
