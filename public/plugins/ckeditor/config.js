@@ -14,24 +14,22 @@ CKEDITOR.editorConfig = function( config ) {
 	config.language = 'zh';
 
     config.toolbarGroups = [
-        {name: 'document', groups: ['mode', 'document', 'doctools']},
-        {name: 'clipboard', groups: ['clipboard', 'undo']},
-        {name: 'editing', groups: ['find', 'selection', 'spellchecker', 'editing']},
-        {name: 'forms', groups: ['forms']},
-        '/',
-        {name: 'basicstyles', groups: ['basicstyles', 'cleanup']},
-        {name: 'paragraph', groups: ['list', 'indent', 'blocks', 'align', 'bidi', 'paragraph']},
-        {name: 'links', groups: ['links']},
-        {name: 'insert', groups: ['insert']},
-        '/',
-        {name: 'styles', groups: ['styles']},
-        {name: 'colors', groups: ['colors']},
-        {name: 'tools', groups: ['tools']},
-        {name: 'others', groups: ['others']},
-        {name: 'about', groups: ['about']}
-    ];
+		{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+		{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+		{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
+		{ name: 'forms', groups: [ 'forms' ] },
+		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+		{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+		{ name: 'links', groups: [ 'links' ] },
+		{ name: 'insert', groups: [ 'insert' ] },
+		{ name: 'styles', groups: [ 'styles' ] },
+		{ name: 'colors', groups: [ 'colors' ] },
+		{ name: 'tools', groups: [ 'tools' ] },
+		{ name: 'others', groups: [ 'others' ] },
+		{ name: 'about', groups: [ 'about' ] }
+	];
 
-	config.removeButtons = 'ShowBlocks,About,Maximize,Form,Checkbox,Radio,TextField,Textarea,Select,Button,HiddenField,SelectAll,Find,Replace,Templates,Save,NewPage,ExportPdf,Preview,Print,Language';
+	config.removeButtons = 'ShowBlocks,About,Maximize,Form,Checkbox,Radio,TextField,Textarea,Select,Button,HiddenField,SelectAll,Find,Replace,Templates,Save,NewPage,ExportPdf,Preview,Print,Language,Cut,Undo,Redo,Copy,Paste,PasteText,PasteFromWord,Scayt,Subscript,Superscript,CopyFormatting,NumberedList,Outdent,BulletedList,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Unlink,Anchor,Table,Image,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,Styles,Format,Font';
 
     config.filebrowserBrowseUrl='plugins/ckfinder/ckfinder.html';
     config.filebrowserImageBrowseUrl='plugins/ckfinder/ckfinder.html?Type=Images';
