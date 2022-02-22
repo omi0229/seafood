@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Cart;
 use App\Http\Resources\CartResource;
+use App\Services\ShoppingCartServices;
 
 class CartController extends Controller
 {
@@ -15,14 +16,17 @@ class CartController extends Controller
         return Str::uuid();
     }
 
-    public function getCartCount(Request $request)
+    public function getCartCount(Request $request, ShoppingCartServices $services)
     {
+        # 檢查購物車有沒有被下架的商品
+        $services->authCartContent($request->all()['cart_id']);
+
         return response()->Json(Cart::where('cart_id', $request->all()['cart_id'])->count());
     }
 
     public function showCart(Request $request)
     {
-        $data = data_get($request->all(), 'cart_id') ? Cart::with(['product_specification' => function ($query) { $query->with(['product']); }])->where('cart_id', $request->all()['cart_id'])->get() : [];
+        $data = data_get($request->all(), 'cart_id') ? Cart::with(['product_specification.product'])->where('cart_id', $request->all()['cart_id'])->get() : [];
         return CartResource::collection($data)->toResponse(app('request'))->getData(true);
     }
 
