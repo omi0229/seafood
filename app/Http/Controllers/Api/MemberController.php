@@ -120,4 +120,10 @@ class MemberController extends Controller
 
         return response()->json(['status' => false, 'message' => '取得列表失敗']);
     }
+
+    # 檢查手機是否有註冊
+    public function authRegisterCellphone($cellphone)
+    {
+        return $this->services::authCellphone($cellphone);
+    }
 }

@@ -57,14 +57,11 @@ class MemberServices
         return ['status' => true ];
     }
 
-    static function authCellphone($cellphone)
+    # true => 此電話無人註冊, false => 已有人註冊
+    static function authCellphone($cellphone): bool
     {
         $model = app()->make(self::$model)->where('cellphone', $cellphone);
-        if ($model->count() > 0) {
-            return false;
-        }
-
-        return true;
+        return !($model->count() > 0);
     }
 
     public function authPassword($id, $password)

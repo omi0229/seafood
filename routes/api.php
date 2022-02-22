@@ -53,6 +53,8 @@ Route::post('auth/login', [AuthController::class, 'login']);
 
 # 新增會員
 Route::post('member/insert', [MemberController::class, 'insert']);
+# 驗證註冊手機
+Route::get('member/auth-register-cellphone/{cellphone}', [MemberController::class, 'authRegisterCellphone']);
 # 忘記密碼
 Route::post('member/forget', [MemberController::class, 'forget']);
 
