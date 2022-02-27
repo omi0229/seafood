@@ -36,13 +36,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 # 網站基本設定
 Route::get('config', function () {
-    return response()->JSON(\App\Models\Config::select(['config_name', 'config_value'])->where(function ($query) {
-        $query->where('config_name', '!=', 'sms_account');
-        $query->where('config_name', '!=', 'sms_password');
-        $query->where('config_name', '!=', 'goldflow_MerchantID');
-        $query->where('config_name', '!=', 'goldflow_HashKey');
-        $query->where('config_name', '!=', 'goldflow_HashIV');
-    })->get());
+    return response()->JSON(Cache::remember('config_list', Carbon::now()->addMinutes(2), function () {
+        return \App\Models\Config::select(['config_name', 'config_value'])->where(function ($query) {
+            $query->where('config_name', '!=', 'sms_account');
+            $query->where('config_name', '!=', 'sms_password');
+            $query->where('config_name', '!=', 'goldflow_MerchantID');
+            $query->where('config_name', '!=', 'goldflow_HashKey');
+            $query->where('config_name', '!=', 'goldflow_HashIV');
+        })->get();
+    }));
 });
 
 ### 簡訊驗證碼
