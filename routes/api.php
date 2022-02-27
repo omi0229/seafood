@@ -1,7 +1,9 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\NewsTypeController;
@@ -80,14 +82,17 @@ Route::get('search/product/{keyword}/{page}', function ($keywords, $page) {
 });
 
 # RWD 滑出式選單內容
-Route::get('menu', function () {
-    $array = [
-        'news_types_list' => (new \App\Repositories\NewsTypesRepository)->list('all'),
-        'cooking_types_list' => (new \App\Repositories\CookingTypesRepository)->list('all'),
-        'directory_list' => (new \App\Repositories\DirectoryRepository)->apiMenu(),
-    ];
-
-    return response()->JSON($array);
+Route::get('menu/{type}', function ($type) {
+    return Cache::remember($type . '_list', Carbon::now()->addMinutes(15), function () use ($type) {
+        switch ($type) {
+            case 'news':
+                return (new \App\Repositories\NewsTypesRepository)->list('all');
+            case 'cooking':
+                return (new \App\Repositories\CookingTypesRepository)->list('all');
+            case 'directory':
+                return (new \App\Repositories\DirectoryRepository)->apiMenu();
+        }
+    });
 });
 
 # 大圖輪播
