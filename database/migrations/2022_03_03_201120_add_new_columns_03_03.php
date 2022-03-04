@@ -18,6 +18,8 @@ class AddNewColumns0303 extends Migration
         foreach ($this->list as $table) {
             Schema::table($table, function (Blueprint $table) {
                 $table->integer('location')->after('name')->default(0)->comment('排序(數字)');
+
+                $table->index('location');
             });
         }
     }
