@@ -24,6 +24,11 @@ class WebAuthenticate
         $actionUri = \Route::current()->uri;
         $type = explode('/', $actionUri)[0];
 
+        $white_list = ['sort/save'];
+        if (in_array($actionUri, $white_list)) {
+            return $next($request);
+        }
+
         $array = [
             'basic' => 'set_basic',
             'role' => 'set_manager',

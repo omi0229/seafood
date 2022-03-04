@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Http\Request;
+use App\Services\SystemServices;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AuthController;
@@ -224,4 +225,10 @@ Route::middleware(['auth:api', 'auth.web'])->group(function () {
     Route::post('coupon/insert', [CouponController::class, 'insert']);
     Route::post('coupon/update', [CouponController::class, 'update']);
     Route::delete('coupon/delete', [CouponController::class, 'delete']);
+
+    ### 其他功能
+    # 修改分類排序
+    Route::post('sort/save', function (Request $request, SystemServices $services) {
+        return response()->JSON($services->saveSort($request->all()));
+    });
 });

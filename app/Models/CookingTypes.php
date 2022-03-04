@@ -13,6 +13,7 @@ class CookingTypes extends Model
 
     protected $fillable = [
         'name',
+        'location',
     ];
 
     public function cooking()

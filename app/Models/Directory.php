@@ -15,6 +15,7 @@ class Directory extends Model
 
     protected $fillable = [
         'name',
+        'location',
     ];
 
     public function products()

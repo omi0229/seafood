@@ -40,46 +40,7 @@
         <div class="content px-4">
             <div class="row">
                 <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">目錄列表</h3>
-                        </div>
-                        <div class="card-body table-responsive p-0">
-                            <table class="table table-hover text-nowrap">
-                                <thead>
-                                <!-- v-if -->
-                                <tr v-if="list.length > 0">
-                                    <th class="align-middle">
-                                        <input type="checkbox" class="checkbox-size" v-model="checkAll">
-                                    </th>
-                                    <th>目錄名稱</th>
-                                    <th class="text-center">建立日期</th>
-                                    <th class="text-center">上次異動日期</th>
-                                    <th class="text-center">功能</th>
-                                </tr>
-                                <tr v-else>
-                                    <th class="text-center" colspan="5"><span class="text-danger">無目錄資料</span></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <!-- v-for -->
-                                <tr v-for="item in list">
-                                    <td class="align-middle">
-                                        <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check">
-                                    </td>
-                                    <td>${item.name}</td>
-                                    <td class="text-center">${dateFormat(item.created_at)}</td>
-                                    <td class="text-center">${dateFormat(item.updated_at)}</td>
-                                    <td class="text-center">
-                                        <button type="button" class="btn btn-sm btn-info px-2" data-toggle="modal" data-target="#set-info" @click="modify(item.id)">
-                                            <i class="fa fa-edit mr-1"></i> 編輯
-                                        </button>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <components-table type="Directory" name="目錄列表" :list="list" @modify="modify" v-model:check="check"></components-table>
                 </div>
                 <components-pagination ref="pagination" :all_count="all_count" :page_count="page_count" @get-data="getData"></components-pagination>
             </div>

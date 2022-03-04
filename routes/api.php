@@ -85,7 +85,7 @@ Route::get('search/product/{keyword}/{page}', function ($keywords, $page) {
 
 # RWD 滑出式選單內容
 Route::get('menu/{type}', function ($type) {
-    return Cache::remember($type . '_list', Carbon::now()->addMinutes(15), function () use ($type) {
+    return Cache::remember($type . '_list', Carbon::now()->addMinutes(3), function () use ($type) {
         switch ($type) {
             case 'news':
                 return (new \App\Repositories\NewsTypesRepository)->list('all');

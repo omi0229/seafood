@@ -13,6 +13,7 @@ class NewsTypes extends Model
 
     protected $fillable = [
         'name',
+        'location',
     ];
 
     public function news()

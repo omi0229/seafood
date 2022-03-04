@@ -20,12 +20,11 @@
         width: inherit;
     }
 
-    &.percent-70 {
-        width: 70%;
-    }
-
-    &.percent-100 {
-        width: 100%;
+    $max: 10;
+    @for $i from 1 through $max {
+        &.percent-#{$i * 10} {
+            width: $i * 10%;
+        }
     }
 }
 

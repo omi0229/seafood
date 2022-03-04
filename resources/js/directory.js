@@ -1,36 +1,27 @@
-import moment from 'moment';
 import { swal2Confirm } from './bootstrap';
 import { search } from './components/search.js';
 import { pagination } from './components/pagination.js';
+import { table } from './components/table.js';
 
 window.app = createApp({
     components: {
         'components-search': search,
         'components-pagination': pagination,
+        'components-table': table,
+    },
+    setup() {
+
     },
     data() {
         return {
             all_count: 0,
             page_count: 10,
-            checkAll: false,
             check: [],
             list: [],
             search_text: '',
         }
     },
     delimiters: ["${", "}"],
-    watch: {
-        'checkAll'(newData, oldData) {
-            this.check = newData ? _.map(this.list, 'id') : [];
-        },
-    },
-    computed: {
-        dateFormat() {
-            return datetime => {
-                return moment(datetime).format('Y-MM-DD HH:mm');
-            }
-        },
-    },
     mounted() {
         this.getCount();
         this.getData(1);
