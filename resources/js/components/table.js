@@ -6,7 +6,7 @@ export const table = {
     template: `
         <div class="card">
             <div class="card-header d-flex align-items-center justify-content-between">
-                <h3 class="card-title text-nowrap">{{ name }}</h3>
+                <h3 class="card-title text-nowrap">{{ name }}列表</h3>
                 <div class="text-right w-100">
                     <template v-if="!is_sort_open">
                         <button class="btn btn-sm btn-secondary" @click="is_sort_open = true">修改排序</button>
@@ -25,14 +25,14 @@ export const table = {
                         <th class="align-middle">
                             <input type="checkbox" class="checkbox-size" v-model="checkAll">
                         </th>
-                        <th>目錄名稱</th>
+                        <th>{{ name }}名稱</th>
                         <th class="text-center">排序</th>
                         <th class="text-center">建立日期</th>
                         <th class="text-center">上次異動日期</th>
                         <th class="text-center">功能</th>
                     </tr>
                     <tr v-else>
-                        <th class="text-center" colspan="5"><span class="text-danger">無目錄資料</span></th>
+                        <th class="text-center" colspan="5"><span class="text-danger">無{{ name }}資料</span></th>
                     </tr>
                     </thead>
                     <tbody>

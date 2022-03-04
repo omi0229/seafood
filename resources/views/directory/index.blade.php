@@ -40,7 +40,7 @@
         <div class="content px-4">
             <div class="row">
                 <div class="col-12">
-                    <components-table type="Directory" name="目錄列表" :list="list" @modify="modify" v-model:check="check"></components-table>
+                    <components-table type="Directory" name="目錄" :list="list" @modify="modify" v-model:check="check"></components-table>
                 </div>
                 <components-pagination ref="pagination" :all_count="all_count" :page_count="page_count" @get-data="getData"></components-pagination>
             </div>
