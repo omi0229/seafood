@@ -31,7 +31,7 @@ class DirectoryRepository extends Repository
                 $query->where('status', 1);
             })
             ->orderBy('location')
-            ->orderBy('id', 'DESC')
+            ->orderBy('id')
             ->get();
 
         $list = [];
