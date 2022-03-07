@@ -162,4 +162,8 @@ Route::middleware(['auth:member_api'])->group(function () {
     Route::get('member/coupon-list/{member_id}/{used?}', [MemberController::class, 'couponList']);
     # 這次購物可使用的優惠劵
     Route::post('member/coupon-use', [MemberController::class, 'couponUse']);
+
+    ### 購物車
+    # 再次購買
+    Route::post('cart/buy-again', [CartController::class, 'buyAgain']);
 });

@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Models\Cart;
 use App\Http\Resources\CartResource;
 use App\Services\ShoppingCartServices;
+use App\Repositories\CartRepository;
 
 class CartController extends Controller
 {
@@ -60,5 +61,17 @@ class CartController extends Controller
     {
         Cart::where('cart_id', $uu_id)->delete();
         return response()->Json(['status' => true, 'message' => '已清空購物車']);
+    }
+
+    # 重新加入購物車
+    public function buyAgain(Request $request, CartRepository $repository)
+    {
+        $inputs = $request->all();
+        if (data_get($inputs, 'order_id') && data_get($inputs, 'cart_id')) {
+            $repository->buyAgain($inputs['order_id'], $inputs['cart_id']);
+            return response()->Json(['status' => true, 'message' => 'success']);
+        }
+
+        return response()->Json(['status' => false, 'message' => '無此訂單']);
     }
 }
