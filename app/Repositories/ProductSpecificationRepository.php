@@ -77,6 +77,7 @@ class ProductSpecificationRepository extends Repository
         foreach ($data as $key => $row) {
             array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
+            $list[$key]['product'] = ['title' => $row->product ? $row->product->title : ''];
         }
 
         return $list;

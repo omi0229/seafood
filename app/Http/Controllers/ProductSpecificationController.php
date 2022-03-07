@@ -74,7 +74,7 @@ class ProductSpecificationController extends Controller
 
     public function all()
     {
-        $cache = Cache::remember('coupon_specifications_list', Carbon::now()->addMinutes(15), function () {
+        $cache = Cache::remember('coupon_specifications_list', Carbon::now()->addMinutes(1), function () {
             return $this->repository->allData();
         });
         return response()->json(['status' => true, 'message' => '取得資料成功', 'data' => $cache]);
