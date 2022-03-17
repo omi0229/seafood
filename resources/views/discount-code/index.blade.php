@@ -118,7 +118,7 @@
                         <div class="d-flex align-items-center">
                         本次即將產生
                         <div class="col-4">
-                            <input type="text" maxlength="2" class="form-control form-control-sm" id="records" placeholder="請輸入優惠筆數" v-model="info.records">
+                            <input type="text" maxlength="3" class="form-control form-control-sm" id="records" placeholder="請輸入優惠筆數" v-model="info.records">
                         </div>
                         組，請輸入數字
                         </div>
