@@ -215,6 +215,7 @@ window.app = createApp({
             detailed_content.info.merchant_trade_no = info.merchant_trade_no;
             detailed_content.info.freight = info.freight
             detailed_content.info.freight_name = info.freight_name
+            detailed_content.info.delivery_method = info.delivery_method
             detailed_content.info.payment_method = info.payment_method;
             detailed_content.info.invoice_method = info.invoice_method;
             detailed_content.info.invoice_tax_id_number = info.invoice_tax_id_number;
@@ -430,6 +431,18 @@ let detailed_content = createApp({
         dateFormat() {
             return datetime => {
                 return moment(datetime).format('Y-MM-DD HH:mm');
+            }
+        },
+        deliveryMethodFormat() {
+            return delivery => {
+                switch (delivery) {
+                    case 0:
+                        return '自取';
+                    case 1:
+                        return '宅配到府';
+                    default:
+                        return '';
+                }
             }
         },
         paymentMethodFormat() {

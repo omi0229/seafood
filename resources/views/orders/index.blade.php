@@ -325,6 +325,14 @@
                                     </div>
                                     <div class="row mt-3">
                                         <div class="col-3">
+                                            配送方式
+                                        </div>
+                                        <div class="col-9 text-bold">
+                                            ${deliveryMethodFormat(info.delivery_method)}
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-3">
                                             付款方式
                                         </div>
                                         <div class="col-9 text-bold">
@@ -522,7 +530,7 @@
                                         <div class="col-3 text-right text-danger">
                                             - $ ${ info.coupon_record.coupon.discount.toLocaleString() }</div>
                                     </div>
-                                    <div class="row align-middle justify-content-end">
+                                    <div class="row align-middle justify-content-end" v-if="info.delivery_method !== 0">
                                         <div class="col-9 text-right">運費<span v-if="info.freight_name">(${ info.freight_name })</span>：
                                         </div>
                                         <div class="col-3 text-right text-danger">
