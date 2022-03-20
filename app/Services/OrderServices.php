@@ -512,7 +512,7 @@ class OrderServices
                 <td>' . $row['freight'] . '</td>
                 <td>' . ($order_total + $row['freight']) . '</td>
                 <td>' . $this->__paymentMethod($row['payment_method']) . '</td>
-                <td>' . '宅配到府' . '</td>
+                <td>' . $this->__deliveryMethod($row['delivery_method']) . '</td>
                 <td>' . $invoice_method . '</td>
                 <td>' . $row['invoice_tax_id_number'] . '</td>
                 <td>' . $row['invoice_name'] . '</td>
@@ -608,7 +608,7 @@ class OrderServices
                 <td>' . $row->order->zipcode . ' ' . $row->order->country . $row->order->city . $row->order->address . '</td>
                 <td>' . $this->__paymentMethod($row->order->payment_method) . '</td>
                 <td>' . $row->order->freight_name . '</td>
-                <td>' . '宅配到府' . '</td>
+                <td>' . $this->__deliveryMethod($row->order->delivery_method) . '</td>
                 <td>' . $this->__orderStatus($row->order->order_status) . '</td>
                 <td>' . $row->order->admin_bookmark . '</td>
                 <td>' . $payment_date . '</td>
@@ -681,6 +681,21 @@ class OrderServices
         }
 
         return $payment_method;
+    }
+
+    private function __deliveryMethod($delivery)
+    {
+        $delivery_method = '';
+        switch ($delivery) {
+            case 0:
+                $delivery_method = '自取';
+                break;
+            case 1:
+                $delivery_method = '宅配到府';
+                break;
+        }
+
+        return $delivery_method;
     }
 
     private function __orderStatus($status)

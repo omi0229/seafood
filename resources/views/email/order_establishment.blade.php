@@ -222,7 +222,19 @@
                         配送方式︰
                     </td>
                     <td height='30' style='font-family: 微軟正黑體;font-size: 13px;color: #666666;line-height: 20px;letter-spacing: 1px;' align='left'>
-                        &nbsp;宅配到府
+                        @php
+                            switch($order->delivery_method) {
+                                case 0:
+                                    $delivery = '自取';
+                                    break;
+                                case 1:
+                                    $delivery = '宅配';
+                                    break;
+                                default:
+                                    $delivery = '';
+                            }
+                        @endphp
+                        &nbsp;{{ $delivery  }}&nbsp;
                     </td>
                 </tr>
             </table>
