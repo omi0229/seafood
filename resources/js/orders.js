@@ -559,9 +559,11 @@ let detailed_content = createApp({
             if (data.receiver.cellphone.substr(0, 2) !== '09') {
                 return {'status': false, 'message': '行動電話格式錯誤'}
             }
-
-            if (!(data.receiver.zipcode && data.receiver.country && data.receiver.city && data.receiver.address)) {
-                return {auth: false, message: '收件人地址格式錯誤！'};
+            
+            if (data.delivery_method !== 0) {
+                if (!(data.receiver.zipcode && data.receiver.country && data.receiver.city && data.receiver.address)) {
+                    return {auth: false, message: '收件人地址格式錯誤！'};
+                }
             }
 
             data.shipment_at = $('input[data-target="#shipment_date"]').val();

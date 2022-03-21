@@ -38,6 +38,8 @@ class OrderController extends Controller
 
         $id = data_get($this->request->all(), 'id');
 
+        $model = $this->repository->find($this->model::decodeSlug($id), ['delivery_method']);
+
         $data = $this->request->only('receiver', 'shipment_at', 'admin_bookmark', 'order_status');
 
         $inputs = [
@@ -54,7 +56,7 @@ class OrderController extends Controller
         ];
 
         # 驗證資料
-        $validator = $this->services::authInputData($inputs);
+        $validator = $this->services::authInputData($inputs, $model->delivery_method);
         if ($validator->fails()) {
             return response()->json(['status' => false, 'message' => $validator->errors()->first()]);
         }

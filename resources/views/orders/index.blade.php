@@ -427,7 +427,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane fade" id="custom-tabs-receiver" role="tabpanel"aria-labelledby="custom-tabs-receiver-tab">
+                                <div class="tab-pane fade" id="custom-tabs-receiver" role="tabpanel" aria-labelledby="custom-tabs-receiver-tab">
                                     <h5 class="text-bold">收件人資料</h5>
                                     <hr />
                                     <div class="row align-items-center mt-2">
@@ -458,25 +458,30 @@
                                         <div class="col-3">
                                             收件人地址
                                         </div>
-                                        <div class="col-3">
-                                            <select class="form-control form-control-sm" v-model="info.receiver.country" @change="selectCountry('receiver')">
-                                                <option value="">請選擇城市</option>
-                                                <!-- v-for -->
-                                                <option :value="item.id" v-for="item in select.main_island_counties">${ item.name }</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-3">
-                                            <select class="form-control form-control-sm" v-model="info.receiver.city" @change="selectCity('receiver')">
-                                                <option value="">請選擇地區</option>
-                                                <!-- v-for -->
-                                                <option :value="item.city" v-for="item in select.main_island_cities">${ item.city }</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-3">
-                                            <input class="form-control form-control-sm" type="text" placeholder="郵遞區號" v-model="info.receiver.zipcode" disabled>
-                                        </div>
+                                        <template v-if="info.delivery_method !== 0">
+                                            <div class="col-3">
+                                                <select class="form-control form-control-sm" v-model="info.receiver.country" @change="selectCountry('receiver')">
+                                                    <option value="">請選擇城市</option>
+                                                    <!-- v-for -->
+                                                    <option :value="item.id" v-for="item in select.main_island_counties">${ item.name }</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-3">
+                                                <select class="form-control form-control-sm" v-model="info.receiver.city" @change="selectCity('receiver')">
+                                                    <option value="">請選擇地區</option>
+                                                    <!-- v-for -->
+                                                    <option :value="item.city" v-for="item in select.main_island_cities">${ item.city }</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-3">
+                                                <input class="form-control form-control-sm" type="text" placeholder="郵遞區號" v-model="info.receiver.zipcode" disabled>
+                                            </div>
+                                        </template>
+                                        <template v-else>
+                                            <div class="col-9">(自取)${ info.receiver.address }</div>
+                                        </template>
                                     </div>
-                                    <div class="row align-items-center mt-2">
+                                    <div class="row align-items-center mt-2" v-if="info.delivery_method !== 0">
                                         <div class="col-3"></div>
                                         <div class="col-9">
                                             <input type="text" maxlength="200" class="form-control form-control-sm" v-model="info.receiver.address">

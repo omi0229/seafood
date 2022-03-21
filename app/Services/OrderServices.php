@@ -19,27 +19,41 @@ class OrderServices
 {
     static $model = 'App\Models\Orders';
 
-    static function authInputData($inputs)
+    static function authInputData($inputs, $delivery_method = 1)
     {
-        $auth = [
-            'name' => 'required',
-            'cellphone' => 'required',
-            'email' => 'email',
-            'zipcode' => 'required',
-            'country' => 'required',
-            'city' => 'required',
-            'address' => 'required',
-        ];
+        if ($delivery_method === 0) {
+            $auth = [
+                'name' => 'required',
+                'cellphone' => 'required',
+                'email' => 'email',
+            ];
 
-        $tip = [
-            'name.required' => '收件人姓名不得為空',
-            'cellphone.required' => '收件人手機號碼不得為空',
-            'email.email' => '電子郵件格式錯誤',
-            'zipcode.required' => '收件人地址格式錯誤',
-            'country.required' => '收件人地址格式錯誤',
-            'city.required' => '收件人地址格式錯誤',
-            'address.required' => '收件人地址格式錯誤',
-        ];
+            $tip = [
+                'name.required' => '收件人姓名不得為空',
+                'cellphone.required' => '收件人手機號碼不得為空',
+                'email.email' => '電子郵件格式錯誤',
+            ];
+        } else {
+            $auth = [
+                'name' => 'required',
+                'cellphone' => 'required',
+                'email' => 'email',
+                'zipcode' => 'required',
+                'country' => 'required',
+                'city' => 'required',
+                'address' => 'required',
+            ];
+
+            $tip = [
+                'name.required' => '收件人姓名不得為空',
+                'cellphone.required' => '收件人手機號碼不得為空',
+                'email.email' => '電子郵件格式錯誤',
+                'zipcode.required' => '收件人地址格式錯誤',
+                'country.required' => '收件人地址格式錯誤',
+                'city.required' => '收件人地址格式錯誤',
+                'address.required' => '收件人地址格式錯誤',
+            ];
+        }
 
         return Validator::make($inputs, $auth, $tip);
     }

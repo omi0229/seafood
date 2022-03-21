@@ -20,10 +20,10 @@ class CreateOrdersTable extends Migration
             $table->string('name', 20)->comment('姓名');
             $table->string('cellphone', 10)->comment('手機號碼');
             $table->string('email', 200)->nullable()->comment('email');
-            $table->string('zipcode', 20)->comment('郵遞區號');
-            $table->string('country', 20)->comment('城市');
-            $table->string('city', 20)->comment('地區');
-            $table->string('address', 200)->comment('地址');
+            $table->string('zipcode', 20)->nullable()->comment('郵遞區號');
+            $table->string('country', 20)->nullable()->comment('城市');
+            $table->string('city', 20)->nullable()->comment('地區');
+            $table->string('address', 200)->nullable()->comment('地址');
             $table->bigInteger('freight_id')->unsigned()->nullable()->comment('運費ID');
             $table->string('freight_name', 200)->nullable()->comment('運費名稱');
             $table->integer('freight')->unsigned()->default(0)->comment('運費');
