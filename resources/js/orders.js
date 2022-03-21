@@ -91,6 +91,26 @@ window.app = createApp({
                 }
             }
         },
+        deliveryMethodFormat() {
+            return status => {
+                switch (status) {
+                    case 1:
+                        return '宅配';
+                    default:
+                        return '自取';
+                }
+            }
+        },
+        deliveryMethodColor() {
+            return status => {
+                switch (Number(status)) {
+                    case 1:
+                        return 'text-primary';
+                    default:
+                        return 'text-default';
+                }
+            }
+        },
         orderStatusFormat() {
             return status => {
                 switch (Number(status)) {
@@ -559,7 +579,7 @@ let detailed_content = createApp({
             if (data.receiver.cellphone.substr(0, 2) !== '09') {
                 return {'status': false, 'message': '行動電話格式錯誤'}
             }
-            
+
             if (data.delivery_method !== 0) {
                 if (!(data.receiver.zipcode && data.receiver.country && data.receiver.city && data.receiver.address)) {
                     return {auth: false, message: '收件人地址格式錯誤！'};

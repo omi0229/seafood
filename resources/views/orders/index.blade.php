@@ -76,6 +76,7 @@
                                     <th class="text-center">訂購人姓名</th>
                                     <th class="text-center">訂購時間</th>
                                     <th class="text-center">付款狀態</th>
+                                    <th class="text-center">配送方式</th>
                                     <th class="text-center">訂單狀態</th>
                                     <th class="text-center">訂單金額</th>
                                     <th class="text-center">物流取號狀態</th>
@@ -89,13 +90,16 @@
                                 <!-- v-for -->
                                 <tr v-for="item in list">
                                     <td class="align-middle">
-                                        <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check" v-if="item.payment_status === 1 && !item.AllPayLogisticsID">
-                                        <input type="checkbox" class="checkbox-size-for-print" style="border: 1px solid #28a745" :value="item.AllPayLogisticsID" v-model="check_print" v-if="item.AllPayLogisticsID">
+                                        <template v-if="item.delivery_method !== 0">
+                                            <input type="checkbox" class="checkbox-size" :value="item.id" v-model="check" v-if="item.payment_status === 1 && !item.AllPayLogisticsID">
+                                            <input type="checkbox" class="checkbox-size-for-print" style="border: 1px solid #28a745" :value="item.AllPayLogisticsID" v-model="check_print" v-if="item.AllPayLogisticsID">
+                                        </template>
                                     </td>
                                     <td>${item.merchant_trade_no}</td>
                                     <td class="text-center">${item.member.name}</td>
                                     <td class="text-center">${dateFormat(item.created_at)}</td>
                                     <td class="text-center" :class="paymentStatusColor(item.payment_status)">${paymentStatusFormat(item.payment_status)}</td>
+                                    <td class="text-center" :class="deliveryMethodColor(item.delivery_method)">${deliveryMethodFormat(item.delivery_method)}</td>
                                     <td class="text-center" :class="orderStatusColor(item.order_status)">${orderStatusFormat(item.order_status)}</td>
                                     <td class="text-center text-danger">${orderTotal(item.freight, item.order_products, item.discount_record, item.coupon_record)}</td>
                                     <td class="text-center" :class="item.AllPayLogisticsID ? 'text-success text-bold' : ''">
