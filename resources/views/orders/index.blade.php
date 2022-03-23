@@ -165,6 +165,13 @@
                                 ${ item.name }
                             </label>
                         </template>
+                        <h6>預定送達時段</h6>
+                        <template v-for="(item, key) in radio.ScheduledDeliveryTime">
+                            <label :for="'send-ScheduledDeliveryTime' + key" class="mr-3">
+                                <input type="radio" :id="'send-ScheduledDeliveryTime' + key" :value="item.value" v-model="value.ScheduledDeliveryTime" />
+                                ${ item.name }
+                            </label>
+                        </template>
                         <hr />
                         <h6>此訂單商品明細</h6>
                         <div class="order_products_list">

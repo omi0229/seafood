@@ -31,6 +31,7 @@ window.app = createApp({
             },
             value: {
                 specification: '0001',
+                ScheduledDeliveryTime: '1',
             },
             radio: {
                 specification: [
@@ -45,6 +46,20 @@ window.app = createApp({
                     {
                         value: '0003',
                         name: '120cm',
+                    },
+                ],
+                ScheduledDeliveryTime:[
+                    {
+                        value: '1',
+                        name: '13點以前',
+                    },
+                    {
+                        value: '2',
+                        name: '14點~18點',
+                    },
+                    {
+                        value: '4',
+                        name: '不限時',
                     },
                 ],
             },
@@ -391,7 +406,9 @@ window.app = createApp({
                 return false;
             }
 
+            // 選項初始化
             this.value.specification = '0001';
+            this.value.ScheduledDeliveryTime = '1';
 
             let info = _.find(this.list, ['id', this.check[0]]);
             this.order_products = info.order_products;
@@ -414,6 +431,7 @@ window.app = createApp({
                         order_id: this.check[0],
                         order_total: this.orderTotal(info.freight, info.order_products, info.discount_record, info.coupon_record),
                         Specification: this.value.specification,
+                        ScheduledDeliveryTime: this.value.ScheduledDeliveryTime,
                     };
 
                     axiosPostMethod('/orders/form-data/logistics', obj).then(res => {

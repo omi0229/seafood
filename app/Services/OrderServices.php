@@ -152,6 +152,7 @@ class OrderServices
                 'Temperature' => '0003',
                 'Distance' => '00',
                 'Specification' => $inputs['Specification'],
+                'ScheduledDeliveryTime' => $inputs['ScheduledDeliveryTime'],
                 'ServerReplyURL' => env('APP_URL') . '/ecpay-server-reply',
             ];
 
