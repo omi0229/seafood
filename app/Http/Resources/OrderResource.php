@@ -31,6 +31,7 @@ class OrderResource extends JsonResource
 
             array_push($order_products, $order_product);
             $order_products[$key]['product'] = $order_product->product;
+            unset($order_products[$key]['product']['content']);
             $order_products[$key]['product_specifications'] = $order_product->product_specifications;
             $order_products[$key]['img'] = $img;
         }
