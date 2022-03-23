@@ -39,8 +39,6 @@ class OrderRepository extends Repository
 
     public function list($page, array $params = [])
     {
-        $keywords = data_get($params, 'keywords');
-
         $data = $this->model::with([
             'order_products',
             'order_products.product',
@@ -52,16 +50,7 @@ class OrderRepository extends Repository
             'discount_record.coupon'
         ]);
 
-        $data = !$keywords ? $data : $data->where('merchant_trade_no', 'LIKE', '%' . $keywords . '%')->orWhere('name', 'LIKE', '%' . $keywords . '%');
-
-        $member_id  = data_get($params, 'member_id');
-        $data = !$member_id ? $data : $data->where('member_id', Member::decodeSlug($member_id));
-
-        $start_date = data_get($params, 'start_date');
-        $end_date = data_get($params, 'end_date');
-        if ($start_date && $end_date) {
-            $data->whereBetween('created_at', [$start_date . ' 00:00:00', $end_date . ' 23:59:59']);
-        }
+        $data = $this->searchCondition($data, $params);
 
         # 是否分頁顯示
         $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;
@@ -81,10 +70,39 @@ class OrderRepository extends Repository
 
     public function count(array $params = [])
     {
+        return $this->searchCondition($this->model, $params)->count();
+    }
+
+    public function searchCondition($data, $params)
+    {
+        # 關鍵字
         $keywords = data_get($params, 'keywords');
+        if ($keywords) {
+            $data = $data->where(function ($query) use ($keywords) {
+                $query->where('merchant_trade_no', 'LIKE', '%' . $keywords . '%');
+                $query->orWhere('name', 'LIKE', '%' . $keywords . '%');
+            });
+        }
 
-        $data = !$keywords ? $this->model : $this->model->where('merchant_trade_no', 'LIKE', '%' . $keywords . '%')->orWhere('name', 'LIKE', '%' . $keywords . '%');
+        # 訂單狀態
+        $order_status = data_get($params, 'order_status');
+        $data = $order_status === null ? $data : $data->where('order_status', $order_status);
 
-        return $data->count();
+        # 付款狀態
+        $payment_status = data_get($params, 'payment_status');
+        $data = $payment_status === null ? $data : $data->where('payment_status', $payment_status);
+
+        # 會員編號
+        $member_id  = data_get($params, 'member_id');
+        $data = !$member_id ? $data : $data->where('member_id', Member::decodeSlug($member_id));
+
+        # 訂購時間範圍
+        $start_date = data_get($params, 'start_date');
+        $end_date = data_get($params, 'end_date');
+        if ($start_date && $end_date) {
+           $data = $data->whereBetween('created_at', [$start_date . ' 00:00:00', $end_date . ' 23:59:59']);
+        }
+
+        return $data;
     }
 }

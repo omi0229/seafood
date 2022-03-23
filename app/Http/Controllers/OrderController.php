@@ -67,7 +67,7 @@ class OrderController extends Controller
     }
 
     public function export($type) {
-        return $this->services->exportOrders($type);
+        return $this->services->exportOrders($type, $this->request->all());
     }
 
     # ATM繳費回傳結果

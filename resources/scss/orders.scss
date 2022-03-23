@@ -18,6 +18,12 @@ textarea {
     }
 }
 
+.content {
+    .card-header {
+        border-bottom: 0;
+    }
+}
+
 .news-keywords {
   min-height: 130px;
   width: 100%;
@@ -63,5 +69,19 @@ th {
 
     &.width-30 {
         width: 30%;
+    }
+}
+
+#daterangepicker {
+    @media (min-width: 992px) {
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    label {
+        position: absolute;
+        top: 50%;
+        transform: translate(0, -50%);
+        left: 50px;
+        z-index: 1;
     }
 }

@@ -18,6 +18,12 @@ window.app = createApp({
             check_print: [],
             list: [],
             search_text: '',
+            search: {
+                order_status: '',
+                payment_status: '',
+                start_date: '',
+                end_date: '',
+            },
             order_products: [],
             ECPay: [],
             url: {
@@ -177,6 +183,33 @@ window.app = createApp({
         },
     },
     async mounted() {
+        $('#reservation').daterangepicker({
+            locale: {
+                format: 'Y-MM-DD',
+                applyLabel: '確定',
+                cancelLabel: '清空',
+            },
+            autoUpdateInput: false,
+        });
+        $('#reservation').on('apply.daterangepicker', async (ev, picker) => {
+            loading.show = true;
+            this.search.start_date = picker.startDate.format('YYYY-MM-DD');
+            this.search.end_date = picker.endDate.format('YYYY-MM-DD');
+            await this.getCount();
+            this.getData(1).then(() => {
+                loading.show = false;
+            });
+        });
+        $('#reservation').on('cancel.daterangepicker', async (ev, picker) => {
+            loading.show = true;
+            this.search.start_date = '';
+            this.search.end_date = '';
+            await this.getCount();
+            this.getData(1).then(() => {
+                loading.show = false;
+            });
+        });
+
         if (sessionStorage.getItem('keywords')) {
             this.search_text = sessionStorage.getItem('keywords');
             sessionStorage.removeItem('keywords')
@@ -190,10 +223,32 @@ window.app = createApp({
         await this.getData(1);
     },
     methods: {
+        getUri() {
+            let search_uri = '';
+
+            if (this.search_text) {
+                search_uri += '?keywords=' + this.search_text;
+            }
+
+            if (this.search.order_status !== '') {
+                search_uri += !search_uri ? '?order_status=' + this.search.order_status : '&order_status=' + this.search.order_status;
+            }
+
+            if (this.search.payment_status === 0) {
+                search_uri += !search_uri ? '?payment_status=' + this.search.payment_status : '&payment_status=' + this.search.payment_status;
+            }
+
+            if (this.search.start_date && this.search.end_date) {
+                search_uri += !search_uri ? '?start_date=' + this.search.start_date : '&start_date=' + this.search.start_date;
+                search_uri += '&end_date=' + this.search.end_date;
+            }
+
+            return search_uri;
+        },
         getCount() {
             return new Promise(resolve => {
-                let url = !this.search_text ? '/orders/count' : '/orders/count?keywords=' + this.search_text;
-                axiosGetMethod(url).then(res => {
+                let url = '/orders/count';
+                axiosGetMethod(url + this.getUri()).then(res => {
                     this.all_count = res.data.count;
                     this.page_count = res.data.page_count;
                     resolve();
@@ -203,19 +258,14 @@ window.app = createApp({
         getData(page) {
             return new Promise(resolve => {
                 let url = '/orders/list/' + page;
-
-                if (this.search_text) {
-                    url += '?keywords=' + this.search_text;
-                }
-
-                axiosGetMethod(url).then(res => {
+                axiosGetMethod(url + this.getUri()).then(res => {
                     this.list = res.data.data;
                     if (loading && loading.show) {
                         loading.show = false;
                     }
 
                     this.check = [];
-
+                    this.$refs.pagination.setPage(page);
                     resolve();
                 });
             });
@@ -224,6 +274,21 @@ window.app = createApp({
         //     detailed_content.dataInit();
         //     detailed_content.mode = 'create';
         // },
+        async changeStatus(status, type = 'order') {
+            loading.show = true;
+            if (type === 'payment') {
+                this.search.order_status = '';
+                this.search.payment_status = status;
+            } else {
+                this.search.order_status = status;
+                this.search.payment_status = '';
+            }
+
+            await this.getCount();
+            this.getData(1).then(() => {
+                loading.show = false;
+            });
+        },
         detail(id) {
 
             detailed_content.dataInit();
@@ -310,7 +375,7 @@ window.app = createApp({
         exportData(type) {
             switch (type) {
                 case 'orders':
-                    window.open('/orders/export/orders');
+                    window.open('/orders/export/orders' + this.getUri());
                     break;
                 case 'all':
                     window.open('/orders/export/all');

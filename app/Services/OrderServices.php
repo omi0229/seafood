@@ -11,6 +11,7 @@ use App\Models\ProductSpecifications;
 use App\Models\OrderProducts;
 use App\Models\DiscountCode;
 use App\Models\DiscountRecord;
+use App\Repositories\OrderRepository;
 use App\Services\DiscountCodeServices;
 use App\Services\CouponServices;
 use Ecpay\Sdk\Services\CheckMacValueService;
@@ -434,11 +435,11 @@ class OrderServices
     }
 
     # 匯出
-    public function exportOrders($type)
+    public function exportOrders($type, $params)
     {
         switch ($type) {
             case 'orders':
-                return $this->__exportOrders();
+                return $this->__exportOrders($params);
             case 'all':
                 return $this->__exportAll();
             case 'products':
@@ -447,9 +448,10 @@ class OrderServices
     }
 
     # 匯出訂單
-    private function __exportOrders()
+    private function __exportOrders($params = [])
     {
-        $model = app()->make(self::$model);
+        $repository = new OrderRepository;
+        $model = $repository->searchCondition(app()->make(self::$model), $params);
 
         $xls = '<table>';
 
@@ -483,7 +485,7 @@ class OrderServices
             <th><span>訂單詳細(品名^規格^單價^數量^價格)</span></th>
         </tr>';
 
-        foreach ($model->all() as $row) {
+        foreach ($model->get() as $row) {
             $payment_status = '';
             switch ($row['payment_status']) {
                 case 0:

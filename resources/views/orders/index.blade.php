@@ -2,6 +2,7 @@
 
 @section('content')
     <link rel="stylesheet" href="plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+    <link rel="stylesheet" href="plugins/daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="css/orders.css">
     <div id="app" v-cloak>
@@ -65,6 +66,31 @@
                             <h3 class="card-title">訂單列表</h3>
                         </div>
                         <div class="card-body table-responsive p-0">
+                            <div class="row mx-0">
+                                <ul class="nav nav-tabs col-12 col-lg-6">
+                                    <li class="nav-item" @click="changeStatus('')"><a class="nav-link" :class="search.order_status === '' &&  search.payment_status !== 0? 'active' : ''" href="#">全部</a></li>
+                                    <li class="nav-item" @click="changeStatus(0, 'payment')"><a class="nav-link" :class="search.payment_status === 0 ? 'active' : ''" href="#">尚未付款</a></li>
+                                    <li class="nav-item" @click="changeStatus(1)"><a class="nav-link" :class="search.order_status === 1 ? 'active' : ''" href="#">待出貨</a></li>
+                                    <li class="nav-item" @click="changeStatus(2)"><a class="nav-link" :class="search.order_status === 2 ? 'active' : ''" href="#">已出貨</a></li>
+                                    <li class="nav-item" @click="changeStatus(3)"><a class="nav-link" :class="search.order_status === 3 ? 'active' : ''" href="#">已完成</a></li>
+                                    <li class="nav-item" @click="changeStatus(-1)"><a class="nav-link" :class="search.order_status === -1 ? 'active' : ''" href="#">不成立</a></li>
+                                    <li class="nav-item" @click="changeStatus(-2)"><a class="nav-link" :class="search.order_status === -2 ? 'active' : ''" href="#">退款/退貨</a></li>
+                                </ul>
+                                <div id="daterangepicker" class="col-12 col-lg-6 row mx-0">
+                                    <div class="col-lg-2"></div>
+                                    <div class="col-12 col-lg-10">
+                                        <div class="input-group position-relative">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="far fa-calendar-alt"></i>
+                                                </span>
+                                            </div>
+                                            <label for="reservation">${search.start_date} - ${search.end_date}</label>
+                                            <input type="text" class="form-control float-right" id="reservation">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <table class="table table-hover text-nowrap">
                                 <thead>
                                 <!-- v-if -->
@@ -567,6 +593,7 @@
     <script src="plugins/moment/moment-with-locales.min.js"></script>
     <script src="plugins/inputmask/jquery.inputmask.min.js"></script>
     <script src="plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="plugins/daterangepicker/daterangepicker.js"></script>
     <script src="plugins/ckeditor/ckeditor.js"></script>
     <script src="js/orders.js"></script>
 @endsection
