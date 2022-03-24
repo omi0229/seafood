@@ -398,10 +398,10 @@ window.app = createApp({
                     window.open('/orders/export/orders' + this.getUri());
                     break;
                 case 'all':
-                    window.open('/orders/export/all');
+                    window.open('/orders/export/all' + this.getUri());
                     break;
                 case 'products':
-                    window.open('/orders/export/products');
+                    window.open('/orders/export/products' + this.getUri());
                     break;
             }
         },

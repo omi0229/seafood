@@ -11,6 +11,7 @@ use App\Models\ProductSpecifications;
 use App\Models\OrderProducts;
 use App\Models\DiscountCode;
 use App\Models\DiscountRecord;
+use App\Models\Member;
 use App\Repositories\OrderRepository;
 use App\Services\DiscountCodeServices;
 use App\Services\CouponServices;
@@ -442,9 +443,9 @@ class OrderServices
             case 'orders':
                 return $this->__exportOrders($params);
             case 'all':
-                return $this->__exportAll();
+                return $this->__exportAll($params);
             case 'products':
-                return $this->__exportProducts();
+                return $this->__exportProducts($params);
         }
     }
 
@@ -559,9 +560,11 @@ class OrderServices
     }
 
     # 匯出全部
-    private function __exportAll()
+    private function __exportAll($params = [])
     {
-        $data = OrderProducts::all();
+        $data = OrderProducts::whereHas('order', function ($query) use ($params) {
+            $this->__orderProductsSearchCondition($query, $params);
+        })->get();
 
         $xls = '<table>';
 
@@ -642,9 +645,11 @@ class OrderServices
     }
 
     # 匯出揀貨單
-    private function __exportProducts()
+    private function __exportProducts($params = [])
     {
-        $data = OrderProducts::all()->sortByDesc('updated_at')->sortByDesc('product_specifications_id');
+        $data = OrderProducts::whereHas('order', function ($query) use ($params) {
+            $this->__orderProductsSearchCondition($query, $params);
+        })->get()->sortByDesc('updated_at')->sortByDesc('product_specifications_id');
 
         $xls = '<table>';
 
@@ -683,6 +688,43 @@ class OrderServices
         header('Cache-Control: max-age=0');
 
         return $xls;
+    }
+
+    private function __orderProductsSearchCondition($query, $params)
+    {
+        # 關鍵字
+        $keywords = data_get($params, 'keywords');
+        if ($keywords) {
+            $query->where(function ($query) use ($keywords) {
+                $query->where('merchant_trade_no', 'LIKE', '%' . $keywords . '%');
+                $query->orWhere('name', 'LIKE', '%' . $keywords . '%');
+            });
+        }
+
+        # 訂單狀態
+        $order_status = data_get($params, 'order_status');
+        if ($order_status !== null) {
+            $query->where('order_status', $order_status);
+        }
+
+        # 付款狀態
+        $payment_status = data_get($params, 'payment_status');
+        if ($payment_status !== null) {
+            $query->where('payment_status', $payment_status);
+        }
+
+        # 會員編號
+        $member_id = data_get($params, 'member_id');
+        if ($member_id) {
+            $query->where('member_id', Member::decodeSlug($member_id));
+        }
+
+        # 訂購時間範圍
+        $start_date = data_get($params, 'start_date');
+        $end_date = data_get($params, 'end_date');
+        if ($start_date && $end_date) {
+            $query->whereBetween('created_at', [$start_date . ' 00:00:00', $end_date . ' 23:59:59']);
+        }
     }
 
     private function __paymentMethod($payment)
