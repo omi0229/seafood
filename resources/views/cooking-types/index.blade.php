@@ -20,7 +20,7 @@
 
         <div class="row mx-0 px-3">
             <div class="mb-3 col-12 col-md-6">
-                <components-search v-model:search_text="search_text" name="分類" @get-count="getCount" @get-data="getData"></components-search>
+                <components-search v-model:search_text="keywords" name="分類" @get-count="getCount" @get-data="setKeywords"></components-search>
             </div>
             <div class="mb-3 col-12 col-md-6 d-flex justify-content-end">
                 <!-- v-show -->
@@ -40,7 +40,7 @@
         <div class="content px-4">
             <div class="row">
                 <div class="col-12">
-                    <components-table type="CookingTypes" name="分類" :list="list" @modify="modify" v-model:check="check"></components-table>
+                    <components-table type="CookingTypes" name="分類" :list="list" :search_text="search_text" @modify="modify" v-model:check="check"></components-table>
                 </div>
                 <components-pagination ref="pagination" :all_count="all_count" :page_count="page_count" @get-data="getData"></components-pagination>
             </div>

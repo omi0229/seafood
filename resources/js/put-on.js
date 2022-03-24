@@ -27,6 +27,7 @@ window.app = createApp({
             all_count: 0,
             page_count: 10,
             search_text: '',
+            keywords: '',
             value: {
                 directory: '',
             },
@@ -66,6 +67,10 @@ window.app = createApp({
 
     },
     methods: {
+        setKeywords(page) {
+            this.search_text = this.keywords;
+            this.getData(page);
+        },
         getCount() {
             return new Promise(resolve => {
                 let url = '/put-on/count?directories_id=' + this.value.directory;
@@ -85,7 +90,7 @@ window.app = createApp({
                     app.check = [];
                     app.checkAll = false;
                     app.list = res.data.data;
-                    this.$refs.pagination.setPage(page);
+                    this.$refs.pagination ? this.$refs.pagination.setPage(page) : null;
                     loading.show = false;
                 });
             });

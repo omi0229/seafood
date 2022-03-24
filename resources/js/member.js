@@ -60,6 +60,8 @@ window.app = createApp({
                     if (loading && loading.show) {
                         loading.show = false;
                     }
+
+                    this.$refs.pagination ? this.$refs.pagination.setPage(page) : null;
                     resolve();
                 });
             });

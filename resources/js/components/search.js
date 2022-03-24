@@ -21,7 +21,7 @@ export const search = {
 
         const getData = async () => {
             loading.show = true;
-            await emit('get-data', 1, 1);
+            await emit('get-data', 1);
             await emit('get-count', 1);
         }
 

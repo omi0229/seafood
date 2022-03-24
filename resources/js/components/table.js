@@ -8,6 +8,7 @@ export const table = {
             <div class="card-header d-flex align-items-center justify-content-between">
                 <h3 class="card-title text-nowrap">{{ name }}列表</h3>
                 <div class="text-right w-100">
+                    <div class="d-inline-block mr-2 s-14" v-if="search_text">目前搜尋關鍵字為：<span class="text-primary">{{ search_text }}</span></div>
                     <template v-if="!is_sort_open">
                         <button class="btn btn-sm btn-secondary" @click="is_sort_open = true">修改排序</button>
                     </template>
@@ -63,6 +64,7 @@ export const table = {
         'type': String,
         'name': String,
         'list': Array,
+        'search_text': String,
     },
     setup(props, {emit}) {
         const check = ref([]);

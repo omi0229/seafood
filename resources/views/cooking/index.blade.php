@@ -23,7 +23,7 @@
 
         <div class="row mx-0 px-3">
             <div class="mb-3 col-12 col-md-6">
-                <components-search v-model:search_text="search_text" name="烹飪教學" @get-count="getCount" @get-data="getData"></components-search>
+                <components-search v-model:search_text="keywords" name="烹飪教學" @get-count="getCount" @get-data="setKeywords"></components-search>
             </div>
             <div class="mb-3 col-12 col-md-6 d-flex justify-content-end">
                 <!-- v-show -->
@@ -44,8 +44,9 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">烹飪教學列表</h3>
+                        <div class="card-header row mx-0">
+                            <h3 class="card-title col-12 col-lg-6 px-0">烹飪教學列表</h3>
+                            <div class="col-12 col-lg-6 px-0 d-flex align-items-center justify-content-end s-14" v-if="search_text">目前搜尋關鍵字為：<span class="text-primary">${ search_text }</span></div>
                         </div>
                         <div class="card-body table-responsive p-0">
                             <table class="table table-hover text-nowrap">

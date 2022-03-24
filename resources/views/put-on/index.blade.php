@@ -33,7 +33,7 @@
             </div>
             <div class="col-12 col-md-3 mb-3">
                 <template v-if="value.directory">
-                    <components-search v-model:search_text="search_text" name="產品" @get-count="getCount" @get-data="getData"></components-search>
+                    <components-search v-model:search_text="keywords" name="產品" @get-count="getCount" @get-data="setKeywords"></components-search>
                 </template>
             </div>
             <div class="col-12 col-md-6 d-flex justify-content-end">
@@ -56,8 +56,9 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">上架列表</h3>
+                        <div class="card-header row mx-0">
+                            <h3 class="card-title col-12 col-lg-6 px-0">上架列表</h3>
+                            <div class="col-12 col-lg-6 px-0 d-flex align-items-center justify-content-end s-14" v-if="search_text">目前搜尋關鍵字為：<span class="text-primary">${ search_text }</span></div>
                         </div>
                         <div class="card-body table-responsive p-0">
                             <table class="table table-hover text-nowrap">

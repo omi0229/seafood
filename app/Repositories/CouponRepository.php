@@ -26,7 +26,7 @@ class CouponRepository extends Repository
             'coupon_records.order',
         ])->withCount(['coupon_records']);
 
-        $data = !$keywords ? $data : $data->where('title', 'LIKE', '%' . $keywords . '%')->orWhere('fixed_name', 'LIKE', '%' . $keywords . '%');
+        $data = !$keywords ? $data : $data->where('title', 'LIKE', '%' . $keywords . '%')->orWhere('coupon', 'LIKE', '%' . $keywords . '%');
 
         # 是否分頁顯示
         $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * 10 : null;

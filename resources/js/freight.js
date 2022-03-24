@@ -17,6 +17,7 @@ window.app = createApp({
             check: [],
             list: [],
             search_text: '',
+            keywords: '',
         }
     },
     delimiters: ["${", "}"],
@@ -64,6 +65,10 @@ window.app = createApp({
         });
     },
     methods: {
+        setKeywords(page) {
+            this.search_text = this.keywords;
+            this.getFloor1Data(page);
+        },
         getCount(floor) {
             return new Promise(resolve => {
                 let url = '/freight/count';
@@ -82,6 +87,9 @@ window.app = createApp({
                 url += '?floor=' + floor;
                 url += this.search_text ? '&keywords=' + this.search_text : '';
                 axiosGetMethod(url).then(res => {
+
+                    this.$refs.pagination ? this.$refs.pagination.setPage(page) : null;
+
                     resolve(res);
                 });
             });
@@ -92,6 +100,8 @@ window.app = createApp({
                 if (loading && loading.show) {
                     loading.show = false;
                 }
+
+                this.$refs.pagination ? this.$refs.pagination.setPage(page) : null;
             });
             await this.getCount(floor);
         },

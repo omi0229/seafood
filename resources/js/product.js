@@ -18,6 +18,7 @@ window.app = createApp({
             check: [],
             list: [],
             search_text: '',
+            keywords: '',
         }
     },
     delimiters: ["${", "}"],
@@ -31,6 +32,10 @@ window.app = createApp({
         await this.getData(1);
     },
     methods: {
+        setKeywords(page) {
+            this.search_text = this.keywords;
+            this.getData(page);
+        },
         getCount() {
             return new Promise(resolve => {
                 let url = !this.search_text ? '/product/count' : '/product/count?keywords=' + this.search_text;
@@ -54,6 +59,8 @@ window.app = createApp({
                     if (loading && loading.show) {
                         loading.show = false;
                     }
+
+                    this.$refs.pagination ? this.$refs.pagination.setPage(page) : null;
                     resolve();
                 });
             });
