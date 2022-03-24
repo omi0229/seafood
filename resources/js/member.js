@@ -18,6 +18,7 @@ window.app = createApp({
             checkAll: false,
             check: [],
             list: [],
+            keywords: '',
             search_text: '',
         }
     },
@@ -32,6 +33,10 @@ window.app = createApp({
         this.getData(1);
     },
     methods: {
+        setKeywords(page) {
+            this.search_text = this.keywords;
+            this.getData(page);
+        },
         getCount() {
             return new Promise(resolve => {
                 let url = !this.search_text ? '/member/count' : '/member/count?keywords=' + this.search_text;

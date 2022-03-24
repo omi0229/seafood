@@ -17,6 +17,7 @@ window.app = createApp({
             check: [],
             check_print: [],
             list: [],
+            keywords: '',
             search_text: '',
             search: {
                 order_status: '',
@@ -238,6 +239,10 @@ window.app = createApp({
         await this.getData(1);
     },
     methods: {
+        setKeywords(page) {
+            this.search_text = this.keywords;
+            this.getData(page);
+        },
         getUri() {
             let search_uri = '';
 
