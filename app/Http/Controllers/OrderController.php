@@ -130,67 +130,68 @@ class OrderController extends Controller
     {
         $inputs = $this->request->all();
 
-//            $CheckMacValueService = new \Ecpay\Sdk\Services\CheckMacValueService($repository->configs['hash_key'], $repository->configs['hash_iv'], 'sha256');
-//            if (!$CheckMacValueService->verify($inputs)) {
-//                return false;
-//            }
+        $model = \App\Models\Config::Where('config_name', 'goldflow_HashKey')->orWhere('config_name', 'goldflow_HashIV')->get();
+        $HashKey = $model->find('goldflow_HashKey') ? $model->find('goldflow_HashKey')->config_value : null;
+        $HashIV = $model->find('goldflow_HashIV') ? $model->find('goldflow_HashIV')->config_value : null;
+        if ($HashKey && $HashIV) {
+            $CheckMacValueService = new \Ecpay\Sdk\Services\CheckMacValueService($HashKey, $HashIV, 'sha256');
+            if ($CheckMacValueService->verify($inputs) && data_get($inputs, 'CustomField1') && data_get($inputs, 'RtnCode')) {
+                $RtnCode = $inputs['RtnCode'];
+                $payment_status = (int)$RtnCode === 1 ? 1 : -2;
 
-        if (data_get($inputs, 'CustomField1') && data_get($inputs, 'RtnCode')) {
-            $RtnCode = $inputs['RtnCode'];
-            $payment_status = $RtnCode === 1 ? 1 : -2;
+                $order_id = Orders::decodeSlug($inputs['CustomField1']);
+                $order = $this->repository->find($order_id);
+                $this->repository->update($order_id, [
+                    'payment_method' => 1,
+                    'payment_status' => $payment_status,
+                    'TradeNo' => null,
+                    'BankCode' => null,
+                    'vAccount' => null,
+                    'ExpireDate' => null,
+                ]);
 
-            $order_id = Orders::decodeSlug($inputs['CustomField1']);
-            $order = $this->repository->find($order_id);
-            $this->repository->update($order_id, [
-                'payment_method' => 1,
-                'payment_status' => $payment_status,
-                'TradeNo' => null,
-                'BankCode' => null,
-                'vAccount' => null,
-                'ExpireDate' => null,
-            ]);
+                $order->refresh();
 
-            $order->refresh();
-
-            # 如果有用優惠劵並且付款成功
-            if (data_get($inputs, 'CustomField2')) {
-                $coupon_record_id = $inputs['CustomField2'];
-                $record = DiscountRecord::find(DiscountRecord::decodeSlug($coupon_record_id));
-                if ($record) {
-                    $record->orders_id = $order_id;
-                    $record->member_id = $order->member_id;
-                    $record->used_at = now();
-                    $record->save();
+                # 如果有用優惠劵並且付款成功
+                if (data_get($inputs, 'CustomField2')) {
+                    $coupon_record_id = $inputs['CustomField2'];
+                    $record = DiscountRecord::find(DiscountRecord::decodeSlug($coupon_record_id));
+                    if ($record) {
+                        $record->orders_id = $order_id;
+                        $record->member_id = $order->member_id;
+                        $record->used_at = now();
+                        $record->save();
+                    }
                 }
+
+                $payment_status_message = $RtnCode === 1 ? '訂單成立(已成功付款)' : '付款失敗';
+                # line notify 推播
+                $userServices->pushAdminNotify('訂單編號：' . $order->merchant_trade_no . ' ' . $payment_status_message);
+
+                # mail 通知
+                try {
+                    Mail::to($order->email)->send(new PaymentSuccess($order));
+                } catch (\Exception $e) {
+                    \AppLog::record(['type' => 'error_mail', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => $e->getMessage()]);
+                }
+
+                # 付款紀錄
+                \AppLog::record([
+                    'type' => 'payment',
+                    'user_id' => $order->member_id,
+                    'data_id' => $order_id,
+                    'content' => json_encode($inputs),
+                ]);
+            } else {
+                # 其他紀錄
+                \AppLog::record([
+                    'type' => 'payment_error',
+                    'user_id' => null,
+                    'data_id' => null,
+                    'content' => json_encode($inputs),
+                ]);
             }
-
-            $payment_status_message = $RtnCode === 1 ? '訂單成立(已成功付款)' : '付款失敗';
-            # line notify 推播
-            $userServices->pushAdminNotify('訂單編號：' . $order->merchant_trade_no . ' ' . $payment_status_message);
-
-            # mail 通知
-            try {
-                Mail::to($order->email)->send(new PaymentSuccess($order));
-            } catch (\Exception $e) {
-                \AppLog::record(['type' => 'error_mail', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => $e->getMessage()]);
-            }
-
-            # 付款紀錄
-            \AppLog::record([
-                'type' => 'payment',
-                'user_id' => $order->member_id,
-                'data_id' => $order_id,
-                'content' => json_encode($inputs),
-            ]);
         }
-
-        # 其他紀錄
-        \AppLog::record([
-            'type' => 'payment_error',
-            'user_id' => null,
-            'data_id' => null,
-            'content' => json_encode($inputs),
-        ]);
 
         header("Location: " . env('FRONT_PAGE_URL') . 'account/record');
         exit;
