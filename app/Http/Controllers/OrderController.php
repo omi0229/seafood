@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Traits\General;
+use App\Models\Config;
 use App\Models\Orders;
 use App\Models\DiscountRecord;
 use App\Repositories\OrderRepository;
@@ -73,53 +74,53 @@ class OrderController extends Controller
     # ATM繳費回傳結果
     public function ecpayReturn(UserServices $userServices)
     {
-        $inputs = $this->request->all();
-        # 用ATM付款
-        if (data_get($inputs, 'PaymentType') && $inputs['PaymentType'] !== 'Credit_CreditCard') {
-            $order_id = Orders::decodeSlug($inputs['CustomField1']);
-            $order = $this->repository->find($order_id);
-            if ((int)$inputs['RtnCode'] === 1) {
-                $this->repository->update($order_id, ['payment_status' => 1]);
+        $model = Config::Where('config_name', 'goldflow_HashKey')->orWhere('config_name', 'goldflow_HashIV')->get();
+        $HashKey = $model->find('goldflow_HashKey') ? $model->find('goldflow_HashKey')->config_value : null;
+        $HashIV = $model->find('goldflow_HashIV') ? $model->find('goldflow_HashIV')->config_value : null;
+        if ($HashKey && $HashIV) {
+            $inputs = $this->request->all();
+            $CheckMacValueService = new \Ecpay\Sdk\Services\CheckMacValueService($HashKey, $HashIV, 'sha256');
+            # 用ATM付款
+            if ($CheckMacValueService->verify($inputs) && data_get($inputs, 'PaymentType') && $inputs['PaymentType'] !== 'Credit_CreditCard') {
+                $order_id = Orders::decodeSlug($inputs['CustomField1']);
+                $order = $this->repository->find($order_id);
+                if ((int)$inputs['RtnCode'] === 1) {
+                    $this->repository->update($order_id, ['payment_status' => 1]);
 
-                # 如果有用優惠劵並且付款成功
-                if (data_get($inputs, 'CustomField2')) {
-                    $coupon_record_id = $inputs['CustomField2'];
-                    $record = DiscountRecord::find(DiscountRecord::decodeSlug($coupon_record_id));
-                    if ($record) {
-                        $record->member_id = $order->member_id;
-                        $record->used_at = now();
-                        $record->save();
+                    # 如果有用優惠劵並且付款成功
+                    if (data_get($inputs, 'CustomField2')) {
+                        $coupon_record_id = $inputs['CustomField2'];
+                        $record = DiscountRecord::find(DiscountRecord::decodeSlug($coupon_record_id));
+                        if ($record) {
+                            $record->member_id = $order->member_id;
+                            $record->used_at = now();
+                            $record->save();
+                        }
                     }
+
+                    # line notify 推播
+                    $userServices->pushAdminNotify('訂單編號：' . $order->merchant_trade_no . ' 訂單成立(已成功付款)');
+
+                } else {
+                    $this->repository->update($order_id, ['payment_status' => -2]);
                 }
 
-                # line notify 推播
-                $userServices->pushAdminNotify('訂單編號：' . $order->merchant_trade_no . ' 訂單成立(已成功付款)');
+                $order->refresh();
 
-            } else {
-                $this->repository->update($order_id, ['payment_status' => -2]);
+                # mail 通知
+                try {
+                    Mail::to($order->email)->send(new PaymentSuccess($order));
+                } catch (\Exception $e) {
+                    \AppLog::record(['type' => 'error_mail', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => $e->getMessage()]);
+                }
+
+                \AppLog::record([
+                    'type' => 'payment',
+                    'user_id' => $order->member_id,
+                    'data_id' => $order_id,
+                    'content' => json_encode($inputs),
+                ]);
             }
-
-            $order->refresh();
-
-            # mail 通知
-            try {
-                Mail::to($order->email)->send(new PaymentSuccess($order));
-            } catch (\Exception $e) {
-                \AppLog::record(['type' => 'error_mail', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => $e->getMessage()]);
-            }
-
-            \AppLog::record([
-                'type' => 'payment',
-                'user_id' => $order->member_id,
-                'data_id' => $order_id,
-                'content' => json_encode([
-                    'RtnCode' => $inputs['RtnCode'],
-                    'RtnMsg' => $inputs['RtnMsg'],
-                    'PaymentType' => $inputs['PaymentType'],
-                    'TradeAmt' => $inputs['TradeAmt'],
-                    'PaymentDate' => $inputs['PaymentDate'],
-                ]),
-            ]);
         }
 
         return "1|OK";
@@ -128,12 +129,11 @@ class OrderController extends Controller
     # 信用卡繳費回傳結果
     public function ecpayResult(UserServices $userServices)
     {
-        $inputs = $this->request->all();
-
-        $model = \App\Models\Config::Where('config_name', 'goldflow_HashKey')->orWhere('config_name', 'goldflow_HashIV')->get();
+        $model = Config::Where('config_name', 'goldflow_HashKey')->orWhere('config_name', 'goldflow_HashIV')->get();
         $HashKey = $model->find('goldflow_HashKey') ? $model->find('goldflow_HashKey')->config_value : null;
         $HashIV = $model->find('goldflow_HashIV') ? $model->find('goldflow_HashIV')->config_value : null;
         if ($HashKey && $HashIV) {
+            $inputs = $this->request->all();
             $CheckMacValueService = new \Ecpay\Sdk\Services\CheckMacValueService($HashKey, $HashIV, 'sha256');
             if ($CheckMacValueService->verify($inputs) && data_get($inputs, 'CustomField1') && data_get($inputs, 'RtnCode')) {
                 $RtnCode = $inputs['RtnCode'];
@@ -289,7 +289,7 @@ class OrderController extends Controller
 
         if ($transactionId && $orderId && $order) {
 
-            $model = \App\Models\Config::where('config_name', 'line_channel_id')->orWhere('config_name', 'line_secret_key')->get();
+            $model = Config::where('config_name', 'line_channel_id')->orWhere('config_name', 'line_secret_key')->get();
             $channelId = $model->find('line_channel_id') ? $model->find('line_channel_id')->config_value : null;
             $channelSecret = $model->find('line_secret_key') ? $model->find('line_secret_key')->config_value : null;
 
