@@ -129,12 +129,16 @@ class OrderController extends Controller
     public function ecpayResult(UserServices $userServices)
     {
         $inputs = $this->request->all();
-        if (data_get($inputs, 'CustomField1')) {
+        if (data_get($inputs, 'CustomField1') && data_get($inputs, 'RtnCode')) {
+
+            $RtnCode = $inputs['RtnCode'];
+            $payment_status = $RtnCode === 1 ? 1 : -2;
+
             $order_id = Orders::decodeSlug($inputs['CustomField1']);
             $order = $this->repository->find($order_id);
             $this->repository->update($order_id, [
                 'payment_method' => 1,
-                'payment_status' => 1,
+                'payment_status' => $payment_status,
                 'TradeNo' => null,
                 'BankCode' => null,
                 'vAccount' => null,
@@ -165,18 +169,22 @@ class OrderController extends Controller
                 \AppLog::record(['type' => 'error_mail', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => $e->getMessage()]);
             }
 
-            # 付款成功紀錄
+            # 付款紀錄
             \AppLog::record([
                 'type' => 'payment',
                 'user_id' => $order->member_id,
                 'data_id' => $order_id,
-                'content' => json_encode([
-                    'PaymentType' => $inputs['PaymentType'],
-                    'TradeAmt' => $inputs['TradeAmt'],
-                    'PaymentDate' => $inputs['PaymentDate'],
-                ]),
+                'content' => json_encode($inputs),
             ]);
         }
+
+        # 其他紀錄
+        \AppLog::record([
+            'type' => 'payment_error',
+            'user_id' => null,
+            'data_id' => null,
+            'content' => json_encode($inputs),
+        ]);
 
         header("Location: " . env('FRONT_PAGE_URL') . 'account/record');
         exit;
