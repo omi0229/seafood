@@ -159,14 +159,16 @@ class OrderController extends Controller
                 }
             }
 
-            # line notify 推播
-            $userServices->pushAdminNotify('訂單編號：' . $order->merchant_trade_no . ' 訂單成立(已成功付款)');
+            if ($RtnCode === 1) {
+                # line notify 推播
+                $userServices->pushAdminNotify('訂單編號：' . $order->merchant_trade_no . ' 訂單成立(已成功付款)');
 
-            # mail 通知
-            try {
-                Mail::to($order->email)->send(new PaymentSuccess($order));
-            } catch (\Exception $e) {
-                \AppLog::record(['type' => 'error_mail', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => $e->getMessage()]);
+                # mail 通知
+                try {
+                    Mail::to($order->email)->send(new PaymentSuccess($order));
+                } catch (\Exception $e) {
+                    \AppLog::record(['type' => 'error_mail', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => $e->getMessage()]);
+                }
             }
 
             # 付款紀錄
