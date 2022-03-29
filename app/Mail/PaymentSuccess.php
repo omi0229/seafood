@@ -33,8 +33,13 @@ class PaymentSuccess extends Mailable
      */
     public function build(): PaymentSuccess
     {
+        $payment_status_message = '失敗';
+        if ($this->order && $this->order->payment_status && $this->order->payment_status === 1) {
+            $payment_status_message = '成功';
+        }
+
         return $this->view('email.payment_success')
-            ->subject(env('SENDER_NAME') . ' - 訂單付款成功')
+            ->subject(env('SENDER_NAME') . ' - 訂單付款' . $payment_status_message)
             ->bcc($this->getBccList()) # 密件副本
             ->with([
                 'order' => $this->order,
