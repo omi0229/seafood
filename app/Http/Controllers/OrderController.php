@@ -129,8 +129,13 @@ class OrderController extends Controller
     public function ecpayResult(UserServices $userServices)
     {
         $inputs = $this->request->all();
-        if (data_get($inputs, 'CustomField1') && data_get($inputs, 'RtnCode')) {
 
+//            $CheckMacValueService = new \Ecpay\Sdk\Services\CheckMacValueService($repository->configs['hash_key'], $repository->configs['hash_iv'], 'sha256');
+//            if (!$CheckMacValueService->verify($inputs)) {
+//                return false;
+//            }
+
+        if (data_get($inputs, 'CustomField1') && data_get($inputs, 'RtnCode')) {
             $RtnCode = $inputs['RtnCode'];
             $payment_status = $RtnCode === 1 ? 1 : -2;
 
