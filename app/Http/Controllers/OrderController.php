@@ -136,8 +136,8 @@ class OrderController extends Controller
             $inputs = $this->request->all();
             $CheckMacValueService = new \Ecpay\Sdk\Services\CheckMacValueService($HashKey, $HashIV, 'sha256');
             if ($CheckMacValueService->verify($inputs) && data_get($inputs, 'CustomField1') && data_get($inputs, 'RtnCode')) {
-                $RtnCode = $inputs['RtnCode'];
-                $payment_status = (int)$RtnCode === 1 ? 1 : -2;
+                $RtnCode = (int)$inputs['RtnCode'];
+                $payment_status = $RtnCode === 1 ? 1 : -2;
 
                 $order_id = Orders::decodeSlug($inputs['CustomField1']);
                 $order = $this->repository->find($order_id);
