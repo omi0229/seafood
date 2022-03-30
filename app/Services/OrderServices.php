@@ -452,6 +452,8 @@ class OrderServices
     # 匯出訂單
     private function __exportOrders($params = [])
     {
+        ini_set('memory_limit', -1);
+
         $repository = new OrderRepository;
         $model = $repository->searchCondition(app()->make(self::$model), $params);
 
@@ -562,6 +564,8 @@ class OrderServices
     # 匯出全部
     private function __exportAll($params = [])
     {
+        ini_set('memory_limit', -1);
+
         $data = OrderProducts::whereHas('order', function ($query) use ($params) {
             $this->__orderProductsSearchCondition($query, $params);
         })->get();
@@ -647,9 +651,11 @@ class OrderServices
     # 匯出揀貨單
     private function __exportProducts($params = [])
     {
-        $data = OrderProducts::whereHas('order', function ($query) use ($params) {
+        ini_set('memory_limit', -1);
+
+        $data = OrderProducts::with(['order'])->whereHas('order', function ($query) use ($params) {
             $this->__orderProductsSearchCondition($query, $params);
-        })->get()->sortByDesc('updated_at')->sortByDesc('product_specifications_id');
+        })->get()->sortByDesc('product_specifications_id')->sortByDesc('order.id');
 
         $xls = '<table>';
 
