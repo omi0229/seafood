@@ -31,7 +31,7 @@ class OrderProducts extends Model
 
     public function product_specifications()
     {
-        return $this->belongsTo('App\Models\ProductSpecifications');
+        return $this->belongsTo('App\Models\ProductSpecifications')->withTrashed();
     }
 
     public function put_on()
