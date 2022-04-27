@@ -98,20 +98,23 @@ class OrderController extends Controller
                         }
                     }
 
+                    $order->refresh();
+
                     # line notify 推播
                     $userServices->pushAdminNotify('訂單編號：' . $order->merchant_trade_no . ' 訂單成立(已成功付款)');
 
+                    # mail 通知
+                    $this->__sendMail($order);
                 } else {
-                    $this->repository->update($order_id, ['payment_status' => -2]);
-                }
+                    # 20220427新增 訂單狀況為已付款則不得再度更改付款狀態
+                    if ($order->payment_status !== 1) {
+                        $this->repository->update($order_id, ['payment_status' => -2]);
 
-                $order->refresh();
+                        $order->refresh();
 
-                # mail 通知
-                try {
-                    Mail::to($order->email)->send(new PaymentSuccess($order));
-                } catch (\Exception $e) {
-                    \AppLog::record(['type' => 'error_mail', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => $e->getMessage()]);
+                        # mail 通知
+                        $this->__sendMail($order);
+                    }
                 }
 
                 \AppLog::record([
@@ -137,10 +140,17 @@ class OrderController extends Controller
             $CheckMacValueService = new \Ecpay\Sdk\Services\CheckMacValueService($HashKey, $HashIV, 'sha256');
             if ($CheckMacValueService->verify($inputs) && data_get($inputs, 'CustomField1') && data_get($inputs, 'RtnCode')) {
                 $RtnCode = (int)$inputs['RtnCode'];
-                $payment_status = $RtnCode === 1 ? 1 : -2;
 
                 $order_id = Orders::decodeSlug($inputs['CustomField1']);
                 $order = $this->repository->find($order_id);
+
+                # 20220427新增 訂單狀況為已付款則不得再度更改付款狀態
+                if ($order->payment_status !== 1) {
+                    $payment_status = $RtnCode === 1 ? 1 : -2;
+                } else {
+                    $payment_status = 1;
+                }
+
                 $this->repository->update($order_id, [
                     'payment_method' => 1,
                     'payment_status' => $payment_status,
@@ -169,11 +179,7 @@ class OrderController extends Controller
                 $userServices->pushAdminNotify('訂單編號：' . $order->merchant_trade_no . ' ' . $payment_status_message);
 
                 # mail 通知
-                try {
-                    Mail::to($order->email)->send(new PaymentSuccess($order));
-                } catch (\Exception $e) {
-                    \AppLog::record(['type' => 'error_mail', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => $e->getMessage()]);
-                }
+                $this->__sendMail($order);
 
                 # 付款紀錄
                 \AppLog::record([
@@ -341,43 +347,45 @@ class OrderController extends Controller
                     $userServices = new UserServices;
                     $userServices->pushAdminNotify('訂單編號：' . $order->merchant_trade_no . ' 訂單成立(已成功付款)');
 
+                    # mail 通知
+                    $this->__sendMail($order);
+
                 } else {
 
-                    ### line 付款失敗 執行以下
-                    # 金額錯誤 (scale)
-                    if ($response['returnCode'] === '1124') {
-                        $order->payment_status = -1;
-                        $order->save();
-                    } else {
-                        # 其他付款失敗
-                        $order->payment_status = -2;
-                        $order->save();
+                    # 20220427新增 訂單狀況為已付款則不得再度更改付款狀態
+                    if ($order->payment_status !== 1) {
+                        ### line 付款失敗 執行以下
+                        # 金額錯誤 (scale)
+                        if ($response['returnCode'] === '1124') {
+                            $order->payment_status = -1;
+                            $order->save();
+                        } else {
+                            # 其他付款失敗
+                            $order->payment_status = -2;
+                            $order->save();
+                        }
+
+                        # 歸還優惠代碼
+                        if ($discount_record) {
+                            $discount_record->delete();
+                        }
+
+                        # 歸還優惠劵
+                        if ($coupon_record) {
+                            $coupon_record->orders_id = null;
+                            $coupon_record->save();
+                        }
+
+                        # mail 通知
+                        $this->__sendMail($order);
                     }
 
-                    # 歸還優惠代碼
-                    if ($discount_record) {
-                        $discount_record->delete();
-                    }
-
-                    # 歸還優惠劵
-                    if ($coupon_record) {
-                        $coupon_record->orders_id = null;
-                        $coupon_record->save();
-                    }
-
-                }
-
-                # mail 通知
-                try {
-                    Mail::to($order->email)->send(new PaymentSuccess($order));
-                } catch (\Exception $e) {
-                    \AppLog::record(['type' => 'error_mail', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => $e->getMessage()]);
                 }
 
                 \AppLog::record([
                     'type' => 'payment',
                     'user_id' => $order->member_id,
-                    'data_id' => $order->jd,
+                    'data_id' => $order->id,
                     'content' => json_encode($response),
                 ]);
 
@@ -387,5 +395,18 @@ class OrderController extends Controller
         }
 
         return response()->json(['error' => 'Not authorized.'], 403);
+    }
+
+    # mail 通知
+    private function __sendMail($order)
+    {
+        # mail 通知
+        try {
+            Mail::to($order->email)->send(new PaymentSuccess($order));
+        } catch (\Exception $e) {
+            \AppLog::record(['type' => 'error_mail', 'user_id' => $order->member_id, 'data_id' => $order->id, 'content' => $e->getMessage()]);
+        }
+
+        return true;
     }
 }

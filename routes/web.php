@@ -47,8 +47,9 @@ Route::get('login', [LoginController::class, 'login'])->name('login')->middlewar
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
 
+# ATM繳費回傳結果
 Route::post('ecpay-return', [OrderController::class, 'ecpayReturn']);
-# 信用卡 訂單繳費
+# 信用卡 訂單繳費 回傳結果
 Route::post('ecpay-result', [OrderController::class, 'ecpayResult']);
 # ATM 訂單取號
 Route::post('ecpay-redirect', [OrderController::class, 'ecpayRedirect']);
