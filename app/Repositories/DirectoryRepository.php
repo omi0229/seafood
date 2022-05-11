@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Resources\ProductSpecificationResource;
+use App\Http\Resources\HomeProductResource;
 
 class DirectoryRepository extends Repository
 {
@@ -63,7 +64,14 @@ class DirectoryRepository extends Repository
         $keywords = data_get($params, 'keywords');
         $data = $keywords ? $data->where('name', 'LIKE', '%' . $keywords . '%') : $data;
 
-        return $this->__formatData($data, $page, env('PRODUCT_PAGE_ITEM_COUNT', 10));
+        # 每頁筆數
+        $page_item_count = (int)env('PRODUCT_PAGE_ITEM_COUNT', 10);
+
+        # 是否分頁顯示
+        $start = $page !== 'all' && is_numeric($page) ? ($page - 1) * $page_item_count : null;
+        $data  = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take($page_item_count)->get() : $data->get();
+
+        return HomeProductResource::collection($data)->toResponse(app('request'))->getData(true);
     }
 
     private function __formatData($data, $set_page = null, $page_item_count = 10)

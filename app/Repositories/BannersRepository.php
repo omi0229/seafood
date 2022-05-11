@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Repositories\Repository;
 use App\Models\Banners;
+use App\Http\Resources\HomeBannerResource;
 
 class BannersRepository extends Repository
 {
@@ -43,7 +44,20 @@ class BannersRepository extends Repository
 
     public function apiList()
     {
-        return $this->list(['status' => 1]);
+        $data = $this->model->where('status', 1)->orderBy('created_at', 'DESC')->get();
+
+        return HomeBannerResource::collection($data)->toResponse(app('request'))->getData(true);
+
+        $list = [];
+        foreach ($data as $key => $row) {
+            $list[$key]['id'] = $row->hash_id;
+            $list[$key]['href'] = $row->href;
+            $list[$key]['target'] = $row->target;
+            $list[$key]['web_img_path'] = $row->web_img ? env('CDN_URL') . $row->web_img : null;
+            $list[$key]['mobile_img_path'] = $row->mobile_img ? env('CDN_URL'). $row->mobile_img : null;
+        }
+
+        return $list;
     }
 
     public function count(array $params = [])

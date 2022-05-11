@@ -77,10 +77,8 @@ class NewsRepository extends Repository
 
         $list = [];
         foreach ($data->get() as $key => $row) {
-            array_push($list, json_decode($row, true));
             $list[$key]['id'] = $row->hash_id;
-            $list[$key]['news_types_id'] = $row->news_types->hash_id ?? '';
-            $list[$key]['news_types_name'] = $row->news_types->name ?? '';
+            $list[$key]['title'] = $row->title;
             $list[$key]['web_img_path'] = $row->web_img ? env('CDN_URL') . $row->web_img : null;
             $list[$key]['mobile_img_path'] = $row->mobile_img ? env('CDN_URL') . $row->mobile_img : null;
         }
