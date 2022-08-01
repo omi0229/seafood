@@ -57,8 +57,8 @@ class NewsRepository extends Repository
     {
         $data = $type_id ? $this->model::with(['news_types'])->where('news_types_id', NewsTypes::decodeSlug($type_id)) : $this->model::with(['news_types'])->where('carousel', 1);
 
-        $data = $data->where('status', 1);
-
+        $data = $data->where('status', 1)->where('start_date', '<',now())->where('end_date', '>',now());
+        
         # 此分類的全部數量
         $all_count = $data->count();
 
@@ -75,12 +75,15 @@ class NewsRepository extends Repository
             $data = $page !== 'all' && is_numeric($page) ? $data->skip($start)->take($page_item_count) : $data;
         }
 
+        $data->orderByDesc('start_date');
+
         $list = [];
         foreach ($data->get() as $key => $row) {
             $list[$key]['id'] = $row->hash_id;
             $list[$key]['title'] = $row->title;
             $list[$key]['web_img_path'] = $row->web_img ? env('CDN_URL') . $row->web_img : null;
             $list[$key]['mobile_img_path'] = $row->mobile_img ? env('CDN_URL') . $row->mobile_img : null;
+            $list[$key]['start_date'] = $row->start_date;
         }
 
         return ['list' => $list, 'all_count' => $all_count, 'page_count' => $page_count, 'page_item_count' => $page_item_count];
