@@ -75,6 +75,7 @@ window.app = createApp({
             set_info.mode = 'modify';
             set_info.info.id = id;
             let info = _.find(this.list, {'id': id});
+            set_info.info.product_number = info.product_number;
             set_info.info.product_types_id = info.product_types_id;
             set_info.info.title = info.title;
             CKEDITOR.instances["content"].setData(info.content);
@@ -149,6 +150,7 @@ let set_info = createApp({
             info: {
                 id: '',
                 product_types_id: '',
+                product_number: '',
                 title: '',
                 content: '',
                 keywords: [],
@@ -235,6 +237,7 @@ let set_info = createApp({
             this.value.keyword = '';
 
             this.info.id = null;
+            this.info.product_number = '';
             this.info.product_types_id = '';
             this.info.title = '';
             this.info.content = '';
@@ -339,6 +342,7 @@ let set_info = createApp({
 
             let formData = new FormData;
             formData.append("id", this.info.id);
+            formData.append("product_number", this.info.product_number);
             formData.append("product_types_id", this.info.product_types_id);
             formData.append("title", this.info.title);
             formData.append("content", CKEDITOR.instances["content"].getData());

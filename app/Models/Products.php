@@ -12,6 +12,7 @@ class Products extends Model
     use HasFactory, SoftDeletes, HashId;
 
     protected $fillable = [
+        'product_number',
         'product_types_id',
         'title',
         'content',

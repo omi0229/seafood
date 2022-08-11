@@ -150,6 +150,10 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label for="product_number">產品編號</label>
+                        <input type="text" maxlength="50" class="form-control form-control-sm" id="product_number" placeholder="請輸入產品編號" v-model="info.product_number">
+                    </div>
+                    <div class="form-group">
                         <label for="title">標題 <span class="text-danger">*</span></label>
                         <input type="text" maxlength="50" class="form-control form-control-sm" id="title" placeholder="請輸入標題" v-model="info.title">
                     </div>

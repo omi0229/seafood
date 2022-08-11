@@ -484,9 +484,11 @@ class OrderServices
             <th><span>收件人鄉鎮市區</span></th>
             <th><span>收件人郵遞區號</span></th>
             <th><span>收件人地址</span></th>
+            <th><span>優惠代碼</span></th>
+            <th><span>優惠金額</span></th>
             <th><span>備註</span></th>
             <th><span>訂購時間</span></th>
-            <th><span>訂單詳細(品名^規格^單價^數量^價格)</span></th>
+            <th><span>訂單詳細(品名^產品編號^規格^單價^數量^價格)</span></th>
         </tr>';
 
         foreach ($model->get() as $row) {
@@ -506,13 +508,14 @@ class OrderServices
                     break;
             }
 
-            $row->load(['order_products', 'member']);
+            $row->load(['order_products', 'member', 'discount_record.discount_codes']);
             $order_total = 0;
             $details = '';
             $row->order_products->load('product_specifications.product');
             foreach ($row->order_products as $order_product) {
                 $order_total += $order_product->count * $order_product->price;
                 $details .= $order_product->product_specifications->product->title . '^';
+                $details .= $order_product->product_specifications->product->product_number . '^';
                 $details .= $order_product->product_specifications->name . '^';
                 $details .= $order_product->price . '^';
                 $details .= $order_product->count . '^';
@@ -520,6 +523,10 @@ class OrderServices
             }
 
             $invoice_method = $row['invoice_method'] === 2 ? '三聯式發票' : '二聯式發票';
+
+            $discount_record = $row->discount_record->where('type', 'discount_codes')->first();
+            $fixed_name =  $discount_record ? $discount_record->discount_codes->fixed_name : '';
+            $discount = $discount_record ? $discount_record->discount_codes->discount : '';
 
             $xls .= '<tr>
                 <td>' . $row['merchant_trade_no'] . '</td>
@@ -546,6 +553,8 @@ class OrderServices
                 <td>' . $row['city'] . '</td>
                 <td>' . $row['zipcode'] . '</td>
                 <td>' . $row['address'] . '</td>
+                <td>' . $fixed_name . '</td>
+                <td>' . $discount . '</td>
                 <td>' . $row['bookmark'] . '</td>
                 <td>' . $row['created_at'] . '</td>
                 <td>' . $details . '</td>

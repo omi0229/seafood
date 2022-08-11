@@ -25,7 +25,7 @@ class ProductController extends Controller
 
     public function insert(Request $request)
     {
-        $inputs = $request->only('id', 'product_types_id', 'title', 'content', 'keywords', 'description', 'product_front_cover_image_id', 'product_mobile_front_cover_image_id', 'number_of_visits', 'web_img_name', 'mobile_img_name', 'sales_status', 'show_status');
+        $inputs = $request->only('id', 'product_number', 'product_types_id', 'title', 'content', 'keywords', 'description', 'product_front_cover_image_id', 'product_mobile_front_cover_image_id', 'number_of_visits', 'web_img_name', 'mobile_img_name', 'sales_status', 'show_status');
 
         # 驗證資料
         $validator = $this->services::authInputData($inputs);
@@ -45,7 +45,7 @@ class ProductController extends Controller
             return response()->json(['status' => false, 'message' => '修改失敗']);
         }
 
-        $inputs = $request->only('id', 'product_types_id', 'title', 'content', 'keywords', 'description', 'product_front_cover_image_id', 'product_mobile_front_cover_image_id', 'number_of_visits', 'web_img_name', 'mobile_img_name', 'sales_status', 'show_status');
+        $inputs = $request->only('id', 'product_number', 'product_types_id', 'title', 'content', 'keywords', 'description', 'product_front_cover_image_id', 'product_mobile_front_cover_image_id', 'number_of_visits', 'web_img_name', 'mobile_img_name', 'sales_status', 'show_status');
 
         # 驗證資料
         $validator = $this->services::authInputData($inputs);
