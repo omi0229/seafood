@@ -585,6 +585,7 @@ class OrderServices
             <th><span>訂單編號</span></th>
             <th><span>訂購日期</span></th>
             <th><span>商品號碼</span></th>
+            <th><span>產品編號</span></th>
             <th><span>商品名稱</span></th>
             <th><span>商品規格</span></th>
             <th><span>售價</span></th>
@@ -625,6 +626,7 @@ class OrderServices
                 <td>' . $row->order->merchant_trade_no  . '</td>
                 <td>' . substr($row->order->created_at, 0, 10) . '</td>
                 <td>' . $row['id'] . '</td>
+                <td>' . $row->product->product_number . '</td>
                 <td>' . $row->product->title . '</td>
                 <td>' . $row->product_specifications->name . '</td>
                 <td>' . $row['price'] . '</td>
@@ -674,6 +676,7 @@ class OrderServices
             <th><span>訂購人手機號碼</span></th>
             <th><span>訂購人連絡電話</span></th>
             <th><span>收件地址</span></th>
+            <th><span>產品編號</span></th>
             <th><span>商品名稱</span></th>
             <th><span>商品規格</span></th>
             <th><span>購買數</span></th>
@@ -689,6 +692,7 @@ class OrderServices
                 <td style="vnd.ms-excel.numberformat:@">' . $row->order->member->cellphone . '</td>
                 <td>' . $row->order->member->telephone . '</td>
                 <td>' . $row->order->zipcode . ' ' . $row->order->country . $row->order->city . $row->order->address . '</td>
+                <td>' . $row->product->product_number . '</td>
                 <td>' . $row->product->title . '</td>
                 <td>' . $row->product_specifications->name . '</td>
                 <td>' . $row['count'] . '</td>
