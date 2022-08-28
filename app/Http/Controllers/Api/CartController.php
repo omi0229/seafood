@@ -51,6 +51,12 @@ class CartController extends Controller
         return response()->Json(['status' => true, 'message' => '加入購物車成功']);
     }
 
+    public function refreshCart(Request $request, CartRepository $repository)
+    {
+        $repository->changeCount($request->all());
+        return response()->Json(['status' => true, 'message' => '修改購物車數量成功']);
+    }
+
     public function RemoveCartProduct($id)
     {
         Cart::find(Cart::decodeSlug($id))->delete();

@@ -66,6 +66,7 @@ Route::post('member/forget', [MemberController::class, 'forget']);
 Route::get('cart/get-cart-id', [CartController::class, 'getCartId']);
 Route::post('cart/get-cart-count', [CartController::class, 'getCartCount']);
 Route::post('cart/add-cart', [CartController::class, 'addCart']);
+Route::post('cart/refresh-cart', [CartController::class, 'refreshCart']);
 
 # 線上購物、烹飪教學 搜尋
 Route::get('search/all/{keyword}', function ($keywords) {

@@ -2,7 +2,10 @@
 
 namespace App\Repositories;
 
+use Illuminate\Http\Request;
+use App\Models\ProductSpecifications;
 use App\Repositories\OrderRepository;
+
 
 class CartRepository extends Repository
 {
@@ -28,5 +31,30 @@ class CartRepository extends Repository
                 }
             }
         }
+    }
+
+    public function changeCount($data)
+    {
+        if (!(isset($data['cart_id']) && isset($data['list']) && is_array($data['list']))) {
+            return false;
+        }
+
+        $model = app()->make($this->model());
+        $list = $data['list'];
+        foreach ($list as $info) {
+            $items = $model::where('cart_id', $data['cart_id'])->where('specifications_id', ProductSpecifications::decodeSlug($info['specifications_id']));
+            if ($items->count() > 0) {
+                $data = $items->first();
+                $data->count = $info['count'];
+
+                if ($data->count > 9999) {
+                    $data->count = 9999;
+                }
+
+                $data->save();
+            }
+        }
+
+        return true;
     }
 }
