@@ -169,31 +169,23 @@
                     </div>
                     <div class="form-group">
                         <label for="start_date">開始日期 <span class="text-danger" v-if="mode === 'create'">*</span></label>
-                        <template v-if="mode === 'create'">
-                        <div class="input-group date" id="start_date" data-target-input="nearest">
+                        <div class="input-group date" id="start_date" data-target-input="nearest" v-show="mode === 'create'">
                             <input type="text" class="form-control form-control-sm datetimepicker-input s-14" placeholder="請選擇開始日期" data-target="#start_date" />
                             <div class="input-group-append" data-target="#start_date" data-toggle="datetimepicker">
                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
                         </div>
-                        </template>
-                        <template v-else>
-                            <div> ${ info.start_date.substr(0, 10) } </div>
-                        </template>
+                        <div v-show="mode === 'modify'"> ${ info.start_date.substr(0, 10) } </div>
                     </div>
                     <div class="form-group">
                         <label for="end_date">結束日期 <span class="text-danger" v-if="mode === 'create'">*</span></label>
-                        <template v-if="mode === 'create'">
-                        <div class="input-group date" id="end_date" data-target-input="nearest">
+                        <div class="input-group date" id="end_date" data-target-input="nearest" v-show="mode === 'create'">
                             <input type="text" class="form-control form-control-sm datetimepicker-input s-14" placeholder="請選擇結束日期" data-target="#end_date" />
                             <div class="input-group-append" data-target="#end_date" data-toggle="datetimepicker">
                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
                         </div>
-                        </template>
-                        <template v-else>
-                            <div> ${ info.end_date.substr(0, 10) } </div>
-                        </template>
+                        <div v-show="mode === 'modify'"> ${ info.end_date.substr(0, 10) } </div>
                     </div>
                     <div class="mt-5 text-bold">可抵用產品</div>
                     <div class="text-danger s-14">如無選擇商品，則此劵可使用於所有訂單，不需選擇指定商品</div>
